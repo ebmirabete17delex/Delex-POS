@@ -14,8 +14,8 @@ public static class DependencyInjection
 {
     public static void AddInfrastructureServices(this IHostApplicationBuilder builder)
     {
-        var connectionString = builder.Configuration.GetConnectionString(Services.Database);
-        Guard.Against.Null(connectionString, message: $"Connection string '{Services.Database}' not found.");
+        var connectionString = builder.Configuration.GetConnectionString(Services.DatabaseConnectionString);
+        Guard.Against.Null(connectionString, message: $"Connection string '{Services.DatabaseConnectionString}' not found.");
 
         builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
         builder.Services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
@@ -23,11 +23,15 @@ public static class DependencyInjection
         builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
             options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
-            options.UseNpgsql(connectionString);
+            options.UseMySQL(connectionString);
             options.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
         });
 
-        builder.EnrichNpgsqlDbContext<ApplicationDbContext>();
+        // builder.EnrichMySqlDbContext<ApplicationDbContext>(configureSettings: settings =>
+        // {
+        //     settings.DisableRetry = false;
+        //     settings.CommandTimeout = 30; // seconds
+        // });
 
         builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 

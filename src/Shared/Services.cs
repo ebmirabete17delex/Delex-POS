@@ -24,5 +24,17 @@ public static class Services
     /// The name of the Database.
     /// This is the name of the database that will be created and used by the application.
     /// </summary>
-    public const string Database = "Delex_POSDb";
+    public const string Database = "DelexPOSLocalDb";
+
+    /// <summary>
+    /// The name of the connection String.
+    /// This is the name of the database connection string that will be used by the application to connect to the database.
+    /// </summary>
+    public const string DatabaseConnectionString = "DelexPOSDb";
+
+    /// <summary>
+    /// The name of the connection String.
+    /// This is the name of the database connection string that will be used by the application to connect to the database.
+    /// </summary>
+    public const int DbPort = 3390;
 }
