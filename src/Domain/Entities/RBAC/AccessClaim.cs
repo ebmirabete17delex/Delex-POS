@@ -13,4 +13,11 @@ public class AccessClaim : BaseAuditableEntity
         BackendUrl = backendUrl;
         FrontendUrl = frontendUrl;
     }
+
+    public void Update(string feature, string backendUrl, string frontendUrl)
+    {
+        Feature = feature;
+        BackendUrl = backendUrl;
+        FrontendUrl = frontendUrl;
+    }
 }

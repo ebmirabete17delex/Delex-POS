@@ -17,8 +17,8 @@ function AuthLinks() {
   }
   return (
     <>
-      <li><Link to="/login">Log in</Link></li>
-      <li><Link to="/register">Register</Link></li>
+      {/* <li><Link to="/login">Log in</Link></li>
+      <li><Link to="/register">Register</Link></li> */}
     </>
   );
 }
@@ -28,14 +28,14 @@ export function NavMenu() {
     <header>
       <nav>
         <ul>
-          <li><Link to="/">Clean Architecture</Link></li>
+          <li><Link to="/">Delex Pharma International Incorporated</Link></li>
         </ul>
-        <ul>
+        {/* <ul>
           <li><Link to="/">Home</Link></li>
           <li><Link to="/counter">Counter</Link></li>
           <li><Link to="/weather">Weather</Link></li>
           <li><Link to="/todo">Tasks</Link></li>
-        </ul>
+        </ul> */}
         <ul>
           <AuthLinks />
           <li aria-hidden="true" className="nav-separator"></li>

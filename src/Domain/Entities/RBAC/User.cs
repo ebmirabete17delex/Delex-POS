@@ -8,17 +8,21 @@ public class User : BaseAuditableEntity
     public IReadOnlyCollection<UserAccess> UserAccesses =>
         _userAccesses.AsReadOnly();
 
-    public Guid BranchId { get; private set; } = Guid.Empty;
+    public string UserCode { get; init; }
+    public string Email { get; init; }
+    public int BranchId { get; private set; }
     public string LastName { get; private set; }
     public string FirstName { get; private set; }
     public string? MiddleName { get; private set; }
 
-    public User(Guid branchId, string lastName, string firstName, string? middleName)
+    public User(int branchId, string lastName, string firstName, string? middleName, string email, string userCode)
     {
         BranchId = branchId;
         LastName = lastName;
         FirstName = firstName;
         MiddleName = middleName ?? string.Empty;
+        Email = email;
+        UserCode = userCode;
     }
 
     public void Update(string lastName, string firstName, string? middleName)
@@ -27,7 +31,7 @@ public class User : BaseAuditableEntity
         MiddleName = middleName ?? string.Empty;
         FirstName = firstName;
     }
-    public void ChangeBranch(Guid branchId)
+    public void ChangeBranch(int branchId)
     {
         BranchId = branchId;
     }

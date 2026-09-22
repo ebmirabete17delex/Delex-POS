@@ -22,27 +22,27 @@ Input.Email={{Email}}&Input.Password={{Password}}&__RequestVerificationToken={{R
 ###
 
 # GET WeatherForecast
-GET {{Web_HostAddress}}/api/WeatherForecasts
-Cookie: {{AuthCookieName}}={{AuthCookieValue}}
-
+# GET {{Web_HostAddress}}/api/WeatherForecasts
+# Cookie: {{AuthCookieName}}={{AuthCookieValue}}
+ 
 ###
 
 # GET TodoLists
-GET {{Web_HostAddress}}/api/TodoLists
-Cookie: {{AuthCookieName}}={{AuthCookieValue}}
+# GET {{Web_HostAddress}}/api/TodoLists
+# Cookie: {{AuthCookieName}}={{AuthCookieValue}}
 
 ###
 
-#GET TodoList
-GET {{Web_HostAddress}}/api/TodoLists/1
-Cookie: {{AuthCookieName}}={{AuthCookieValue}}
+# GET TodoList
+# GET {{Web_HostAddress}}/api/TodoLists/1
+# Cookie: {{AuthCookieName}}={{AuthCookieValue}}
 
 ###
 
 # POST TodoLists
-POST {{Web_HostAddress}}/api/TodoLists
-Cookie: {{AuthCookieName}}={{AuthCookieValue}}
-Content-Type: application/json
+# POST {{Web_HostAddress}}/api/TodoLists
+# Cookie: {{AuthCookieName}}={{AuthCookieValue}}
+# Content-Type: application/json
 
 // CreateTodoListCommand
 {
@@ -65,8 +65,8 @@ Content-Type: application/json
 ###
 
 # DELETE TodoLists
-DELETE {{Web_HostAddress}}/api/TodoLists/1
-Cookie: {{AuthCookieName}}={{AuthCookieValue}}
+# DELETE {{Web_HostAddress}}/api/TodoLists/1
+# Cookie: {{AuthCookieName}}={{AuthCookieValue}}
 
 ###
 

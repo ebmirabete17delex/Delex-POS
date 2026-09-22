@@ -30,7 +30,7 @@ export function LoginPage() {
     <article>
       <h2>Log in</h2>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email</label>
+        <label htmlFor="email">User ID</label>
         <input type="email" id="email" autoComplete="username"
           value={email} onChange={handleChange(setEmail)}
           aria-invalid={invalid || undefined}
@@ -40,9 +40,9 @@ export function LoginPage() {
           value={password} onChange={handleChange(setPassword)}
           aria-invalid={invalid || undefined}
           aria-describedby={invalid ? 'login-error' : undefined} />
-        {invalid && <small id="login-error">Invalid email or password.</small>}
+        {invalid && <small id="login-error">Invalid user ID or password.</small>}
         <button type="submit">Log in</button>
-        <p style={{ marginTop: '1rem' }}>Don't have an account? <Link to="/register">Register</Link></p>
+        {/* <p style={{ marginTop: '1rem' }}>Don't have an account? <Link to="/register">Register</Link></p> */}
       </form>
     </article>
   );
