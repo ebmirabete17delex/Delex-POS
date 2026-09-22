@@ -8,6 +8,19 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
+using Delex_POS.Application.Common.Interfaces.Repositories.AccessClaim;
+using Delex_POS.Infrastructure.Repositories.AccessClaim;
+using Delex_POS.Application.Common.Interfaces.Repositories.Branch;
+using Delex_POS.Infrastructure.Repositories.Branch;
+using Delex_POS.Application.Common.Interfaces.Repositories.Role;
+using Delex_POS.Infrastructure.Repositories.Role;
+using Delex_POS.Application.Common.Interfaces.Repositories.User;
+using Delex_POS.Infrastructure.Repositories.User;
+using Delex_POS.Application.Common.Interfaces.Repositories.UserAccess;
+using Delex_POS.Infrastructure.Repositories.UserAccess;
+using Delex_POS.Application.Common.Interfaces.Repositories.UserRole;
+using Delex_POS.Infrastructure.Repositories.UserRole;
+
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjection
@@ -56,5 +69,21 @@ public static class DependencyInjection
 
         builder.Services.AddSingleton(TimeProvider.System);
         builder.Services.AddTransient<IIdentityService, IdentityService>();
+        
+        #region Repository
+            builder.Services.AddScoped<IAccessClaimCommandRepository, AccessClaimCommandRepository>();
+            builder.Services.AddScoped<IAccessClaimQueryRepository, AccessClaimQueryRepository>();
+            builder.Services.AddScoped<IBranchCommandRepository, BranchCommandRepository>();
+            builder.Services.AddScoped<IBranchQueryRepository, BranchQueryRepository>();
+            builder.Services.AddScoped<IRoleCommandRepository, RoleCommandRepository>();
+            builder.Services.AddScoped<IRoleQueryRepository, RoleQueryRepository>();
+            builder.Services.AddScoped<IUserCommandRepository, UserCommandRepository>();
+            builder.Services.AddScoped<IUserQueryRepository, UserQueryRepository>();
+            builder.Services.AddScoped<IUserAccessCommandRepository, UserAccessCommandRepository>();
+            builder.Services.AddScoped<IUserAccessQueryRepository, UserAccessQueryRepository>();
+            builder.Services.AddScoped<IUserRoleCommandRepository, UserRoleCommandRepository>();
+            builder.Services.AddScoped<IUserRoleQueryRepository, UserRoleQueryRepository>();
+        #endregion
+
     }
 }
