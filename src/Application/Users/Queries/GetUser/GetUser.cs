@@ -1,10 +1,4 @@
-using System.Linq.Expressions;
-using Delex_POS.Application.Common.Enums;
-using Delex_POS.Application.Common.Extensions;
-using Delex_POS.Application.Common.Mappings;
-using Delex_POS.Application.Common.Models;
 using Delex_POS.Application.Common.Interfaces.Repositories.User;
-using Delex_POS.Domain.Entities.RBAC;
 using Delex_POS.Application.Users.Queries.UserDTOs;
 
 namespace Delex_POS.Application.Users.Queries.GetUser;
