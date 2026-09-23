@@ -1,42 +1,38 @@
-using Delex_POS.Application.Common.Interfaces.Repositories.User;
+using Delex_POS.Application.Common.Models;
+using Delex_POS.Application.Common.Interfaces;
 
 namespace Delex_POS.Application.Users.Commands.UpdateUser;
 
 public record UpdateUserCommand : IRequest
 {
-    public int Id { get; set; }
-
+    public string Id { get; set; } = string.Empty;
+    public string UserCode {get; set;} = string.Empty;
     public string LastName { get; set; } = string.Empty;
-
     public string FirstName { get; set; } = string.Empty;
-
     public string? MiddleName { get; set; }
-
     public int BranchId { get; set; }
 }
 
 public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
 {
-    private readonly IUserCommandRepository _userCommandRepository;
-    private readonly IUserQueryRepository _userQueryRepository;
+    private readonly IIdentityService _identityService;
 
-    public UpdateUserCommandHandler(IUserCommandRepository userCommandRepository, IUserQueryRepository userQueryRepository)
+    public UpdateUserCommandHandler(IIdentityService identityService)
     {
-        _userCommandRepository = userCommandRepository;
-        _userQueryRepository = userQueryRepository;
+        _identityService = identityService;
     }
 
     public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _userQueryRepository.GetByIdAsync(request.Id, cancellationToken);
-        Guard.Against.NotFound(request.Id, entity);
-        entity.Update(
-            request.LastName, 
-            request.FirstName, 
-            request.MiddleName
-            );
-        entity.ChangeBranch(request.BranchId);
- 
-        await _userCommandRepository.UpdateAsync(entity, cancellationToken);
+        var user = new ApplicationUserDto(
+            branchId: request.BranchId,
+            lastName: request.LastName,
+            firstName: request.FirstName,
+            middleName: request.MiddleName,
+            email: request.UserCode,
+            userCode: request.UserCode
+        );
+
+        await _identityService.UpdateUserAsync(user: user);
     }
 }

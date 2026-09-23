@@ -1,15 +1,15 @@
-using Delex_POS.Application.Common.Interfaces.Repositories.User;
+using Delex_POS.Application.Common.Interfaces;
 using Delex_POS.Application.Common.Interfaces.Repositories.Branch;
 
 namespace Delex_POS.Application.Users.Commands.UpdateUser;
 
 public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
 {
-    private readonly IUserQueryRepository _userQueryRepository;
+    private readonly IIdentityService _identityService;
     private readonly IBranchQueryRepository _branchQueryRepository;
-    public UpdateUserCommandValidator(IUserQueryRepository userQueryRepository, IBranchQueryRepository branchQueryRepository)
+    public UpdateUserCommandValidator(IIdentityService identityService, IBranchQueryRepository branchQueryRepository)
     {
-        _userQueryRepository = userQueryRepository;
+        _identityService = identityService;
         _branchQueryRepository = branchQueryRepository;
 
         RuleFor(v => v.LastName)
@@ -29,10 +29,10 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
             .MustAsync(UserExists);
     }
 
-    private async Task<bool> UserExists(int id, CancellationToken cancellationToken)
+    private async Task<bool> UserExists(string id, CancellationToken cancellationToken)
     {
-        var entity = await _userQueryRepository.ExistAsync(e => e.Id == id, cancellationToken);
-        return entity;
+        var entity = await _identityService.GetUserNameAsync(id);
+        return entity != null;
     }
 
     private async Task<bool> BranchIdExists(int branchId, CancellationToken cancellationToken)

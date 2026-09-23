@@ -1,27 +1,27 @@
-using Delex_POS.Application.Common.Interfaces.Repositories.User;
-using Delex_POS.Application.Users.Queries.UserDTOs;
+using Delex_POS.Application.Common.Interfaces;
+using Delex_POS.Application.Common.Models;
 
 namespace Delex_POS.Application.Users.Queries.GetUser;
 
-public record GetUserQuery() : IRequest<UserDto>
+public record GetUserQuery() : IRequest<ApplicationUserDto>
 {
-    public int Id { get; init; }
+    public string Id { get; init; } = string.Empty;
 };
 
-public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserDto>
+public class GetUserQueryHandler : IRequestHandler<GetUserQuery, ApplicationUserDto>
 {
     private readonly IMapper _mapper;
-    private readonly IUserQueryRepository _userQueryRepository;
+    private readonly IIdentityService _identityService;
 
-    public GetUserQueryHandler(IMapper mapper, IUserQueryRepository userQueryRepository)
+    public GetUserQueryHandler(IMapper mapper, IIdentityService identityService)
     {
         _mapper = mapper;
-        _userQueryRepository = userQueryRepository;
+        _identityService = identityService;
     }
 
-    public async Task<UserDto> Handle(GetUserQuery request,CancellationToken cancellationToken)
+    public async Task<ApplicationUserDto> Handle(GetUserQuery request,CancellationToken cancellationToken)
     {
-        var user = await _userQueryRepository.GetByIdAsync(request.Id, cancellationToken);
-        return _mapper.Map<UserDto>(user);
+        var user = await _identityService.GetUserById(request.Id.Trim());
+        return _mapper.Map<ApplicationUserDto>(user);
     }
 }

@@ -17,15 +17,22 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
             .MaximumLength(20);
 
         RuleFor(v => v.LastName)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(200);
 
         RuleFor(v => v.FirstName)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(200);
+
+        RuleFor(v => v.MiddleName)
+            .MaximumLength(200);
 
         RuleFor(v => v.BranchId)
             .NotEmpty()
             .MustAsync(BranchIdExists);
 
+        RuleFor(v => v.Password)
+            .NotEmpty();
     }
     private async Task<bool> BranchIdExists(int branchId, CancellationToken cancellationToken)
     {

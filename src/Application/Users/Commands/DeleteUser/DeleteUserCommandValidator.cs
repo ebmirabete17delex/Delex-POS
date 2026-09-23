@@ -1,22 +1,22 @@
-using Delex_POS.Application.Common.Interfaces.Repositories.User;
+using Delex_POS.Application.Common.Interfaces;
 namespace Delex_POS.Application.Users.Commands.DeleteUser;
 
 public class DeleteUserCommandValidator : AbstractValidator<DeleteUserCommand>
 {
-    private readonly IUserQueryRepository _userQueryRepository;
-    public DeleteUserCommandValidator(IUserQueryRepository userQueryRepository)
+    private readonly IIdentityService _identityService;
+    public DeleteUserCommandValidator(IIdentityService identityService)
     {
-        _userQueryRepository = userQueryRepository;
+        _identityService = identityService;
     
         RuleFor(v => v.Id)
             .NotEmpty()
             .MustAsync(UserExists);
     }
 
-    private async Task<bool> UserExists(int id, CancellationToken cancellationToken)
+    private async Task<bool> UserExists(string id, CancellationToken cancellationToken)
     {
-        var entity = await _userQueryRepository.ExistAsync(e => e.Id == id, cancellationToken);
-        return entity;
+        var entity = await _identityService.GetUserNameAsync(id);
+        return entity != null;
     }
 }
 

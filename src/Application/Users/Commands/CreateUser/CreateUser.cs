@@ -1,10 +1,11 @@
-using Delex_POS.Domain.Entities.RBAC;
-using Delex_POS.Application.Common.Interfaces.Repositories.User;
+using Delex_POS.Application.Common.Interfaces;
+using Delex_POS.Application.Common.Models;
 
 namespace Delex_POS.Application.Users.Commands.CreateUser;
 
-public record CreateUserCommand : IRequest<int>
+public record CreateUserCommand : IRequest<string>
 {
+    public string Password { get; set; } = string.Empty;
     public int BranchId { get; set; }
     public string UserCode { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
@@ -13,18 +14,18 @@ public record CreateUserCommand : IRequest<int>
     public string? MiddleName { get; set; }
 }
 
-public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, int>
+public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, string>
 {
-    private readonly IUserCommandRepository _userCommandRepository;
+    private readonly IIdentityService _identityService;
 
-    public CreateUserCommandHandler(IUserCommandRepository userCommandRepository)
+    public CreateUserCommandHandler(IIdentityService identityService)
     {
-        _userCommandRepository = userCommandRepository;
+        _identityService = identityService;
     }
 
-    public async Task<int> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<string> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var entity = new User(
+        var entity = new ApplicationUserDto(
             branchId: request.BranchId,
             lastName: request.LastName,
             firstName: request.FirstName,
@@ -33,7 +34,9 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, int>
             userCode: request.UserCode
         );
 
-        return await _userCommandRepository.AddAsync(entity,cancellationToken);
+        (Result result, string identityId) = await _identityService.CreateUserAsync(entity, request.Password);
+
+        return identityId;
 
     }
 }

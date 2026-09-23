@@ -1,24 +1,19 @@
-using Delex_POS.Application.Common.Interfaces.Repositories.User ;
+using Delex_POS.Application.Common.Interfaces;
 
 namespace Delex_POS.Application.Users.Commands.DeleteUser;
 
-public record DeleteUserCommand(int Id) : IRequest;
+public record DeleteUserCommand(string Id) : IRequest;
 
 public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand>
 {
-    private readonly IUserCommandRepository _userCommandRepository;
-    private readonly IUserQueryRepository _userQueryRepository;
-
-    public DeleteUserCommandHandler(IUserCommandRepository userCommandRepository, IUserQueryRepository userQueryRepository)
+    private readonly IIdentityService _identityService;
+    public DeleteUserCommandHandler(IIdentityService identityService)
     {
-        _userCommandRepository = userCommandRepository;
-        _userQueryRepository = userQueryRepository;
+        _identityService = identityService;
     }
 
     public async Task Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _userQueryRepository.GetByIdAsync(request.Id, cancellationToken);
-        Guard.Against.NotFound(request.Id, entity);
-        await _userCommandRepository.DeleteAsync(request.Id, cancellationToken);
+        await _identityService.DeleteUserAsync(request.Id);
     }
 }
