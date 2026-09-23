@@ -1,25 +1,21 @@
-using Delex_POS.Application.Common.Interfaces.Repositories.Role;
+using Delex_POS.Application.Common.Interfaces;
 namespace Delex_POS.Application.Roles.Commands.CreateRole;
 
 public class CreateRoleCommandValidator : AbstractValidator<CreateRoleCommand>
 {
-    private readonly IRoleQueryRepository _roleQueryRepository;
-    public CreateRoleCommandValidator(IRoleQueryRepository roleQueryRepository)
+    private readonly IIdentityService _identityService;
+    public CreateRoleCommandValidator(IIdentityService identityService)
     {
-        _roleQueryRepository = roleQueryRepository;
+        _identityService = identityService;
     
         RuleFor(v => v.Name)
             .NotEmpty()
             .MustAsync(NameNotExists);
         
-        RuleFor(v => v.Description)
-            .NotEmpty()
-            .MaximumLength(200);
-
     }
     private async Task<bool> NameNotExists(string name, CancellationToken cancellationToken)
     {
-        var entity = await _roleQueryRepository.ExistAsync(e => e.Name == name, cancellationToken);
+        var entity = await _identityService.RoleExistAsync(name);
         return !entity;
     }
 }

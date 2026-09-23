@@ -1,27 +1,27 @@
-using Delex_POS.Application.Common.Interfaces.Repositories.Role;
-using Delex_POS.Application.Roles.Queries.RoleDTOs;
+using Delex_POS.Application.Common.Interfaces;
+using Delex_POS.Application.Common.Models;
 
 namespace Delex_POS.Application.Roles.Queries.GetRole;
 
-public record GetRoleQuery() : IRequest<RoleDto>
+public record GetRoleQuery() : IRequest<IdentityRoleDto>
 {
-    public int Id { get; init; }
+    public string Id { get; init; } = string.Empty;
 };
 
-public class GetRoleQueryHandler : IRequestHandler<GetRoleQuery, RoleDto>
+public class GetRoleQueryHandler : IRequestHandler<GetRoleQuery, IdentityRoleDto>
 {
+    private readonly IIdentityService _identityService;
     private readonly IMapper _mapper;
-    private readonly IRoleQueryRepository _roleQueryRepository;
 
-    public GetRoleQueryHandler(IMapper mapper, IRoleQueryRepository RoleQueryRepository)
+    public GetRoleQueryHandler(IMapper mapper, IIdentityService identityService)
     {
+        _identityService = identityService;
         _mapper = mapper;
-        _roleQueryRepository = RoleQueryRepository;
     }
 
-    public async Task<RoleDto> Handle(GetRoleQuery request,CancellationToken cancellationToken)
-    {
-        var Role = await _roleQueryRepository.GetByIdAsync(request.Id, cancellationToken);
-        return _mapper.Map<RoleDto>(Role);
+    public async Task<IdentityRoleDto> Handle(GetRoleQuery request,CancellationToken cancellationToken)
+    {   
+        var role = await _identityService.GetRoleByIdAsync(request.Id, cancellationToken);
+        return _mapper.Map<IdentityRoleDto>(role);
     }
 }

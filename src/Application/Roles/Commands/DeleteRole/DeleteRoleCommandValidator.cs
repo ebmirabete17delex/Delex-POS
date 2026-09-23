@@ -1,21 +1,21 @@
-using Delex_POS.Application.Common.Interfaces.Repositories.Role;
+using Delex_POS.Application.Common.Interfaces;
 namespace Delex_POS.Application.Roles.Commands.DeleteRole;
 
 public class DeleteRoleCommandValidator : AbstractValidator<DeleteRoleCommand>
 {
-    private readonly IRoleQueryRepository _RoleQueryRepository;
-    public DeleteRoleCommandValidator(IRoleQueryRepository RoleQueryRepository)
+    private readonly IIdentityService _identityService;
+    public DeleteRoleCommandValidator(IIdentityService identityService)
     {
-        _RoleQueryRepository = RoleQueryRepository;
+        _identityService = identityService;
     
         RuleFor(v => v.Id)
             .NotEmpty()
             .MustAsync(RoleExists);
     }
 
-    private async Task<bool> RoleExists(int id, CancellationToken cancellationToken)
+    private async Task<bool> RoleExists(string id, CancellationToken cancellationToken)
     {
-        var entity = await _RoleQueryRepository.ExistAsync(e => e.Id == id, cancellationToken);
+        var entity = await _identityService.RoleExistAsync(id);
         return entity;
     }
 }

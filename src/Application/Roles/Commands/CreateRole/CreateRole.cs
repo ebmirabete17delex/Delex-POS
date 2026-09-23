@@ -1,30 +1,24 @@
-using Delex_POS.Domain.Entities.RBAC;
-using Delex_POS.Application.Common.Interfaces.Repositories.Role;
-
+using Delex_POS.Application.Common.Interfaces;
 namespace Delex_POS.Application.Roles.Commands.CreateRole;
 
-public record CreateRoleCommand : IRequest<int>
+public record CreateRoleCommand : IRequest<(string Id, string Name)>
 {
     public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
 }
 
-public class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, int>
+public class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, (string Id, string Name)>
 {
-    private readonly IRoleCommandRepository _roleCommandRepository;
+    private readonly IIdentityService _identityService;
 
-    public CreateRoleCommandHandler(IRoleCommandRepository roleCommandRepository)
+    public CreateRoleCommandHandler(IIdentityService identityService)
     {
-        _roleCommandRepository = roleCommandRepository;
+        _identityService = identityService;
     }
 
-    public async Task<int> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
+    public async Task<(string Id, string Name)> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
     {
-        var entity = new Role(
-            name: request.Name,
-            description: request.Description
-        );
+        var result = await _identityService.CreateRoleAsync(request.Name);
 
-        return await _roleCommandRepository.AddAsync(entity,cancellationToken);
+        return (result.RoleId, request.Name);
     }
 }
