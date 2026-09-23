@@ -13,5 +13,8 @@ public interface IApplicationDbContext
 
     DbSet<UserAccess> UserAccesses { get; }
 
+    DbSet<TodoItem> TodoItems { get; }
+    DbSet<TodoList> TodoLists { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

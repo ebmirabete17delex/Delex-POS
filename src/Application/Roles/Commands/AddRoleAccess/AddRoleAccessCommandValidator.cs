@@ -1,6 +1,5 @@
 using Delex_POS.Application.Common.Interfaces;
 using Delex_POS.Application.Common.Interfaces.Repositories.AccessClaim;
-using Delex_POS.Application.Common.Interfaces.Repositories.Branch;
 using Delex_POS.Application.Common.Interfaces.Repositories.RoleAccess;
 namespace Delex_POS.Application.Roles.Commands.AddRoleAccess;
 

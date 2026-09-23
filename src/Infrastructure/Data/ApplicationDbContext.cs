@@ -20,6 +20,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public DbSet<AccessClaim> Accesses => Set<AccessClaim>();
 
     public DbSet<UserAccess> UserAccesses => Set<UserAccess>();
+    public DbSet<TodoItem> TodoItems => Set<TodoItem>();
+    public DbSet<TodoList> TodoLists => Set<TodoList>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -1,16 +1,15 @@
 using Delex_POS.Application.Common.Interfaces;
 using Delex_POS.Application.Common.Interfaces.Repositories.AccessClaim;
-using Delex_POS.Application.Common.Interfaces.Repositories.Branch;
 using Delex_POS.Application.Common.Interfaces.Repositories.RoleAccess;
-namespace Delex_POS.Application.Roles.Commands.AddRoleAccess;
+namespace Delex_POS.Application.Roles.Commands.RemoveRoleAccess;
 
-public class AddRoleAccessCommandValidator : AbstractValidator<AddRoleAccessCommand>
+public class RemoveRoleAccessCommandValidator : AbstractValidator<RemoveRoleAccessCommand>
 {
     private readonly IIdentityService _identityService;
     private readonly IAccessClaimQueryRepository _accessClaimQueryRepository;
     private readonly IRoleAccessQueryRepository _roleAccessQueryRepository;
     
-    public AddRoleAccessCommandValidator(
+    public RemoveRoleAccessCommandValidator(
         IIdentityService identityService, 
         IAccessClaimQueryRepository accessClaimQueryRepository,
         IRoleAccessQueryRepository roleAccessQueryRepository)
@@ -20,34 +19,13 @@ public class AddRoleAccessCommandValidator : AbstractValidator<AddRoleAccessComm
         _roleAccessQueryRepository = roleAccessQueryRepository;
     
         RuleFor(v => v)
-            .MustAsync(RoleAccessCombinationNotExist);
-
-        RuleFor(v => v.RoleId)
-            .NotEmpty()
-            .MustAsync(RoleIdExist);
-
-        RuleFor(v => v.AccessId)
-            .NotEmpty()
-            .MustAsync(AccessIdExist);
-        
+            .MustAsync(RoleAccessCombinationExist);
     }
 
-    private async Task<bool> RoleAccessCombinationNotExist(AddRoleAccessCommand command, CancellationToken cancellationToken)
+    private async Task<bool> RoleAccessCombinationExist(RemoveRoleAccessCommand command, CancellationToken cancellationToken)
     {
         var exist = await _roleAccessQueryRepository
         .ExistAsync(e => e.RoleId == command.RoleId && e.AccessId == command.AccessId, cancellationToken);
-        return !exist;
+        return exist;
     }
-
-    private async Task<bool> RoleIdExist(string id, CancellationToken cancellationToken)
-    {
-        var entity = await _identityService.GetRoleByIdAsync(id, cancellationToken);
-        return entity is not null;
-    }
-
-    private async Task<bool> AccessIdExist(int id, CancellationToken cancellationToken)
-    {
-        return await _accessClaimQueryRepository.ExistAsync(e => e.Id == id, cancellationToken);
-    }
-
 }
