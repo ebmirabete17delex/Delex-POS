@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Delex_POS.Application.Roles.Queries.RoleDTOs;
 using Delex_POS.Application.Users.Queries.GetUsers;
 using Delex_POS.Infrastructure.Factories;
 

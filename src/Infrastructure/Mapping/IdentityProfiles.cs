@@ -1,5 +1,6 @@
 using AutoMapper;
 using Delex_POS.Application.Common.Models;
+using Delex_POS.Application.Roles.Queries.RoleDTOs;
 using Delex_POS.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 

@@ -2,6 +2,7 @@ using Delex_POS.Application.Roles.Commands.CreateRole;
 using Delex_POS.Application.Roles.Commands.DeleteRole;
 using Delex_POS.Application.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Delex_POS.Application.Roles.Queries.RoleDTOs;
 using Delex_POS.Application.Roles.Queries.GetRoles;
 using Delex_POS.Application.Roles.Queries.GetRole;
 using Microsoft.AspNetCore.Mvc;

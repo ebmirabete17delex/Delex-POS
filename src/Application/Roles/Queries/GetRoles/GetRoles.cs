@@ -1,10 +1,8 @@
-using System.Linq.Expressions;
 using Delex_POS.Application.Common.Enums;
-using Delex_POS.Application.Common.Extensions;
 using Delex_POS.Application.Common.Mappings;
 using Delex_POS.Application.Common.Models;
 using Delex_POS.Application.Common.Interfaces;
-using Delex_POS.Domain.Entities.RBAC;
+using Delex_POS.Application.Roles.Queries.RoleDTOs;
 
 namespace Delex_POS.Application.Roles.Queries.GetRoles;
 

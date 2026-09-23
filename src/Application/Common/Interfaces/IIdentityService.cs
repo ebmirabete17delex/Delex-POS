@@ -1,5 +1,6 @@
 ﻿using Delex_POS.Application.Common.Models;
 using Delex_POS.Application.Common.Enums;
+using Delex_POS.Application.Roles.Queries.RoleDTOs;
 using Delex_POS.Application.Users.Queries.GetUsers;
 namespace Delex_POS.Application.Common.Interfaces;
 

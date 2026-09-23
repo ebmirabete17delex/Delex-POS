@@ -1,6 +1,4 @@
-using AutoMapper;
-
-namespace Delex_POS.Application.Common.Models;
+namespace Delex_POS.Application.Roles.Queries.RoleDTOs;
 
 public class IdentityRoleDto
 {
