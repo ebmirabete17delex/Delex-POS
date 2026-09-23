@@ -7,7 +7,7 @@ using Delex_POS.Application.Common.Interfaces.Repositories.Branch;
 using Delex_POS.Domain.Entities.RBAC;
 using Delex_POS.Application.Branches.Queries.BranchDTOs;
 
-namespace Delex_POS.Application.Branchs.Queries.GetBranches;
+namespace Delex_POS.Application.Branches.Queries.GetBranches;
 
 public record GetBranchesQuery(
     int PageNumber,
@@ -46,9 +46,9 @@ public class GetBranchesQueryHandler : IRequestHandler<GetBranchesQuery, Paginat
             request.SortBy.Equals("status", StringComparison.CurrentCultureIgnoreCase) ? "BranchStatus" : request.SortBy;
         var sortDirection = request.Sort is null ? TableSort.DESC : (TableSort)request.Sort;
 
-        var BranchsQuery = _branchQueryRepository.GetAll().Where(filter);
+        var branchesQuery = _branchQueryRepository.GetAll().Where(filter);
 
-        IQueryable<BranchDto> projectedQuery = BranchsQuery.ProjectTo<BranchDto>(_mapper.ConfigurationProvider);
+        IQueryable<BranchDto> projectedQuery = branchesQuery.ProjectTo<BranchDto>(_mapper.ConfigurationProvider);
 
         return await
             projectedQuery.OrderBy(sortBy, sortDirection)

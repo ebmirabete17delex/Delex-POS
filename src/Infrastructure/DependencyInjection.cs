@@ -2,6 +2,8 @@
 using Delex_POS.Infrastructure.Data;
 using Delex_POS.Infrastructure.Data.Interceptors;
 using Delex_POS.Infrastructure.Identity;
+using Delex_POS.Infrastructure.Factories;
+using Delex_POS.Infrastructure.Mapping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -12,14 +14,11 @@ using Delex_POS.Application.Common.Interfaces.Repositories.AccessClaim;
 using Delex_POS.Infrastructure.Repositories.AccessClaim;
 using Delex_POS.Application.Common.Interfaces.Repositories.Branch;
 using Delex_POS.Infrastructure.Repositories.Branch;
-using Delex_POS.Application.Common.Interfaces.Repositories.Role;
-using Delex_POS.Infrastructure.Repositories.Role;
-using Delex_POS.Application.Common.Interfaces.Repositories.User;
-using Delex_POS.Infrastructure.Repositories.User;
 using Delex_POS.Application.Common.Interfaces.Repositories.UserAccess;
 using Delex_POS.Infrastructure.Repositories.UserAccess;
-using Delex_POS.Application.Common.Interfaces.Repositories.UserRole;
-using Delex_POS.Infrastructure.Repositories.UserRole;
+using Delex_POS.Application.Common.Interfaces.Repositories.RoleAccess;
+using Delex_POS.Infrastructure.Repositories.RoleAccess;
+using Delex_POS.Infrastructure.Mapping.IdentityProfile;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -27,6 +26,8 @@ public static class DependencyInjection
 {
     public static void AddInfrastructureServices(this IHostApplicationBuilder builder)
     {
+        builder.Services.AddAutoMapper(cfg => {}, typeof(IdentityProfile));
+
         var connectionString = builder.Configuration.GetConnectionString(Services.DatabaseConnectionString);
         Guard.Against.Null(connectionString, message: $"Connection string '{Services.DatabaseConnectionString}' not found.");
 
@@ -68,21 +69,19 @@ public static class DependencyInjection
             .AddApiEndpoints();
 
         builder.Services.AddSingleton(TimeProvider.System);
-        builder.Services.AddTransient<IIdentityService, IdentityService>();
+        builder.Services.AddScoped<TokenFactory>();
+        builder.Services.AddScoped<IIdentityService, IdentityService>();
+        
         
         #region Repository
             builder.Services.AddScoped<IAccessClaimCommandRepository, AccessClaimCommandRepository>();
             builder.Services.AddScoped<IAccessClaimQueryRepository, AccessClaimQueryRepository>();
             builder.Services.AddScoped<IBranchCommandRepository, BranchCommandRepository>();
             builder.Services.AddScoped<IBranchQueryRepository, BranchQueryRepository>();
-            builder.Services.AddScoped<IRoleCommandRepository, RoleCommandRepository>();
-            builder.Services.AddScoped<IRoleQueryRepository, RoleQueryRepository>();
-            builder.Services.AddScoped<IUserCommandRepository, UserCommandRepository>();
-            builder.Services.AddScoped<IUserQueryRepository, UserQueryRepository>();
             builder.Services.AddScoped<IUserAccessCommandRepository, UserAccessCommandRepository>();
             builder.Services.AddScoped<IUserAccessQueryRepository, UserAccessQueryRepository>();
-            builder.Services.AddScoped<IUserRoleCommandRepository, UserRoleCommandRepository>();
-            builder.Services.AddScoped<IUserRoleQueryRepository, UserRoleQueryRepository>();
+            builder.Services.AddScoped<IRoleAccessCommandRepository, RoleAccessCommandRepository>();
+            builder.Services.AddScoped<IRoleAccessQueryRepository, RoleAccessQueryRepository>();
         #endregion
 
     }

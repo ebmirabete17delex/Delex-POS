@@ -9,7 +9,13 @@ public interface IApplicationDbContext
 
     DbSet<TodoItem> TodoItems { get; }
 
-    DbSet<User> POSUsers { get; }
+    DbSet<Branch> Branches { get; }
+
+    DbSet<RoleAccess> RoleAccesses { get; }
+        
+    DbSet<Domain.Entities.RBAC.AccessClaim> Accesses { get; }
+
+    DbSet<UserAccess> UserAccesses { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

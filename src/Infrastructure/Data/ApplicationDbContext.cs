@@ -15,11 +15,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     // RBAC Entities
     public DbSet<Branch> Branches => Set<Branch>();
     
-    public DbSet<User> POSUsers => Set<User>();
-    
-    public DbSet<Role> POSRoles => Set<Role>();
-    
-    public DbSet<UserRole> UserPOSRoles => Set<UserRole>();
+    public DbSet<RoleAccess> RoleAccesses => Set<RoleAccess>();
     
     public DbSet<AccessClaim> Accesses => Set<AccessClaim>();
 

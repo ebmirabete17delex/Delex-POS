@@ -6,7 +6,7 @@ using Delex_POS.Application.Common.Models;
 using Delex_POS.Application.Common.Interfaces.Repositories.AccessClaim;
 using Delex_POS.Application.AccessClaims.Queries.AccessClaimDTOs;
 
-namespace Delex_POS.Application.AccessClaim.Queries.GetAccessClaims;
+namespace Delex_POS.Application.AccessClaims.Queries.GetAccessClaims;
 
 public record GetAccessClaimsQuery(
     int PageNumber,
