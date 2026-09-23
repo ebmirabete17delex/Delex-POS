@@ -14,7 +14,7 @@ public record GetRoleAccessQuery(
     string? SortBy,
     TableSort? Sort) : IRequest<PaginatedList<RoleAccessDto>>
 {
-    public string Id { get; init; } = string.Empty;
+    public string RoleId { get; init; } = string.Empty;
 };
 
 public class GetRoleAccessQueryHandler : IRequestHandler<GetRoleAccessQuery, PaginatedList<RoleAccessDto>>
@@ -45,7 +45,7 @@ public class GetRoleAccessQueryHandler : IRequestHandler<GetRoleAccessQuery, Pag
         var sortBy = string.IsNullOrEmpty(request.SortBy) ? "Created" : request.SortBy;
         var sortDirection = request.Sort is null ? TableSort.DESC : (TableSort)request.Sort;
 
-        var accesses = _roleAccessQueryRepository.GetByRoleId(request.Id, sortBy, sortDirection);
+        var accesses = _roleAccessQueryRepository.GetByRoleId(request.RoleId, sortBy, sortDirection);
 
         return await accesses.PaginatedListAsync(request.PageNumber, request.PageSize);
     }

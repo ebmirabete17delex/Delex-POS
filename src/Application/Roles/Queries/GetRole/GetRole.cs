@@ -5,7 +5,7 @@ namespace Delex_POS.Application.Roles.Queries.GetRole;
 
 public record GetRoleQuery() : IRequest<IdentityRoleDto>
 {
-    public string Id { get; init; } = string.Empty;
+    public string RoleId { get; init; } = string.Empty;
 };
 
 public class GetRoleQueryHandler : IRequestHandler<GetRoleQuery, IdentityRoleDto>
@@ -21,7 +21,7 @@ public class GetRoleQueryHandler : IRequestHandler<GetRoleQuery, IdentityRoleDto
 
     public async Task<IdentityRoleDto> Handle(GetRoleQuery request,CancellationToken cancellationToken)
     {   
-        var role = await _identityService.GetRoleByIdAsync(request.Id, cancellationToken);
+        var role = await _identityService.GetRoleByIdAsync(request.RoleId, cancellationToken);
         return _mapper.Map<IdentityRoleDto>(role);
     }
 }
