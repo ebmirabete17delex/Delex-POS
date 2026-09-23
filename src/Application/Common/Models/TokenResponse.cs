@@ -2,9 +2,10 @@ namespace Delex_POS.Application.Common.Models;
 
 public class TokenResponse
 {
-    public string access_token { get; set; } = string.Empty;
-    public string token_type { get; set; } = string.Empty;
-    public int expires_in { get; set; }
+    public string? TokenType { get; init; }
+    public string AccessToken { get; init; } = string.Empty;
+    public int ExpiresIn { get; init; }
+    public string RefreshToken { get; init; } = string.Empty;
 }
 
 public class OboTokenErrorBody

@@ -1,4 +1,5 @@
 using Delex_POS.Infrastructure.Data;
+// using Delex_POS.Infrastructure.Identity; UNCOMMENT When testing RBAC suggestion
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,14 @@ app.UseCors(static builder =>
     builder.AllowAnyMethod()
         .AllowAnyHeader()
         .AllowAnyOrigin());
+
+// app.UseRouting();
+
+// app.UseAuthentication(); UNCOMMENT When testing RBAC suggestion
+
+// app.UseMiddleware<EndpointRoleAuthorizationMiddleware>();
+
+// app.UseAuthorization();
 
 app.UseFileServer();
 

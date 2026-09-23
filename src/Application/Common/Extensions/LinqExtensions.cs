@@ -35,17 +35,17 @@ public static class LinqExtensions
         var orderType = sort == TableSort.DESC ? "OrderByDescending" : "OrderBy";
 
         var method = Array.Find(typeof(Enumerable).GetMethods(),
-            m => m.Name == orderType && m.GetParameters().Length == 2);
+            m => m.Name == orderType && m.IsGenericMethodDefinition && m.GetParameters().Length == 2);
 
         if (method is null)
-            throw new ArgumentNullException(nameof(name), nameof(method));
+            throw new InvalidOperationException($"Could not find Enumerable.{orderType}.");
 
         var genericMethod = method.MakeGenericMethod(typeof(T), propInfo.PropertyType);
         return (IEnumerable<T>)genericMethod!.Invoke(null, new object[] { query, expr.Compile() })!;
     }
 
     public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, string name,
-        TableSort sort = TableSort.DESC)
+        TableSort sort = TableSort.ASC)
     {
         var propInfo = GetPropertyInfo(typeof(T), name);
         var expr = GetOrderExpression(typeof(T), propInfo);
@@ -53,10 +53,10 @@ public static class LinqExtensions
         var orderType = sort == TableSort.DESC ? "OrderByDescending" : "OrderBy";
 
         var method = Array.Find(typeof(Queryable).GetMethods(),
-            m => m.Name == orderType && m.GetParameters().Length == 2);
+            m => m.Name == orderType && m.IsGenericMethodDefinition && m.GetParameters().Length == 2);
 
         if (method is null)
-            throw new ArgumentNullException(nameof(name), nameof(method));
+            throw new InvalidOperationException($"Could not find Queryable.{orderType}.");
 
         var genericMethod = method.MakeGenericMethod(typeof(T), propInfo.PropertyType);
         return (IQueryable<T>)genericMethod!.Invoke(null, new object[] { query, expr })!;
