@@ -2,50 +2,43 @@
 using Delex_POS.Application.Users.Commands.UpdateUser;
 using Delex_POS.Application.Users.Commands.DeleteUser;
 using Delex_POS.Application.Users.Commands.AssignRole;
+using Delex_POS.Application.Users.Commands.DismissRole;
+using Delex_POS.Application.Users.Commands.AddUserAccess;
+using Delex_POS.Application.Users.Commands.RemoveUserAccess;
 using Delex_POS.Application.Users.Queries.GetUser;
 using Delex_POS.Application.Users.Queries.GetUsers;
-using Delex_POS.Infrastructure.Identity;
+using Delex_POS.Application.Users.Queries.GetUserRoles;
+using Delex_POS.Application.Users.Queries.GetUserAccesses;
+using Delex_POS.Application.Users.Queries.UserDTOs;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Delex_POS.Application.Common.Models;
-using System.Text.RegularExpressions;
 
 namespace Delex_POS.Web.Endpoints;
 
 public class Users : IEndpointGroup
 {
+    public static string? RoutePrefix => "/api/Users";
+
     public static void Map(RouteGroupBuilder groupBuilder)
     {
         // groupBuilder.MapIdentityApi<ApplicationUser>();
 
-        groupBuilder.MapGet(GetUsers).RequireAuthorization();
+        groupBuilder.MapGet(GetUsers);
 
-        groupBuilder.MapGet(GetUser, "{id}")
-            .Produces<NotFound>()
-            .Produces<Ok>();
-
+        groupBuilder.MapGet(GetUser, "{userId}");
         groupBuilder.MapPost(CreateUser);
+        groupBuilder.MapPut(UpdateUser, "{userId}");
+        groupBuilder.MapDelete(DeleteUser, "{userId}");
 
-        groupBuilder.MapPut(UpdateUser, "{id}");
-        
-        groupBuilder.MapDelete(DeleteUser, "{id}");
+        groupBuilder.MapGet(GetUserAccess, "{userId}/accesses");
+        groupBuilder.MapPost(AddUserAccess, "{userId}/accesses");
+        groupBuilder.MapDelete(RemoveUserAccess, "{userId}/accesses/{accessId}");
 
-        // groupBuilder.MapPost(Logout, "logout").RequireAuthorization();
+        groupBuilder.MapGet(GetUserRoles, "{userId}/roles");
+        groupBuilder.MapPost(AssignUserRole, "{userId}/roles/{roleId}");
+        groupBuilder.MapDelete(DismissUserRole, "{userId}/roles/{roleId}");       
+
     }
-
-    // [EndpointSummary("Log out")]
-    // [EndpointDescription("Logs out the current user by clearing the authentication cookie.")]
-    // public static async Task<Results<Ok, UnauthorizedHttpResult>> Logout(SignInManager<ApplicationUser> signInManager, [FromBody] object empty)
-    // {
-    //     if (empty != null)
-    //     {
-    //         await signInManager.SignOutAsync();
-    //         return TypedResults.Ok();
-    //     }
-
-    //     return TypedResults.Unauthorized();
-    // }
 
     [EndpointSummary("Get all Users")]
     [EndpointDescription("Retrieves all users along with their items.")]
@@ -58,9 +51,9 @@ public class Users : IEndpointGroup
 
     [EndpointSummary("Get User")]
     [EndpointDescription("Retrieves user along with their items.")]
-    public static async Task<Ok<ApplicationUserDto>> GetUser(ISender sender, [AsParameters] GetUserQuery query)
+    public static async Task<Ok<ApplicationUserDto>> GetUser(ISender sender, string userId)
     {
-        var vm = await sender.Send(query);
+        var vm = await sender.Send(new GetUserQuery { Id = userId });
 
         return TypedResults.Ok(vm);
     }
@@ -76,9 +69,9 @@ public class Users : IEndpointGroup
 
     [EndpointSummary("Update a User")]
     [EndpointDescription("Updates the specified User. The ID in the URL must match the ID in the payload.")]
-    public static async Task<Results<NoContent, BadRequest>> UpdateUser(ISender sender, string id, UpdateUserCommand command)
+    public static async Task<Results<NoContent, BadRequest>> UpdateUser(ISender sender, string userId, UpdateUserCommand command)
     {
-        if (id != command.Id) return TypedResults.BadRequest();
+        if (userId != command.Id) return TypedResults.BadRequest();
 
         await sender.Send(command);
 
@@ -87,10 +80,73 @@ public class Users : IEndpointGroup
 
     [EndpointSummary("Delete a user")]
     [EndpointDescription("Deletes the user with the specified ID.")]
-    public static async Task<NoContent> DeleteUser(ISender sender, string id)
+    public static async Task<NoContent> DeleteUser(ISender sender, string userId)
     {
-        await sender.Send(new DeleteUserCommand(id));
+        await sender.Send(new DeleteUserCommand(userId));
 
         return TypedResults.NoContent();
     }
-}
+
+    [EndpointSummary("Get User Roles")]
+    [EndpointDescription("Retrieves user roles along with their items.")]
+    public static async Task<Ok<List<UserRoleDto>>> GetUserRoles(ISender sender, string userId)
+    {
+        var vm = await sender.Send(new GetUserRolesQuery { Id = userId });
+
+        return TypedResults.Ok(vm);
+    }
+
+    [EndpointSummary("Assign role to user")]
+    [EndpointDescription("Assigns a role to user using the provided details and returns the ID of the created item.")]
+    public static async Task<Created<string>> AssignUserRole(ISender sender, string userId, AssignRoleCommand command)
+    {
+        command.UserId = userId;
+        var result = await sender.Send(command);
+
+        return TypedResults.Created($"/api/Users/{userId}/roles", userId);
+    }
+
+    [EndpointSummary("Dismiss a Role from a user")]
+    [EndpointDescription("Dismiss a role from a user with the specified IDs.")]
+    public static async Task<NoContent> DismissUserRole(ISender sender, string userId, string roleId)
+    {
+        await sender.Send(new DismissRoleCommand
+        {
+            Role = roleId,
+            UserId = userId
+        });
+
+        return TypedResults.NoContent();
+    }
+
+[EndpointSummary("Get all user access")]
+    [EndpointDescription("Retrieves all user access.")]
+    public static async Task<Ok<PaginatedList<UserAccessDto>>> GetUserAccess(ISender sender, [AsParameters] GetUserAccessQuery query)
+    {
+        var vm = await sender.Send(query);
+
+        return TypedResults.Ok(vm);
+    }
+
+    [EndpointSummary("Add a user access")]
+    [EndpointDescription("Adds a user access using the provided details and returns the ID of the created item.")]
+    public static async Task<Created<int>> AddUserAccess(ISender sender, string roleId, AddUserAccessCommand command)
+    {
+        command.UserId = roleId;
+        var result = await sender.Send(command);
+
+        return TypedResults.Created($"/api/Users/{roleId}/accesses/{result}", result);
+    }
+
+    [EndpointSummary("Remove a User Access")]
+    [EndpointDescription("Remove a user access with the specified IDs.")]
+    public static async Task<NoContent> RemoveUserAccess(ISender sender, string userId, int accessId)
+    {
+        await sender.Send(new RemoveUserAccessCommand
+        {
+            UserId = userId,
+            AccessId = accessId
+        });
+
+        return TypedResults.NoContent();
+    }}

@@ -1,7 +1,7 @@
 ﻿using Delex_POS.Application.Common.Models;
 using Delex_POS.Application.Common.Enums;
 using Delex_POS.Application.Roles.Queries.RoleDTOs;
-using Delex_POS.Application.Users.Queries.GetUsers;
+using Delex_POS.Application.Users.Queries.UserDTOs;
 namespace Delex_POS.Application.Common.Interfaces;
 
 public interface IIdentityService
@@ -10,16 +10,12 @@ public interface IIdentityService
     #region User management
     Task<string?> GetUserNameAsync(string userId);
 
-    Task<ApplicationUserDto> GetUserById(string userid);
+    Task<ApplicationUserDto> GetUserByIdAsync(string userid);
     IQueryable<ApplicationUserDto> GetAllUsers(string? searchQuery, string sortBy, TableSort sort);
     Task<bool> IsInRoleAsync(string userId, string role);
-
     Task<bool> AuthorizeAsync(string userId, string policyName);
-
     Task<(Result Result, string UserId)> CreateUserAsync(string userName, string password);
-
     Task<(Result Result, string UserId)> CreateUserAsync(ApplicationUserDto userName, string password);
-
     Task<Result> DeleteUserAsync(string userId);
     Task<Result> UpdateUserAsync(ApplicationUserDto user);
     #endregion
@@ -30,7 +26,7 @@ public interface IIdentityService
     Task<Result> DeleteRoleAsync(string roleId);
     Task<Result> AddToRoleAsync(string userId, string role);
     Task<Result> RemoveFromRoleAsync(string userId, string role);
-    Task<IList<string>> GetUserRolesAsync(string userId);
+    Task<IList<UserRoleDto>> GetUserRolesAsync(string userId);
     Task<bool> RoleExistAsync(string roleName);
     Task<IList<IdentityRoleDto>> GetAllRolesAsync(CancellationToken cancellationToken);
     IQueryable<IdentityRoleDto> GetAllRoles(string? searchQuery, string sortBy, TableSort sort);

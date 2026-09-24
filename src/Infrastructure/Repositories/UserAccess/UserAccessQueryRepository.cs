@@ -1,14 +1,40 @@
 ﻿using Delex_POS.Application.Common.Extensions;
 using Delex_POS.Application.Common.Interfaces.Repositories.UserAccess;
-using Delex_POS.Application.Common.Models;
+using Delex_POS.Application.Users.Queries.UserDTOs;
+using Delex_POS.Application.Common.Enums;
 using Delex_POS.Infrastructure.Data;
-using Delex_POS.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace Delex_POS.Infrastructure.Repositories.UserAccess;
 
 public class UserAccessQueryRepository : QueryHandlerBase<Domain.Entities.RBAC.UserAccess>, IUserAccessQueryRepository
 {
     public UserAccessQueryRepository(ApplicationDbContext dbContext) : base(dbContext) { }
+
+    public async Task<Domain.Entities.RBAC.UserAccess> GetByUserIdAndAccessIdAsync(string userId, int accessId)
+    {
+        var entity = await _dbContext.UserAccesses.FirstOrDefaultAsync(e => e.UserId == userId && e.AccessId == accessId);
+        Guard.Against.NotFound(userId, entity);
+        return entity!;
+    }
+
+    public IQueryable<UserAccessDto> GetByUserId(string id, string sortBy, TableSort sortDirection)
+    {
+        string query = $"""
+                        SELECT r.Id as [Id]
+                                , r.UserId
+                                , r.AccessId
+                              	, a.Name
+                              	, a.Feature
+                              	, a.BackendUrl
+                                , a.FrontendUrl
+                        FROM UserAccesses r
+                        		INNER JOIN Accesses a
+                        					ON r.accessid = a.id
+                        WHERE r.UserId = {id}
+                        """;
+        return _dbContext.Database.SqlQueryRaw<UserAccessDto>(query).OrderBy(sortBy, sortDirection);
+    }
 
     // public async Task<Domain.Entities.RBAC.Branch?> GetBranchByNameAsync(string name)
     // {

@@ -7,8 +7,8 @@ namespace Delex_POS.Application.Users.Commands.AssignRole;
 [Authorize(Roles = "Administrator")] // Only Admins can grant roles
 public record AssignRoleCommand : IRequest<Result>
 {
-    public string UserId { get; init; } = string.Empty;
-    public string Role { get; init; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
 }
 
 public class AssignRoleCommandHandler : IRequestHandler<AssignRoleCommand, Result>

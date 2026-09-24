@@ -2,7 +2,6 @@ using System.Linq.Expressions;
 using Delex_POS.Application.Common.Enums;
 using Delex_POS.Application.Common.Interfaces;
 using Delex_POS.Application.Common.Models;
-using Delex_POS.Application.Common.Mappings;
 using Delex_POS.Application.Common.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,8 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Delex_POS.Application.Roles.Queries.RoleDTOs;
-using Delex_POS.Application.Users.Queries.GetUsers;
 using Delex_POS.Infrastructure.Factories;
+using Delex_POS.Application.Users.Queries.UserDTOs;
 
 namespace Delex_POS.Infrastructure.Identity;
 
@@ -50,7 +49,7 @@ public class IdentityService : IIdentityService
         return user?.UserName;
     }
 
-    public async Task<ApplicationUserDto> GetUserById(string userid)
+    public async Task<ApplicationUserDto> GetUserByIdAsync(string userid)
     {
         var user = await _userManager.FindByIdAsync(userid);        
         Guard.Against.NotFound(userid, user);
@@ -218,12 +217,23 @@ public class IdentityService : IIdentityService
         return result.ToApplicationResult();
     }
 
-    public async Task<IList<string>> GetUserRolesAsync(string userId)
+    public async Task<IList<UserRoleDto>> GetUserRolesAsync(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
-        if (user == null) return new List<string>();
+        if (user == null) return [];
 
-        return await _userManager.GetRolesAsync(user);
+        var roles = await _userManager.GetRolesAsync(user);
+
+        List<UserRoleDto> userRoles = [];
+        foreach(var role in roles)
+        {
+            userRoles.Add(new UserRoleDto
+            {
+                UserId = userId,
+                RoleId = role
+            });
+        }
+        return userRoles;
     }
 
     public async Task<bool> RoleExistAsync(string roleName)

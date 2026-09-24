@@ -1,9 +1,9 @@
-namespace Delex_POS.Application.Roles.Queries.RoleDTOs;
+namespace Delex_POS.Application.Users.Queries.UserDTOs;
 
-public class RoleAccessDto
+public class UserAccessDto
 {
     public int Id { get; init; } 
-    public string RoleId { get; init; } = string.Empty;
+    public string UserId { get; init; } = string.Empty;
     public int AccessId { get; init; }
     public string Name { get; init; } = string.Empty;
     public string Feature { get; init; } = string.Empty;

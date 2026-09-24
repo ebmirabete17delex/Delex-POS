@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Delex_POS.Application.Roles.Queries.RoleDTOs;
 using Delex_POS.Application.Roles.Queries.GetRoles;
 using Delex_POS.Application.Roles.Queries.GetRole;
-using Microsoft.AspNetCore.Mvc;
 using Delex_POS.Application.Roles.Queries.GetRoleAccess;
 
 namespace Delex_POS.Web.Endpoints;
@@ -36,7 +35,7 @@ public class Role : IEndpointGroup
     {
         (string id, string name) result = await sender.Send(command);
 
-        return TypedResults.Created($"/api/Roles/{result.id}", result.name);
+        return TypedResults.Created($"/api/Roles/{result.id}", result.id);
     }
 
     [EndpointSummary("Delete a Role")]
@@ -59,9 +58,9 @@ public class Role : IEndpointGroup
     
     [EndpointSummary("Get role")]
     [EndpointDescription("Retrieves a role.")]
-    public static async Task<Ok<IdentityRoleDto>> GetRole(ISender sender, [AsParameters] GetRoleQuery query)
+    public static async Task<Ok<IdentityRoleDto>> GetRole(ISender sender, string roleId)
     {
-        var vm = await sender.Send(query);
+        var vm = await sender.Send(new GetRoleQuery { RoleId = roleId });
 
         return TypedResults.Ok(vm);
     }

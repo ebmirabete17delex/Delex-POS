@@ -2,7 +2,6 @@
 using Delex_POS.Application.Common.Enums;
 using Delex_POS.Application.Common.Interfaces.Repositories.RoleAccess;
 using Delex_POS.Infrastructure.Data;
-using Delex_POS.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Delex_POS.Application.Roles.Queries.RoleDTOs;
 
