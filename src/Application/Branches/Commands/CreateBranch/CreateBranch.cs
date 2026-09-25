@@ -31,7 +31,7 @@ public class CreateBranchCommandHandler : IRequestHandler<CreateBranchCommand, i
             contactNumber: request.ContactNumber
         );
 
-        return await _branchCommandRepository.AddAsync(entity,cancellationToken);
+        return await _branchCommandRepository.AddAsync(entity, cancellationToken);
 
     }
 }

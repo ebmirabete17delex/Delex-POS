@@ -25,7 +25,7 @@ public class Role : IEndpointGroup
         groupBuilder.MapGet(GetRole, "{roleId}");
 
         groupBuilder.MapGet(GetRoleAccess, "{roleId}/accesses");
-        groupBuilder.MapPost(AddRoleAccess, "{roleId}/accesses");
+        groupBuilder.MapPost(AddRoleAccess, "{roleId}/accesses/{accessId}");
         groupBuilder.MapDelete(RemoveRoleAccess, "{roleId}/accesses/{accessId}");
     }
 
@@ -67,25 +67,28 @@ public class Role : IEndpointGroup
 
     [EndpointSummary("Get all role access")]
     [EndpointDescription("Retrieves all role access.")]
-    public static async Task<Ok<PaginatedList<RoleAccessDto>>> GetRoleAccess(ISender sender, [AsParameters] GetRoleAccessQuery query)
+    public static async Task<Ok<PaginatedList<RoleAccessDto>>> GetRoleAccess(ISender sender, string roleId, [AsParameters] GetRoleAccessQuery query)
     {
-        var vm = await sender.Send(query);
+        var vm = await sender.Send(query with { RoleId = roleId });
 
         return TypedResults.Ok(vm);
     }
 
-    [EndpointSummary("Add a aole access")]
-    [EndpointDescription("Adds a role access using the provided details and returns the ID of the created item.")]
-    public static async Task<Created<int>> AddRoleAccess(ISender sender, string roleId, AddRoleAccessCommand command)
+    [EndpointSummary("Grant a aole access")]
+    [EndpointDescription("Grants a role access using the provided details and returns the ID of the created item.")]
+    public static async Task<Created<int>> AddRoleAccess(ISender sender, string roleId, int accessId)
     {
-        command.RoleId = roleId;
-        var result = await sender.Send(command);
+        var result = await sender.Send(new AddRoleAccessCommand
+        {
+            RoleId = roleId,
+            AccessId = accessId
+        });
 
         return TypedResults.Created($"/api/Roles/{roleId}/accesses/{result}", result);
     }
 
-    [EndpointSummary("Remove a Role Access")]
-    [EndpointDescription("Remove a role access with the specified IDs.")]
+    [EndpointSummary("Revoke a Role Access")]
+    [EndpointDescription("Revoke a role access with the specified IDs.")]
     public static async Task<NoContent> RemoveRoleAccess(ISender sender, string roleId, int accessId)
     {
         await sender.Send(new RemoveRoleAccessCommand

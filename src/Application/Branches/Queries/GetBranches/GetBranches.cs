@@ -42,16 +42,15 @@ public class GetBranchesQueryHandler : IRequestHandler<GetBranchesQuery, Paginat
                         || x.ContactNumber!.Contains(searchQuery),
         };
 
-        var sortBy = string.IsNullOrEmpty(request.SortBy) ? "AddedOn" : 
-            request.SortBy.Equals("status", StringComparison.CurrentCultureIgnoreCase) ? "BranchStatus" : request.SortBy;
+        var sortBy = string.IsNullOrEmpty(request.SortBy) ? "Created" : request.SortBy;
         var sortDirection = request.Sort is null ? TableSort.DESC : (TableSort)request.Sort;
 
-        var branchesQuery = _branchQueryRepository.GetAll().Where(filter);
+        var query = _branchQueryRepository.GetAll().Where(filter);
 
-        IQueryable<BranchDto> projectedQuery = branchesQuery.ProjectTo<BranchDto>(_mapper.ConfigurationProvider);
+        query = query.OrderBy(sortBy, sortDirection);
 
-        return await
-            projectedQuery.OrderBy(sortBy, sortDirection)
-            .PaginatedListAsync(request.PageNumber, request.PageSize);
+        var projectedQuery = query.ProjectTo<BranchDto>(_mapper.ConfigurationProvider);
+
+        return await projectedQuery.PaginatedListAsync(request.PageNumber, request.PageSize);
     }
 }

@@ -1,5 +1,5 @@
 using Delex_POS.Infrastructure.Data;
-// using Delex_POS.Infrastructure.Identity; UNCOMMENT When testing RBAC suggestion
+using Delex_POS.Application.Common.Middlewares;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +14,8 @@ builder.AddWebServices();
 
 var app = builder.Build();
 
+app.UseExceptionHandler(options => { });
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -26,26 +28,26 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseCors(static builder => 
+
+app.UseRouting();
+
+app.UseCors(static builder =>
     builder.AllowAnyMethod()
         .AllowAnyHeader()
         .AllowAnyOrigin());
 
-// app.UseRouting();
+app.UseAuthentication(); //UNCOMMENT When testing RBAC suggestion
 
-// app.UseAuthentication(); UNCOMMENT When testing RBAC suggestion
+app.UseAuthorization();
 
-// app.UseMiddleware<EndpointRoleAuthorizationMiddleware>();
+app.UseMiddleware<ValidationExceptionMiddleware>();
 
-// app.UseAuthorization();
+//app.UseMiddleware<EndpointRoleAuthorizationMiddleware>();
 
 app.UseFileServer();
 
 app.MapOpenApi();
 app.MapScalarApiReference();
-
-app.UseExceptionHandler(options => { });
-
 
 app.MapDefaultEndpoints();
 app.MapEndpoints(typeof(Program).Assembly);

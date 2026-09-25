@@ -10,21 +10,26 @@ public class CreateBranchCommandValidator : AbstractValidator<CreateBranchComman
     
         RuleFor(v => v.Code)
             .NotEmpty()
+            .NotNull()
             .MustAsync(BranchCodeNotExists);
 
         RuleFor(v => v.Name)
             .NotEmpty()
+            .NotNull()
             .MustAsync(BranchNameNotExists);
         
         RuleFor(v => v.Location)
-            .NotEmpty();
+            .NotEmpty()
+            .NotNull();
         
         RuleFor(v => v.Email)
             .NotEmpty()
+            .NotNull()
             .EmailAddress();
         
         RuleFor(v => v.ContactNumber)
-            .NotEmpty();
+            .NotEmpty()
+            .NotNull();
     }
 
     private async Task<bool> BranchCodeNotExists(string code, CancellationToken cancellationToken)

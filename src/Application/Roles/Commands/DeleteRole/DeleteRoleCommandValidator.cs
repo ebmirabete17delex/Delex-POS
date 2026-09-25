@@ -10,6 +10,7 @@ public class DeleteRoleCommandValidator : AbstractValidator<DeleteRoleCommand>
     
         RuleFor(v => v.Id)
             .NotEmpty()
+            .NotNull()
             .MustAsync(RoleExists);
     }
 

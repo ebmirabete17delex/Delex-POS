@@ -1,4 +1,5 @@
 ﻿using FluentValidation.Results;
+using System.ComponentModel.Design;
 
 namespace Delex_POS.Application.Common.Exceptions;
 
@@ -14,7 +15,7 @@ public class ValidationException : Exception
         : this()
     {
         Errors = failures
-            .GroupBy(e => e.PropertyName, e => e.ErrorMessage)
+            .GroupBy(e => e.PropertyName ?? string.Empty, e => e.ErrorMessage)
             .ToDictionary(failureGroup => failureGroup.Key, failureGroup => failureGroup.ToArray());
     }
 

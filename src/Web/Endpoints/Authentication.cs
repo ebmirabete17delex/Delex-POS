@@ -22,7 +22,7 @@ public class Authentication : IEndpointGroup
         LoginRequest request)
     {
         var result = await identityService.LoginAsync(
-            request.Email,
+            request.UserId,
             request.Password,
             request.IsPersistent);
 
@@ -47,6 +47,6 @@ public class Authentication : IEndpointGroup
 }
 
 public sealed record LoginRequest(
-    string Email,
+    string UserId,
     string Password,
     bool IsPersistent = false);

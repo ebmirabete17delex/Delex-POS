@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Delex_POS.Application.Branches.Queries.GetBranches;
 using Delex_POS.Application.Branches.Queries.GetBranch;
 using Delex_POS.Application.Branches.Queries.BranchDTOs;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Delex_POS.Web.Endpoints;
 
@@ -54,7 +53,7 @@ public class Branch : IEndpointGroup
 
     [EndpointSummary("Get all branches")]
     [EndpointDescription("Retrieves all branches.")]
-    public static async Task<Ok<PaginatedList<BranchDto>>> GetBranches(ISender sender, [FromBody] GetBranchesQuery query)
+    public static async Task<Ok<PaginatedList<BranchDto>>> GetBranches(ISender sender, [AsParameters] GetBranchesQuery query)
     {
         var vm = await sender.Send(query);
 
@@ -63,7 +62,7 @@ public class Branch : IEndpointGroup
     
     [EndpointSummary("Get branch")]
     [EndpointDescription("Retrieves a branch.")]
-    public static async Task<Ok<BranchDto>> GetBranch(ISender sender, string id, [AsParameters] GetBranchQuery query)
+    public static async Task<Ok<BranchDto>> GetBranch(ISender sender, [AsParameters] GetBranchQuery query)
     {
         var vm = await sender.Send(query);
 

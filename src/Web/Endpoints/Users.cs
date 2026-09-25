@@ -31,7 +31,7 @@ public class Users : IEndpointGroup
         groupBuilder.MapDelete(DeleteUser, "{userId}");
 
         groupBuilder.MapGet(GetUserAccess, "{userId}/accesses");
-        groupBuilder.MapPost(AddUserAccess, "{userId}/accesses");
+        groupBuilder.MapPost(AddUserAccess, "{userId}/accesses/{accessId}");
         groupBuilder.MapDelete(RemoveUserAccess, "{userId}/accesses/{accessId}");
 
         groupBuilder.MapGet(GetUserRoles, "{userId}/roles");
@@ -98,12 +98,15 @@ public class Users : IEndpointGroup
 
     [EndpointSummary("Assign role to user")]
     [EndpointDescription("Assigns a role to user using the provided details and returns the ID of the created item.")]
-    public static async Task<Created<string>> AssignUserRole(ISender sender, string userId, AssignRoleCommand command)
+    public static async Task<Created<string>> AssignUserRole(ISender sender, string userId, string roleId)
     {
-        command.UserId = userId;
-        var result = await sender.Send(command);
+        await sender.Send(new AssignRoleCommand
+        {
+            UserId = userId,
+            Role = roleId
+        });
 
-        return TypedResults.Created($"/api/Users/{userId}/roles", userId);
+        return TypedResults.Created($"/api/Users/{userId}/roles/{roleId}", roleId);
     }
 
     [EndpointSummary("Dismiss a Role from a user")]
@@ -121,24 +124,27 @@ public class Users : IEndpointGroup
 
 [EndpointSummary("Get all user access")]
     [EndpointDescription("Retrieves all user access.")]
-    public static async Task<Ok<PaginatedList<UserAccessDto>>> GetUserAccess(ISender sender, [AsParameters] GetUserAccessQuery query)
+    public static async Task<Ok<PaginatedList<UserAccessDto>>> GetUserAccess(ISender sender, string userId, [AsParameters] GetUserAccessQuery query)
     {
-        var vm = await sender.Send(query);
+        var vm = await sender.Send(query with { UserId = userId });
 
         return TypedResults.Ok(vm);
     }
 
-    [EndpointSummary("Add a user access")]
+    [EndpointSummary("Grant a user access")]
     [EndpointDescription("Adds a user access using the provided details and returns the ID of the created item.")]
-    public static async Task<Created<int>> AddUserAccess(ISender sender, string roleId, AddUserAccessCommand command)
+    public static async Task<Created<int>> AddUserAccess(ISender sender, string userId, int accessId)
     {
-        command.UserId = roleId;
-        var result = await sender.Send(command);
+        var result = await sender.Send(new AddUserAccessCommand
+        {
+            UserId = userId,
+            AccessId = accessId
+        });
 
-        return TypedResults.Created($"/api/Users/{roleId}/accesses/{result}", result);
+        return TypedResults.Created($"/api/Users/{userId}/accesses/{result}", result);
     }
 
-    [EndpointSummary("Remove a User Access")]
+    [EndpointSummary("Revoke a User Access")]
     [EndpointDescription("Remove a user access with the specified IDs.")]
     public static async Task<NoContent> RemoveUserAccess(ISender sender, string userId, int accessId)
     {

@@ -10,6 +10,7 @@ public class DeleteAccessClaimCommandValidator : AbstractValidator<DeleteAccessC
     
         RuleFor(v => v.Id)
             .NotEmpty()
+            .NotNull()
             .MustAsync(AccessClaimExists);
     }
 

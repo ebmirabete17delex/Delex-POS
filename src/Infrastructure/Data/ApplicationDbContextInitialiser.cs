@@ -79,8 +79,10 @@ public class ApplicationDbContextInitialiser
         var administrator = new ApplicationUser 
         { 
             UserName = "administrator@localhost", 
-            Email = "administrator@localhost" 
+            Email = "administrator@localhost"
         };
+
+        administrator.Update(userCode: "000001",lastName: "Admin",firstName: "admin", middleName: null);
 
         if (_userManager.Users.All(u => u.UserName != administrator.UserName))
         {
@@ -93,22 +95,22 @@ public class ApplicationDbContextInitialiser
 
         // Default data
         // Seed, if necessary
-        // if (!_context.TodoLists.Any())
-        // {
-        //     _context.TodoLists.Add(new TodoList
-        //     {
-        //         Title = "Tasks",
-        //         Colour = Colour.Green,
-        //         Items =
-        //         {
-        //             new TodoItem { Title = "Make a todo list 📃" },
-        //             new TodoItem { Title = "Check off the first item ✅" },
-        //             new TodoItem { Title = "Realise you've already done two things on the list! 🤯"},
-        //             new TodoItem { Title = "Reward yourself with a nice, long nap 🏆" },
-        //         }
-        //     });
+        if (!_context.TodoLists.Any())
+        {
+            _context.TodoLists.Add(new TodoList
+            {
+                Title = "Tasks",
+                Colour = Colour.Green,
+                Items =
+                {
+                    new TodoItem { Title = "Make a todo list 📃" },
+                    new TodoItem { Title = "Check off the first item ✅" },
+                    new TodoItem { Title = "Realise you've already done two things on the list! 🤯"},
+                    new TodoItem { Title = "Reward yourself with a nice, long nap 🏆" },
+                }
+            });
 
-        //     await _context.SaveChangesAsync();
-        // }
+            await _context.SaveChangesAsync();
+        }
     }
 }

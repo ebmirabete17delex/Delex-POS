@@ -12,21 +12,26 @@ public class UpdateBranchCommandValidator : AbstractValidator<UpdateBranchComman
         
         RuleFor(v => v.Id)
             .NotEmpty()
+            .NotNull()
             .MustAsync(BranchExists);
 
         RuleFor(v => v.Name)
             .NotEmpty()
+            .NotNull()
             .MaximumLength(200);
         
         RuleFor(v => v.Location)
             .NotEmpty()
+            .NotNull()
             .MaximumLength(200);
 
         RuleFor(v => v.Email)
-            .NotEmpty();
+            .NotEmpty()
+            .NotNull();
 
         RuleFor(v => v.ContactNumber)
-            .NotEmpty();
+            .NotEmpty()
+            .NotNull();
     }
 
     private async Task<bool> BranchExists(int id, CancellationToken cancellationToken)

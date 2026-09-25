@@ -6,17 +6,21 @@ public class CreateAccessClaimCommandValidator : AbstractValidator<CreateAccessC
     {
     
         RuleFor(v => v.Name)
-            .NotEmpty();
+            .NotEmpty()
+            .NotNull();
         
         RuleFor(v => v.Feature)
             .NotEmpty()
+            .NotNull()
             .MaximumLength(200);
 
         RuleFor(v => v.BackendUrl)
-            .NotEmpty();
+            .NotEmpty()
+            .NotNull();
 
         RuleFor(v => v.FrontendUrl)
-            .NotEmpty();
+            .NotEmpty()
+            .NotNull();
 
     }
 }

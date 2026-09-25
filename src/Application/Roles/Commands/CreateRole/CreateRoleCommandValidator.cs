@@ -10,6 +10,7 @@ public class CreateRoleCommandValidator : AbstractValidator<CreateRoleCommand>
     
         RuleFor(v => v.Name)
             .NotEmpty()
+            .NotNull()
             .MustAsync(NameNotExists);
         
     }

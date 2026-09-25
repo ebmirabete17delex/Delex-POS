@@ -2,6 +2,7 @@ using Azure.Identity;
 using Delex_POS.Application.Common.Interfaces;
 using Delex_POS.Infrastructure.Data;
 using Delex_POS.Web.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -20,7 +21,7 @@ public static class DependencyInjection
 
         // Customise default API behaviour
         builder.Services.Configure<ApiBehaviorOptions>(options =>
-            options.SuppressModelStateInvalidFilter = true);
+            options.SuppressModelStateInvalidFilter = false);
 
         builder.Services.AddEndpointsApiExplorer();
 

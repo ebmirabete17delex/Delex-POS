@@ -19,6 +19,8 @@ public class RemoveRoleAccessCommandValidator : AbstractValidator<RemoveRoleAcce
         _roleAccessQueryRepository = roleAccessQueryRepository;
     
         RuleFor(v => v)
+            .NotEmpty()
+            .NotNull()
             .MustAsync(RoleAccessCombinationExist);
     }
 

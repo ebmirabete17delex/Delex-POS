@@ -10,6 +10,7 @@ public class DeleteBranchCommandValidator : AbstractValidator<DeleteBranchComman
     
         RuleFor(v => v.Id)
             .NotEmpty()
+            .NotNull()
             .MustAsync(BranchExists);
     }
 

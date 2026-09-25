@@ -41,16 +41,16 @@ public class GetAccessClaimsQueryHandler : IRequestHandler<GetAccessClaimsQuery,
                         || x.FrontendUrl.Contains(searchQuery),
         };
 
-        var sortBy = string.IsNullOrEmpty(request.SortBy) ? "AddedOn" : 
-            request.SortBy.Equals("status", StringComparison.CurrentCultureIgnoreCase) ? "AccessClaimStatus" : request.SortBy;
+        var sortBy = string.IsNullOrEmpty(request.SortBy) ? "Created" : request.SortBy;
         var sortDirection = request.Sort is null ? TableSort.DESC : (TableSort)request.Sort;
 
-        var accessClaimsQuery = _accessClaimQueryRepository.GetAll().Where(filter);
+        var query = _accessClaimQueryRepository.GetAll().Where(filter);
+        
+        query = query.OrderBy(sortBy, sortDirection);
 
-        IQueryable<AccessClaimDto> projectedQuery = accessClaimsQuery.ProjectTo<AccessClaimDto>(_mapper.ConfigurationProvider);
+        var projectedQuery = query.ProjectTo<AccessClaimDto>(_mapper.ConfigurationProvider);
 
         return await
-            projectedQuery.OrderBy(sortBy, sortDirection)
-            .PaginatedListAsync(request.PageNumber, request.PageSize);
+            projectedQuery.PaginatedListAsync(request.PageNumber, request.PageSize);
     }
 }
