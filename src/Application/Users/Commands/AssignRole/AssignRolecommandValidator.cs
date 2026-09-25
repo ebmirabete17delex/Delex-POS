@@ -14,10 +14,12 @@ public class AssignRoleCommandValidator : AbstractValidator<AssignRoleCommand>
 
         RuleFor(v => v.UserId)
             .NotEmpty()
+            .NotNull()
             .MustAsync(UserIdExist);
 
         RuleFor(v => v.Role)
             .NotEmpty()
+            .NotNull()
             .MustAsync(RoleIdExist);
     }
 

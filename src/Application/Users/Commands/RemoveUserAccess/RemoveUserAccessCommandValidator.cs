@@ -12,6 +12,8 @@ public class RemoveUserAccessCommandValidator : AbstractValidator<RemoveUserAcce
         _userAccessQueryRepository = userAccessQueryRepository;
     
         RuleFor(v => v)
+            .NotEmpty()
+            .NotNull()
             .MustAsync(UserAccessCombinationExist);
     }
 

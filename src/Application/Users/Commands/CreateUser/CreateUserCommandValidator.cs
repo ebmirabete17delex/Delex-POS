@@ -10,18 +10,22 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
     
         RuleFor(v => v.Email)
             .NotEmpty()
+            .NotNull()
             .EmailAddress();
         
         RuleFor(v => v.UserCode)
             .NotEmpty()
+            .NotNull()
             .MaximumLength(20);
 
         RuleFor(v => v.LastName)
             .NotEmpty()
+            .NotNull()
             .MaximumLength(200);
 
         RuleFor(v => v.FirstName)
             .NotEmpty()
+            .NotNull()
             .MaximumLength(200);
 
         RuleFor(v => v.MiddleName)
@@ -29,10 +33,12 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
 
         RuleFor(v => v.BranchId)
             .NotEmpty()
+            .NotNull()
             .MustAsync(BranchIdExists);
 
         RuleFor(v => v.Password)
-            .NotEmpty();
+            .NotEmpty()
+            .NotNull();
     }
     private async Task<bool> BranchIdExists(int branchId, CancellationToken cancellationToken)
     {

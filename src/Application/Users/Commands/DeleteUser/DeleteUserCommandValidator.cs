@@ -10,6 +10,7 @@ public class DeleteUserCommandValidator : AbstractValidator<DeleteUserCommand>
     
         RuleFor(v => v.Id)
             .NotEmpty()
+            .NotNull()
             .MustAsync(UserExists);
     }
 

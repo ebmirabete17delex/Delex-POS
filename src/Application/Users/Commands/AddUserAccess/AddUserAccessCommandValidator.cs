@@ -23,10 +23,12 @@ public class AddUserAccessCommandValidator : AbstractValidator<AddUserAccessComm
 
         RuleFor(v => v.UserId)
             .NotEmpty()
+            .NotNull()
             .MustAsync(UserIdExist);
 
         RuleFor(v => v.AccessId)
             .NotEmpty()
+            .NotNull()
             .MustAsync(AccessIdExist);
         
     }

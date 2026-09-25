@@ -14,18 +14,22 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
 
         RuleFor(v => v.LastName)
             .NotEmpty()
+            .NotNull()
             .MaximumLength(200);
         
         RuleFor(v => v.FirstName)
             .NotEmpty()
+            .NotNull()
             .MaximumLength(200);
 
         RuleFor(v => v.BranchId)
             .NotEmpty()
+            .NotNull()
             .MustAsync(BranchIdExists);
 
         RuleFor(v => v.Id)
             .NotEmpty()
+            .NotNull()
             .MustAsync(UserExists);
     }
 
