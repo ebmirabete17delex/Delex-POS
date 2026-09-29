@@ -1,4 +1,4 @@
-namespace Delex_POS.Domain.Entities.RBAC;
+namespace Delex_POS.Domain.Entities;
 public class AccessClaim : BaseAuditableEntity
 {
     public string Name { get; init; } = string.Empty;

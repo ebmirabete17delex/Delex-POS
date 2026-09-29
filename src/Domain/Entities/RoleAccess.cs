@@ -1,4 +1,4 @@
-namespace Delex_POS.Domain.Entities.RBAC;
+namespace Delex_POS.Domain.Entities;
 public class RoleAccess : BaseAuditableEntity
 {
     public string RoleId { get; private set; }
