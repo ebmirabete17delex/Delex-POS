@@ -4,8 +4,8 @@ using Delex_POS.Application.Common.Extensions;
 using Delex_POS.Application.Common.Mappings;
 using Delex_POS.Application.Common.Models;
 using Delex_POS.Application.Common.Interfaces.Repositories.Branch;
-using Delex_POS.Domain.Entities.RBAC;
 using Delex_POS.Application.Branches.Queries.BranchDTOs;
+using Delex_POS.Domain.Entities;
 
 namespace Delex_POS.Application.Branches.Queries.GetBranches;
 
@@ -37,9 +37,9 @@ public class GetBranchesQueryHandler : IRequestHandler<GetBranchesQuery, Paginat
         {
             (null) => x => true,
             (_) => x => x.Name.Contains(searchQuery)
-                        || x.Location!.Contains(searchQuery)
+                        || x.Address1!.Contains(searchQuery)
                         || x.Email!.Contains(searchQuery)
-                        || x.ContactNumber!.Contains(searchQuery),
+                        || x.Phone!.Contains(searchQuery),
         };
 
         var sortBy = string.IsNullOrEmpty(request.SortBy) ? "Created" : request.SortBy;

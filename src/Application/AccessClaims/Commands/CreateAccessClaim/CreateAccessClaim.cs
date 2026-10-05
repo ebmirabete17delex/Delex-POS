@@ -22,7 +22,7 @@ public class CreateAccessClaimCommandHandler : IRequestHandler<CreateAccessClaim
 
     public async Task<int> Handle(CreateAccessClaimCommand request, CancellationToken cancellationToken)
     {
-        var entity = new Domain.Entities.RBAC.AccessClaim(
+        var entity = new Domain.Entities.AccessClaim(
             name: request.Name,
             feature: request.Feature,
             backendUrl: request.BackendUrl,

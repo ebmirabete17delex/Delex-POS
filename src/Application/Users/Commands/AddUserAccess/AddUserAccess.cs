@@ -1,10 +1,12 @@
 using Delex_POS.Application.Common.Interfaces.Repositories.UserAccess;
+using Delex_POS.Domain.Enums;
 namespace Delex_POS.Application.Users.Commands.AddUserAccess;
 
 public record AddUserAccessCommand : IRequest<int>
 {
     public string UserId { get; set; } = string.Empty;
     public int AccessId { get; set; }
+    public AccessType AccessType { get; set; }
 }
 
 public class AddUserAccessCommandHandler : IRequestHandler<AddUserAccessCommand, int>
@@ -18,6 +20,6 @@ public class AddUserAccessCommandHandler : IRequestHandler<AddUserAccessCommand,
     public async Task<int> Handle(AddUserAccessCommand request, CancellationToken cancellationToken)
     {
         return await _userAccessCommandRepository
-            .AddAsync(new Domain.Entities.RBAC.UserAccess(request.UserId, request.AccessId), cancellationToken);
+            .AddAsync(new Domain.Entities.UserAccess(request.UserId, request.AccessId, request.AccessType), cancellationToken);
     }
 }

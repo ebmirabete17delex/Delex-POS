@@ -1,3 +1,5 @@
+using Delex_POS.Domain.Entities;
+
 namespace Delex_POS.Application.AccessClaims.Queries.AccessClaimDTOs;
 public class AccessClaimDto
 {
@@ -6,13 +8,13 @@ public class AccessClaimDto
     public string Feature { get; set; } = string.Empty;
     public string BackendUrl { get; set; } = string.Empty;
     public string FrontendUrl { get; set; } = string.Empty;
-    public DateTimeOffset AddedOn { get; init; }
+    public DateTimeOffset Created { get; init; }
 
     public class Mapping : Profile
     {
         public Mapping()
         {
-            CreateMap<Domain.Entities.RBAC.AccessClaim, AccessClaimDto>();
+            CreateMap<AccessClaim, AccessClaimDto>();
         }
     }
 };

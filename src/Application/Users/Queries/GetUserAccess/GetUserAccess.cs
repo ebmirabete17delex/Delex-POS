@@ -5,7 +5,7 @@ using Delex_POS.Application.Common.Enums;
 using Delex_POS.Application.Common.Mappings;
 using Delex_POS.Application.Users.Queries.UserDTOs;
 
-namespace Delex_POS.Application.Users.Queries.GetUserAccesses;
+namespace Delex_POS.Application.Users.Queries.GetUserAccess;
 
 public record GetUserAccessQuery(
     int PageNumber,

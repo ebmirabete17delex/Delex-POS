@@ -4,7 +4,7 @@ using Delex_POS.Application.Common.Interfaces;
 
 namespace Delex_POS.Application.Users.Commands.DismissRole;
 
-[Authorize(Roles = "Administrator")] // Only Admins can grant roles
+//[Authorize(Roles = "Administrator")] // Only Admins can grant roles
 public record DismissRoleCommand : IRequest<Result>
 {
     public string UserId { get; init; } = string.Empty;

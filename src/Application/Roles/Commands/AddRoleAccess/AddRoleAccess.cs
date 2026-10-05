@@ -20,7 +20,7 @@ public class AddRoleAccessCommandHandler : IRequestHandler<AddRoleAccessCommand,
     public async Task<int> Handle(AddRoleAccessCommand request, CancellationToken cancellationToken)
     {
         return await _roleAccessCommandRepository
-            .AddAsync(new Domain.Entities.RBAC.RoleAccess(request.RoleId, request.AccessId), cancellationToken);
+            .AddAsync(new Domain.Entities.RoleAccess(request.RoleId, request.AccessId, Domain.Enums.AccessType.Read), cancellationToken);
 
     }
 }

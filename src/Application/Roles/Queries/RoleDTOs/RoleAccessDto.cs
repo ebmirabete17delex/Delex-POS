@@ -9,4 +9,5 @@ public class RoleAccessDto
     public string Feature { get; init; } = string.Empty;
     public string BackendUrl { get; init; } = string.Empty;
     public string FrontendUrl { get; init; } = string.Empty;
+    public string[] Details { get; init; } = Array.Empty<string>();
 }

@@ -32,7 +32,7 @@ public class UpdateAccessClaimCommandValidator : AbstractValidator<UpdateAccessC
 
     private async Task<bool> AccessClaimExists(int id, CancellationToken cancellationToken)
     {
-        var entity = await _accessClaimQueryRepository.ExistAsync(e => e.Id == id, cancellationToken);
+        var entity = await _accessClaimQueryRepository.ExistAsync(e => e.Id.Equals(id), cancellationToken);
         return entity;
     }
 }

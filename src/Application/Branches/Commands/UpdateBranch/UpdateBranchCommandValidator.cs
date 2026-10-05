@@ -20,16 +20,15 @@ public class UpdateBranchCommandValidator : AbstractValidator<UpdateBranchComman
             .NotNull()
             .MaximumLength(200);
         
-        RuleFor(v => v.Location)
+        RuleFor(v => v.RegionId)
             .NotEmpty()
-            .NotNull()
-            .MaximumLength(200);
+            .NotNull();
 
         RuleFor(v => v.Email)
             .NotEmpty()
             .NotNull();
 
-        RuleFor(v => v.ContactNumber)
+        RuleFor(v => v.WarehouseId)
             .NotEmpty()
             .NotNull();
     }

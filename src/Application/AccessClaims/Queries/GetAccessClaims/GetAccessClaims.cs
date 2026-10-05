@@ -5,6 +5,7 @@ using Delex_POS.Application.Common.Mappings;
 using Delex_POS.Application.Common.Models;
 using Delex_POS.Application.Common.Interfaces.Repositories.AccessClaim;
 using Delex_POS.Application.AccessClaims.Queries.AccessClaimDTOs;
+using Delex_POS.Domain.Entities;
 
 namespace Delex_POS.Application.AccessClaims.Queries.GetAccessClaims;
 
@@ -21,7 +22,8 @@ public class GetAccessClaimsQueryHandler : IRequestHandler<GetAccessClaimsQuery,
     private readonly IMapper _mapper;
     private readonly IAccessClaimQueryRepository _accessClaimQueryRepository;
 
-    public GetAccessClaimsQueryHandler(IMapper mapper, IAccessClaimQueryRepository accessClaimQueryRepository)
+    public GetAccessClaimsQueryHandler(IMapper mapper, 
+        IAccessClaimQueryRepository accessClaimQueryRepository)
     {
         _mapper = mapper;
         _accessClaimQueryRepository = accessClaimQueryRepository;
@@ -32,7 +34,7 @@ public class GetAccessClaimsQueryHandler : IRequestHandler<GetAccessClaimsQuery,
     {
         string? searchQuery = request.SearchQuery;
 
-        Expression<Func<Domain.Entities.RBAC.AccessClaim, bool>> filter = (searchQuery) switch
+        Expression<Func<AccessClaim, bool>> filter = (searchQuery) switch
         {
             (null) => x => true,
             (_) => x => x.Name.Contains(searchQuery)
