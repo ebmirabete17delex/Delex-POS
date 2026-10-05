@@ -6,6 +6,7 @@
     <SpaRoot>ClientApp\</SpaRoot>
     <OpenApiDocumentsDirectory>./wwwroot/openapi/</OpenApiDocumentsDirectory>
     <OpenApiGenerateDocumentsOptions>--file-name v1</OpenApiGenerateDocumentsOptions>
+    <SuppressTfmSupportBuildWarnings>True</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
 
   <ItemGroup>
