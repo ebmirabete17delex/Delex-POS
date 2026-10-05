@@ -1,34 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Delex_POS.Domain.Entities;
+﻿namespace Delex_POS.Domain.Entities;
 
 public class ProductPurchasing : BaseAuditableEntity
 {
     public int ProductId { get; init; }
-    public string? PurchaseUnit { get; private set; } 
-    public int PrimarySupplier { get; private set; }
-    public int ExtendedSupplier { get; private set; }
-    public int MaxCount { get; private set; }
+    public int PurchasingUnitId { get; private set; } 
+    public int PrimarySupplierId { get; private set; }
+    public int MaxQuantity { get; private set; }
     public int ReorderQuantity { get; private set; }
-    public ProductPurchasing(int productId, string? purchaseUnit, int primarySupplier, 
-        int extendedSupplier, int maxCount, int reorderQuantity)
+    public ProductPurchasing(int productId, int purchasingUnitId, int primarySupplierId, 
+        int maxQuantity, int reorderQuantity)
     {
         ProductId = productId;
-        PurchaseUnit = purchaseUnit ?? string.Empty;
-        PrimarySupplier = primarySupplier;
-        ExtendedSupplier = extendedSupplier;
-        MaxCount = maxCount;
+        PurchasingUnitId = purchasingUnitId;
+        PrimarySupplierId = primarySupplierId;
+        MaxQuantity = maxQuantity;
         ReorderQuantity = reorderQuantity;
     }
-    public void Update(int productId, string? purchaseUnit, int primarySupplier,
-        int extendedSupplier, int maxCount, int reorderQuantity)
+    public void Update(int purchasingUnitId, int primarySupplierId,
+        int maxQuantity, int reorderQuantity)
     {
-        PurchaseUnit = purchaseUnit ?? string.Empty;
-        PrimarySupplier = primarySupplier;
-        ExtendedSupplier = extendedSupplier;
-        MaxCount = maxCount;
+        PurchasingUnitId = purchasingUnitId;
+        PrimarySupplierId = primarySupplierId;
+        MaxQuantity = maxQuantity;
         ReorderQuantity = reorderQuantity;
     }
 }

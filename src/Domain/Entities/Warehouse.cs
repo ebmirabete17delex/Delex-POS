@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Delex_POS.Domain.Entities;
+﻿namespace Delex_POS.Domain.Entities;
 
 public class Warehouse : BaseAuditableEntity
 {
-    public string Name { get; init; } = string.Empty;
+    public string WarehouseId { get; init; } = string.Empty;
+    public string Name { get; private set; } = string.Empty;
     public string? Memo {  get; private set; }
     public bool IsActive { get; private set; }
     public string? Address1 { get; private set; }
@@ -15,10 +12,24 @@ public class Warehouse : BaseAuditableEntity
     public string? Phone { get; private set; }
     public string? Fax { get; private set; }
     public string? Email { get; private set; }
-    public Warehouse (string name, string? memo, string? address1, string? address2, 
+    public Warehouse (string warehouseId, string name, string? memo, string? address1, string? address2, 
         string? address3,  string? phone, string? fax, string email)
     {
+        WarehouseId = warehouseId;
         Name = name;
+        Memo = memo;
+        IsActive = true;
+        Address1 = address1;
+        Address2 = address2;
+        Address3 = address3;
+        Phone = phone;
+        Fax = fax;
+        Email = email;
+    }
+    public void Update(string? name, string? memo, string? address1, string? address2,
+        string? address3, string? phone, string? fax, string? email)
+    {
+        Name = name ?? string.Empty;
         Memo = memo;
         Address1 = address1;
         Address2 = address2;
@@ -27,15 +38,13 @@ public class Warehouse : BaseAuditableEntity
         Fax = fax;
         Email = email;
     }
-    public void Update(string? memo, string? address1, string? address2,
-        string? address3, string? phone, string? fax, string email)
+
+    public void Activate()
     {
-        Memo = memo;
-        Address1 = address1;
-        Address2 = address2;
-        Address3 = address3;
-        Phone = phone;
-        Fax = fax;
-        Email = email;
+        IsActive = true;
+    }
+    public void Deactivate()
+    {
+        IsActive = false;
     }
 }

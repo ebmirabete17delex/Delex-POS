@@ -12,11 +12,11 @@ public class Branch : BaseAuditableEntity
     public string? Phone { get; private set; }
     public string? Fax { get; private set; }
     public string? Email { get; private set; }
-    public string? TIN {  get; private set; }
+    public string? Tin {  get; private set; }
 
     public Branch(string name, int warehouseId, int regionId, string? memo, 
-        string? address1, string? address2, string? address3, string? phone, string? fax, 
-        string? email, string? tin)
+        string? address1, string? address2, string? address3, string? phone, 
+        string? fax, string? email, string? tin)
     {
         Name = name;
         IsActive = true;
@@ -29,7 +29,7 @@ public class Branch : BaseAuditableEntity
         Phone = phone ?? string.Empty;
         Fax = fax ?? string.Empty;
         Email = email ?? string.Empty;
-        TIN = tin ?? string.Empty;
+        Tin = tin ?? string.Empty;
     }
 
     public void Update(string name, int warehouseId, int regionId, string? memo,
@@ -46,7 +46,7 @@ public class Branch : BaseAuditableEntity
         Phone = phone ?? string.Empty;
         Fax = fax ?? string.Empty;
         Email = email ?? string.Empty;
-        TIN = tin ?? string.Empty;
+        Tin = tin ?? string.Empty;
     }
 
     public void Activate()

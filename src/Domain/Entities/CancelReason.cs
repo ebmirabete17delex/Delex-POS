@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Delex_POS.Domain.Entities;
+﻿namespace Delex_POS.Domain.Entities;
 
 public class CancelReason : BaseAuditableEntity
 {

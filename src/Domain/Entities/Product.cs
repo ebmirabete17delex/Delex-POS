@@ -7,37 +7,40 @@ public class Product : BaseAuditableEntity
     public int UnitOfMeasureId { get; private set; }
     public string? Memo { get; private set; }
     public bool IsActive { get; private set; }
-    public int PackingId { get; private set; }
 
-    public string Brand { get; init; } = string.Empty;
-    public string GenericName { get; private set; } = string.Empty;
-    public string Dosage { get; private set; } = string.Empty;
-    public string Form { get; private set; } = string.Empty;
-    public string Category { get; private set; } = string.Empty;
-    public string SKU { get; private set; } = string.Empty;
-    public string Barcode { get; private set; } = string.Empty;
-    public string RxOtcClass {get; private set; } = string.Empty;
+    //public string Brand { get; init; } = string.Empty;
+    //public string GenericName { get; private set; } = string.Empty;
+    //public string Dosage { get; private set; } = string.Empty;
+    //public string Form { get; private set; } = string.Empty;
+    //public string Category { get; private set; } = string.Empty;
+    //public string SKU { get; private set; } = string.Empty;
+    //public string Barcode { get; private set; } = string.Empty;
+    //public string RxOtcClass {get; private set; } = string.Empty;
     
-    public Product(string brand, string genericName, string dosage, string form, string category, string sku, string barCode, string rxOtcClass)
+    public Product(string name, int productClassId, int productTypeId, int unitOfMeasureId,string? memo)
     {
-        Brand = brand;
-        GenericName = genericName;
-        Dosage = dosage;
-        Form = form;
-        Category = category;
-        SKU = sku;
-        Barcode = barCode;
-        RxOtcClass = rxOtcClass;
+        Name = name;
+        ProductClassId = productClassId;
+        ProductTypeId = productTypeId;
+        UnitOfMeasureId = unitOfMeasureId;
+        IsActive = true;
+        Memo = memo ?? string.Empty;
     }
 
-    public void Update(string genericName, string dosage, string form, string category, string sku, string barCode, string rxOtcClass)
+    public void Update(int productClassId, int productTypeId, int unitOfMeasureId, string? memo)
     {
-        GenericName = genericName;
-        Dosage = dosage;
-        Form = form;
-        Category = category;
-        SKU = sku;
-        Barcode = barCode;
-        RxOtcClass = rxOtcClass;
+        ProductClassId = productClassId;
+        ProductTypeId = productTypeId;
+        UnitOfMeasureId = unitOfMeasureId;
+        Memo = memo;
+    }
+
+    public void Activate()
+    {
+        IsActive = true;
+    }
+    public void Dectivate()
+    {
+        IsActive = false;
     }
 }

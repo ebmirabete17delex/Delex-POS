@@ -19,7 +19,7 @@ public class Region : BaseAuditableEntity
     {
         IsActive = true;
     }
-    public void Dectivate()
+    public void Deactivate()
     {
         IsActive = false;
     }

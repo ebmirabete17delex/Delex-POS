@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace Delex_POS.Domain.Entities;
+﻿namespace Delex_POS.Domain.Entities;
 
 public class PriceLevel: BaseAuditableEntity
 {
