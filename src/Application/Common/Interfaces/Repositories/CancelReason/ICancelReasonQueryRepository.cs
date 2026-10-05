@@ -1,5 +1,5 @@
-namespace Delex_POS.Application.Common.Interfaces.Repositories.Branch;
-public interface IBranchQueryRepository : IQueryHandlerBase<Domain.Entities.Branch>
+namespace Delex_POS.Application.Common.Interfaces.Repositories.CancelReason;
+public interface ICancelReasonQueryRepository : IQueryHandlerBase<Domain.Entities.CancelReason>
 {
     // Task<Domain.Entities.Branch?> GetBranchByNameAsync(string name);
     // Task<Domain.Entities.Branch?> GetBranchBySourceSystemIdAsync(string id, bool includeSupplyChain = false);

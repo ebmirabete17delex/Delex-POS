@@ -1,7 +1,5 @@
-using Delex_POS.Application.Users.Queries.UserDTOs;
-using Delex_POS.Application.Common.Enums;
-namespace Delex_POS.Application.Common.Interfaces.Repositories.UserAccess;
-public interface IUserAccessQueryRepository : IQueryHandlerBase<Domain.Entities.UserAccess>
+namespace Delex_POS.Application.Common.Interfaces.Repositories.Warehouse;
+public interface IWarehouseQueryRepository : IQueryHandlerBase<Domain.Entities.Warehouse>
 {
     // Task<Domain.Entities.UserAccess?> GetUserAccessByNameAsync(string name);
     // Task<Domain.Entities.UserAccess?> GetUserAccessBySourceSystemIdAsync(string id, bool includeSupplyChain = false);
@@ -10,6 +8,4 @@ public interface IUserAccessQueryRepository : IQueryHandlerBase<Domain.Entities.
     // IQueryable<CompanyDto> GetCompanies();
 
     // Task<bool> UserExistInNonDraftCompanies(int userId);
-    Task<Domain.Entities.UserAccess> GetByUserIdAndAccessIdAsync(string userId, int accessId);
-    IQueryable<UserAccessDto> GetByUserId(string id, string sortBy, TableSort sortDirection);
 }

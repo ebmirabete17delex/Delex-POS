@@ -1,5 +1,5 @@
-namespace Delex_POS.Application.Common.Interfaces.Repositories.AccessClaim;
-public interface IAccessClaimQueryRepository : IQueryHandlerBase<Domain.Entities.AccessClaim>
+namespace Delex_POS.Application.Common.Interfaces.Repositories.Account;
+public interface IAccountQueryRepository : IQueryHandlerBase<Domain.Entities.Account>
 {
     // Task<Domain.Entities.AccessClaim?> GetAccessClaimByNameAsync(string name);
     // Task<Domain.Entities.AccessClaim?> GetAccessClaimBySourceSystemIdAsync(string id, bool includeSupplyChain = false);
