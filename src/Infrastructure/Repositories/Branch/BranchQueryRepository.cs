@@ -1,21 +1,19 @@
-﻿using Delex_POS.Application.Common.Extensions;
+﻿using Delex_POS.Application.Branches.Queries.BranchDTOs;
 using Delex_POS.Application.Common.Interfaces.Repositories.Branch;
-using Delex_POS.Application.Common.Models;
 using Delex_POS.Infrastructure.Data;
-using Delex_POS.Domain.Enums;
 
 namespace Delex_POS.Infrastructure.Repositories.Branch;
 
-public class BranchQueryRepository : QueryHandlerBase<Domain.Entities.RBAC.Branch>, IBranchQueryRepository
+public class BranchQueryRepository : QueryHandlerBase<Domain.Entities.Branch>, IBranchQueryRepository
 {
     public BranchQueryRepository(ApplicationDbContext dbContext) : base(dbContext) { }
 
-    // public async Task<Domain.Entities.RBAC.Branch?> GetBranchByNameAsync(string name)
+    // public async Task<Domain.Entities.Branch?> GetBranchByNameAsync(string name)
     // {
     //     return await _dbContext.Branches.FirstOrDefaultAsync(x => x.Name == name);
     // }
 
-    // public async Task<Domain.Entities.RBAC.Branch?> GetBranchBySourceSystemIdAsync(string id,
+    // public async Task<Domain.Entities.Branch?> GetBranchBySourceSystemIdAsync(string id,
     //     bool includeSupplyChain = false)
     // {
     //     return includeSupplyChain
@@ -30,8 +28,8 @@ public class BranchQueryRepository : QueryHandlerBase<Domain.Entities.RBAC.Branc
     //             .FromCacheFirstAsync(x => x.SourceSystemId == id, id);
     // }
 
-    // public async Task<Domain.Entities.RBAC.Branch?> GetBranchByNameAddressAsync(string name,
-    //     Domain.Entities.RBAC.BranchAddress address)
+    // public async Task<Domain.Entities.Branch?> GetBranchByNameAddressAsync(string name,
+    //     Domain.Entities.BranchAddress address)
     // {
 
     //     string addr = address!.CountryId.ToString().ToLower().Trim()

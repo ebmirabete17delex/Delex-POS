@@ -1,21 +1,18 @@
-﻿using Delex_POS.Application.Common.Extensions;
-using Delex_POS.Application.Common.Interfaces.Repositories.AccessClaim;
-using Delex_POS.Application.Common.Models;
+﻿using Delex_POS.Application.Common.Interfaces.Repositories.AccessClaim;
 using Delex_POS.Infrastructure.Data;
-using Delex_POS.Domain.Enums;
 
 namespace Delex_POS.Infrastructure.Repositories.AccessClaim;
 
-public class AccessClaimQueryRepository : QueryHandlerBase<Domain.Entities.RBAC.AccessClaim>, IAccessClaimQueryRepository
+public class AccessClaimQueryRepository : QueryHandlerBase<Domain.Entities.AccessClaim>, IAccessClaimQueryRepository
 {
     public AccessClaimQueryRepository(ApplicationDbContext dbContext) : base(dbContext) { }
 
-    // public async Task<Domain.Entities.RBAC.Branch?> GetBranchByNameAsync(string name)
+    // public async Task<Domain.Entities.Branch?> GetBranchByNameAsync(string name)
     // {
     //     return await _dbContext.Branches.FirstOrDefaultAsync(x => x.Name == name);
     // }
 
-    // public async Task<Domain.Entities.RBAC.Branch?> GetBranchBySourceSystemIdAsync(string id,
+    // public async Task<Domain.Entities.Branch?> GetBranchBySourceSystemIdAsync(string id,
     //     bool includeSupplyChain = false)
     // {
     //     return includeSupplyChain
@@ -30,8 +27,8 @@ public class AccessClaimQueryRepository : QueryHandlerBase<Domain.Entities.RBAC.
     //             .FromCacheFirstAsync(x => x.SourceSystemId == id, id);
     // }
 
-    // public async Task<Domain.Entities.RBAC.Branch?> GetBranchByNameAddressAsync(string name,
-    //     Domain.Entities.RBAC.BranchAddress address)
+    // public async Task<Domain.Entities.Branch?> GetBranchByNameAddressAsync(string name,
+    //     Domain.Entities.BranchAddress address)
     // {
 
     //     string addr = address!.CountryId.ToString().ToLower().Trim()
@@ -88,7 +85,7 @@ public class AccessClaimQueryRepository : QueryHandlerBase<Domain.Entities.RBAC.
     //                                       	WHEN 4 THEN 'Pending Review'
     //                                       	ELSE 'Unknown'
     //                           	  END AS [Status]
-    //                           	, c.Created AS [AddedOn]
+    //                           	, c.Created AS [Created]
     //                     FROM Companies c
     //                     		INNER JOIN SupplyChain sc
     //                     					ON c.id = sc.CompanyId

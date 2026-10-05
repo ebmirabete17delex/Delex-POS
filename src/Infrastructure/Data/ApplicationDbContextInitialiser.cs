@@ -93,6 +93,51 @@ public class ApplicationDbContextInitialiser
             }
         }
 
+        if (!_context.Accesses.Any()) 
+        {
+            _context.Accesses.Add(
+                new AccessClaim(name: "Access Management", feature: "access", backendUrl: "", frontendUrl: "/access"));
+            _context.Accesses.Add(
+                new AccessClaim(name: "Account Management", feature: "accounts", backendUrl: "", frontendUrl: "/accounts"));
+            _context.Accesses.Add(
+                new AccessClaim(name: "User Management", feature: "users", backendUrl: "", frontendUrl: "/users"));
+            _context.Accesses.Add(
+                new AccessClaim(name: "Role Management", feature: "roles", backendUrl: "", frontendUrl: "/roles"));
+            _context.Accesses.Add(
+                new AccessClaim(name: "Product Management", feature: "products", backendUrl: "", frontendUrl: "/products"));
+            _context.Accesses.Add(
+                new AccessClaim(name: "Inventory Management", feature: "inventories", backendUrl: "", frontendUrl: "/inventory"));
+            _context.Accesses.Add(
+                new AccessClaim(name: "Point-Of-Sale", feature: "pos", backendUrl: "", frontendUrl: "/pos"));
+            _context.Accesses.Add(
+                new AccessClaim(name: "Reports Management", feature: "reports", backendUrl: "", frontendUrl: "/reports"));
+            _context.Accesses.Add(
+                new AccessClaim(name: "Warehouse Management", feature: "warehouses", backendUrl: "", frontendUrl: "/warehouses"));
+            _context.Accesses.Add(
+                new AccessClaim(name: "Branch Management", feature: "branches", backendUrl: "", frontendUrl: "/branches"));
+            _context.Accesses.Add(
+                new AccessClaim(name: "Cancel Reasons Management", feature: "cancel-reasons", backendUrl: "", frontendUrl: "/cancel-reasons"));
+            _context.Accesses.Add(
+                new AccessClaim(name: "Stock Transfer Management", feature: "stock-transfers", backendUrl: "", frontendUrl: "/stock-transfers"));
+            await _context.SaveChangesAsync();
+        }
+
+        if (!_context.UserAccesses.Any(u => u.UserId == administrator.Id))
+        {
+            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Account Management").Id, type: Domain.Enums.AccessType.Read));
+            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "User Management").Id, type: Domain.Enums.AccessType.Read));
+            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Role Management").Id, type: Domain.Enums.AccessType.Read));
+            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Product Management").Id, type: Domain.Enums.AccessType.Read));
+            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Inventory Management").Id, type: Domain.Enums.AccessType.Read));
+            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Point-Of-Sale").Id, type: Domain.Enums.AccessType.Read));
+            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Reports Management").Id, type: Domain.Enums.AccessType.Read));
+            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Warehouse Management").Id, type: Domain.Enums.AccessType.Read));
+            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Branch Management").Id, type: Domain.Enums.AccessType.Read));
+            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Cancel Reasons Management").Id, type: Domain.Enums.AccessType.Read));
+            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Stock Transfer Management").Id, type: Domain.Enums.AccessType.Read));
+            await _context.SaveChangesAsync();
+        }
+
         // Default data
         // Seed, if necessary
         if (!_context.TodoLists.Any())
@@ -112,5 +157,7 @@ public class ApplicationDbContextInitialiser
 
             await _context.SaveChangesAsync();
         }
+
+
     }
 }

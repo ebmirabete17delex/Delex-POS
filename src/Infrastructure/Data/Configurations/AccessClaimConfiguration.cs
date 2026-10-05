@@ -1,4 +1,4 @@
-using Delex_POS.Domain.Entities.RBAC;
+using Delex_POS.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

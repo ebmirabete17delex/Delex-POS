@@ -4,16 +4,20 @@ using Delex_POS.Application.Common.Interfaces.Repositories.RoleAccess;
 using Delex_POS.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Delex_POS.Application.Roles.Queries.RoleDTOs;
+using Delex_POS.Domain.Enums;
 
 namespace Delex_POS.Infrastructure.Repositories.RoleAccess;
 
-public class RoleAccessQueryRepository : QueryHandlerBase<Domain.Entities.RBAC.RoleAccess>, IRoleAccessQueryRepository
+public class RoleAccessQueryRepository : QueryHandlerBase<Domain.Entities.RoleAccess>, IRoleAccessQueryRepository
 {
     public RoleAccessQueryRepository(ApplicationDbContext dbContext) : base(dbContext) { }
 
-    public async Task<Domain.Entities.RBAC.RoleAccess> GetByRoleIdAndAccessIdAsync(string roleId, int accessId)
+    public async Task<Domain.Entities.RoleAccess> GetByRoleIdAndAccessIdAsync(string roleId, int accessId)
     {
-        var entity = await _dbContext.RoleAccesses.FirstOrDefaultAsync(e => e.RoleId == roleId && e.AccessId == accessId);
+        var entity = await _dbContext.RoleAccesses
+            .FirstOrDefaultAsync(e => e.RoleId == roleId && 
+                                    e.AccessId == accessId && 
+                                    e.Type == AccessType.Read);
         Guard.Against.NotFound(roleId, entity);
         return entity!;
     }
@@ -36,12 +40,12 @@ public class RoleAccessQueryRepository : QueryHandlerBase<Domain.Entities.RBAC.R
         return _dbContext.Database.SqlQueryRaw<RoleAccessDto>(query).OrderBy(sortBy, sortDirection);
     }
 
-    // public async Task<Domain.Entities.RBAC.Role?> GetRoleByNameAsync(string name)
+    // public async Task<Domain.Entities.Role?> GetRoleByNameAsync(string name)
     // {
     //     return await _dbContext.Branches.FirstOrDefaultAsync(x => x.Name == name);
     // }
 
-    // public async Task<Domain.Entities.RBAC.Branch?> GetBranchBySourceSystemIdAsync(string id,
+    // public async Task<Domain.Entities.Branch?> GetBranchBySourceSystemIdAsync(string id,
     //     bool includeSupplyChain = false)
     // {
     //     return includeSupplyChain
@@ -56,8 +60,8 @@ public class RoleAccessQueryRepository : QueryHandlerBase<Domain.Entities.RBAC.R
     //             .FromCacheFirstAsync(x => x.SourceSystemId == id, id);
     // }
 
-    // public async Task<Domain.Entities.RBAC.Branch?> GetBranchByNameAddressAsync(string name,
-    //     Domain.Entities.RBAC.BranchAddress address)
+    // public async Task<Domain.Entities.Branch?> GetBranchByNameAddressAsync(string name,
+    //     Domain.Entities.BranchAddress address)
     // {
 
     //     string addr = address!.CountryId.ToString().ToLower().Trim()

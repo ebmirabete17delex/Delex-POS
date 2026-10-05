@@ -22,7 +22,7 @@ namespace Delex_POS.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "10.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Delex_POS.Domain.Entities.RBAC.AccessClaim", b =>
+            modelBuilder.Entity("Delex_POS.Domain.Entities.AccessClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -65,7 +65,7 @@ namespace Delex_POS.Infrastructure.Migrations
                     b.ToTable("Accesses");
                 });
 
-            modelBuilder.Entity("Delex_POS.Domain.Entities.RBAC.Branch", b =>
+            modelBuilder.Entity("Delex_POS.Domain.Entities.Branch", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,7 +110,7 @@ namespace Delex_POS.Infrastructure.Migrations
                     b.ToTable("Branches");
                 });
 
-            modelBuilder.Entity("Delex_POS.Domain.Entities.RBAC.Role", b =>
+            modelBuilder.Entity("Delex_POS.Domain.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -143,7 +143,7 @@ namespace Delex_POS.Infrastructure.Migrations
                     b.ToTable("POSRoles");
                 });
 
-            modelBuilder.Entity("Delex_POS.Domain.Entities.RBAC.User", b =>
+            modelBuilder.Entity("Delex_POS.Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -183,7 +183,7 @@ namespace Delex_POS.Infrastructure.Migrations
                     b.ToTable("POSUsers");
                 });
 
-            modelBuilder.Entity("Delex_POS.Domain.Entities.RBAC.UserAccess", b =>
+            modelBuilder.Entity("Delex_POS.Domain.Entities.UserAccess", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -214,7 +214,7 @@ namespace Delex_POS.Infrastructure.Migrations
                     b.ToTable("UserAccesses");
                 });
 
-            modelBuilder.Entity("Delex_POS.Domain.Entities.RBAC.UserRole", b =>
+            modelBuilder.Entity("Delex_POS.Domain.Entities.UserRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -511,18 +511,18 @@ namespace Delex_POS.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Delex_POS.Domain.Entities.RBAC.UserAccess", b =>
+            modelBuilder.Entity("Delex_POS.Domain.Entities.UserAccess", b =>
                 {
-                    b.HasOne("Delex_POS.Domain.Entities.RBAC.User", null)
+                    b.HasOne("Delex_POS.Domain.Entities.User", null)
                         .WithMany("UserAccesses")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Delex_POS.Domain.Entities.RBAC.UserRole", b =>
+            modelBuilder.Entity("Delex_POS.Domain.Entities.UserRole", b =>
                 {
-                    b.HasOne("Delex_POS.Domain.Entities.RBAC.User", null)
+                    b.HasOne("Delex_POS.Domain.Entities.User", null)
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -614,7 +614,7 @@ namespace Delex_POS.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Delex_POS.Domain.Entities.RBAC.User", b =>
+            modelBuilder.Entity("Delex_POS.Domain.Entities.User", b =>
                 {
                     b.Navigation("UserAccesses");
 

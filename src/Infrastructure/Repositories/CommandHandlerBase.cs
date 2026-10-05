@@ -25,11 +25,11 @@ public abstract class CommandHandlerBase<TEntity> where TEntity : class
 
     public virtual async Task DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        var entity = await _dbContext.Set<TEntity>().FindAsync([id], cancellationToken: cancellationToken);
+        var entity = await _dbContext.Set<TEntity>().FindAsync(new object?[] { id }, cancellationToken: cancellationToken);
 
         Guard.Against.NotFound(id, entity);
 
-        _dbContext.Set<TEntity>().Remove(entity);
+        _dbContext.Set<TEntity>().Remove(entity!);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }

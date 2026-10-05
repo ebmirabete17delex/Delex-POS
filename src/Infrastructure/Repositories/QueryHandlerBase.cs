@@ -25,7 +25,7 @@ public abstract class QueryHandlerBase<TEntity> where TEntity : class
     public virtual async Task<bool> ExistAsync(Expression<Func<TEntity, bool>> predicate,
         CancellationToken cancellationToken)
     {
-        return await _dbContext.Set<TEntity>().AllAsync<TEntity>(predicate, cancellationToken);
+        return await _dbContext.Set<TEntity>().AnyAsync<TEntity>(predicate, cancellationToken);
     }
 
     public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken)

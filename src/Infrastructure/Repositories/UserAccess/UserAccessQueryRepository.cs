@@ -4,16 +4,21 @@ using Delex_POS.Application.Users.Queries.UserDTOs;
 using Delex_POS.Application.Common.Enums;
 using Delex_POS.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Delex_POS.Domain.Enums;
 
 namespace Delex_POS.Infrastructure.Repositories.UserAccess;
 
-public class UserAccessQueryRepository : QueryHandlerBase<Domain.Entities.RBAC.UserAccess>, IUserAccessQueryRepository
+public class UserAccessQueryRepository : QueryHandlerBase<Domain.Entities.UserAccess>, IUserAccessQueryRepository
 {
     public UserAccessQueryRepository(ApplicationDbContext dbContext) : base(dbContext) { }
 
-    public async Task<Domain.Entities.RBAC.UserAccess> GetByUserIdAndAccessIdAsync(string userId, int accessId)
+    public async Task<Domain.Entities.UserAccess> GetByUserIdAndAccessIdAsync(string userId, int accessId)
     {
-        var entity = await _dbContext.UserAccesses.FirstOrDefaultAsync(e => e.UserId == userId && e.AccessId == accessId);
+        var entity = await _dbContext.UserAccesses
+            .FirstOrDefaultAsync(e => e.UserId == userId && 
+                                    e.AccessId == accessId &&
+                                    e.Type == AccessType.Read);
+
         Guard.Against.NotFound(userId, entity);
         return entity!;
     }
@@ -36,12 +41,12 @@ public class UserAccessQueryRepository : QueryHandlerBase<Domain.Entities.RBAC.U
         return _dbContext.Database.SqlQueryRaw<UserAccessDto>(query).OrderBy(sortBy, sortDirection);
     }
 
-    // public async Task<Domain.Entities.RBAC.Branch?> GetBranchByNameAsync(string name)
+    // public async Task<Domain.Entities.Branch?> GetBranchByNameAsync(string name)
     // {
     //     return await _dbContext.Branches.FirstOrDefaultAsync(x => x.Name == name);
     // }
 
-    // public async Task<Domain.Entities.RBAC.Branch?> GetBranchBySourceSystemIdAsync(string id,
+    // public async Task<Domain.Entities.Branch?> GetBranchBySourceSystemIdAsync(string id,
     //     bool includeSupplyChain = false)
     // {
     //     return includeSupplyChain
@@ -56,8 +61,8 @@ public class UserAccessQueryRepository : QueryHandlerBase<Domain.Entities.RBAC.U
     //             .FromCacheFirstAsync(x => x.SourceSystemId == id, id);
     // }
 
-    // public async Task<Domain.Entities.RBAC.Branch?> GetBranchByNameAddressAsync(string name,
-    //     Domain.Entities.RBAC.BranchAddress address)
+    // public async Task<Domain.Entities.Branch?> GetBranchByNameAddressAsync(string name,
+    //     Domain.Entities.BranchAddress address)
     // {
 
     //     string addr = address!.CountryId.ToString().ToLower().Trim()

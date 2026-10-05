@@ -3,6 +3,7 @@
   <PropertyGroup>
     <RootNamespace>Delex_POS.Infrastructure</RootNamespace>
     <AssemblyName>Delex_POS.Infrastructure</AssemblyName>
+    <SuppressTfmSupportBuildWarnings>True</SuppressTfmSupportBuildWarnings>    
   </PropertyGroup>
 
   <ItemGroup>
