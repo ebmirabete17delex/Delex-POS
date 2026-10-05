@@ -3,10 +3,10 @@ using Delex_POS.Application.AccessClaims.Commands.UpdateAccessClaim;
 using Delex_POS.Application.AccessClaims.Commands.DeleteAccessClaim;
 using Delex_POS.Application.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Delex_POS.Application.AccessClaims.Queries.GetAccessClaimsList;
 using Delex_POS.Application.AccessClaims.Queries.GetAccessClaims;
 using Delex_POS.Application.AccessClaims.Queries.GetAccessClaim;
 using Delex_POS.Application.AccessClaims.Queries.AccessClaimDTOs;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Delex_POS.Web.Endpoints;
 
@@ -20,6 +20,7 @@ public class Access : IEndpointGroup
         groupBuilder.MapPut(UpdateAccessClaim, "{id}");
         groupBuilder.MapDelete(DeleteAccessClaim, "{id}");
         groupBuilder.MapGet(GetAccessClaims);
+        groupBuilder.MapGet(GetAccessClaimsList, "list");
         groupBuilder.MapGet(GetAccessClaim, "{id}");
     }
 
@@ -36,7 +37,7 @@ public class Access : IEndpointGroup
     [EndpointDescription("Updates the specified Access. The ID in the URL must match the ID in the payload.")]
     public static async Task<Results<NoContent, BadRequest>> UpdateAccessClaim(ISender sender, int id, UpdateAccessClaimCommand command)
     {
-        if (id != command.Id) return TypedResults.BadRequest();
+        command.Id = id;
 
         await sender.Send(command);
 
@@ -60,7 +61,16 @@ public class Access : IEndpointGroup
 
         return TypedResults.Ok(vm);
     }
-    
+
+    [EndpointSummary("Get accesses List")]
+    [EndpointDescription("Retrieves all accesses as list.")]
+    public static async Task<Ok<List<AccessClaimListDto>>> GetAccessClaimsList(ISender sender, [AsParameters] GetAccessClaimsListQuery query)
+    {
+        var vm = await sender.Send(query);
+
+        return TypedResults.Ok(vm);
+    }
+
     [EndpointSummary("Get access")]
     [EndpointDescription("Retrieves a access.")]
     public static async Task<Ok<AccessClaimDto>> GetAccessClaim(ISender sender, string id, [AsParameters] GetAccessClaimQuery query)

@@ -3,6 +3,7 @@ using Delex_POS.Application.Branches.Commands.UpdateBranch;
 using Delex_POS.Application.Branches.Commands.DeleteBranch;
 using Delex_POS.Application.Common.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Delex_POS.Application.Branches.Queries.GetBranchesList;
 using Delex_POS.Application.Branches.Queries.GetBranches;
 using Delex_POS.Application.Branches.Queries.GetBranch;
 using Delex_POS.Application.Branches.Queries.BranchDTOs;
@@ -19,6 +20,7 @@ public class Branch : IEndpointGroup
         groupBuilder.MapPut(UpdateBranch, "{id}");
         groupBuilder.MapDelete(DeleteBranch, "{id}");
         groupBuilder.MapGet(GetBranches);
+        groupBuilder.MapGet(GetBranchesList, "list");
         groupBuilder.MapGet(GetBranch, "{id}");
     }
 
@@ -59,7 +61,16 @@ public class Branch : IEndpointGroup
 
         return TypedResults.Ok(vm);
     }
-    
+
+    [EndpointSummary("Get branches List")]
+    [EndpointDescription("Retrieves all branches as list.")]
+    public static async Task<Ok<List<BranchListDto>>> GetBranchesList(ISender sender, [AsParameters] GetBranchesListQuery query)
+    {
+        var vm = await sender.Send(query);
+
+        return TypedResults.Ok(vm);
+    }
+
     [EndpointSummary("Get branch")]
     [EndpointDescription("Retrieves a branch.")]
     public static async Task<Ok<BranchDto>> GetBranch(ISender sender, [AsParameters] GetBranchQuery query)

@@ -81,7 +81,7 @@ public class Role : IEndpointGroup
         var result = await sender.Send(new AddRoleAccessCommand
         {
             RoleId = roleId,
-            AccessId = accessId
+            AccessId = accessId,
         });
 
         return TypedResults.Created($"/api/Roles/{roleId}/accesses/{result}", result);

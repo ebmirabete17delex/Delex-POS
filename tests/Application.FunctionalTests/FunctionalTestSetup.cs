@@ -5,8 +5,8 @@ namespace Delex_POS.Application.FunctionalTests;
 [SetUpFixture]
 public class FunctionalTestSetup
 {
-    internal static IServiceScopeFactory ScopeFactory { get; private set; } = null!;
-    internal static DatabaseResetter? DbResetter { get; private set; }
+    internal static IServiceScopeFactory ScopeFactory { get; set; } = null!;
+    internal static DatabaseResetter? DbResetter { get; set; }
 
     private static WebApiFactory? _factory;
     private static DistributedApplication? _app;

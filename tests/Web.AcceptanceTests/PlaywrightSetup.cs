@@ -8,7 +8,7 @@ public class PlaywrightSetup
     private static bool IsHeadless => Debugger.IsAttached is false;
     private static IPlaywright? _playwright;
 
-    public static IBrowser Browser { get; private set; } = null!;
+    public static IBrowser Browser { get; set; } = null!;
 
     [OneTimeSetUp]
     public async Task OneTimeSetUp()

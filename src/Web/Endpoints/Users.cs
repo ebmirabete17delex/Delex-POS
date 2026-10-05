@@ -8,7 +8,7 @@ using Delex_POS.Application.Users.Commands.RemoveUserAccess;
 using Delex_POS.Application.Users.Queries.GetUser;
 using Delex_POS.Application.Users.Queries.GetUsers;
 using Delex_POS.Application.Users.Queries.GetUserRoles;
-using Delex_POS.Application.Users.Queries.GetUserAccesses;
+using Delex_POS.Application.Users.Queries.GetUserAccess;
 using Delex_POS.Application.Users.Queries.UserDTOs;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Delex_POS.Application.Common.Models;
