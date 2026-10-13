@@ -1,10 +1,7 @@
-﻿using Delex_POS.Application.Common.Extensions;
-using Delex_POS.Application.Common.Interfaces.Repositories.UserAccess;
-using Delex_POS.Application.Users.Queries.UserDTOs;
-using Delex_POS.Application.Common.Enums;
+﻿using Delex_POS.Application.Common.Interfaces.Repositories.UserAccess;
 using Delex_POS.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Delex_POS.Domain.Enums;
+using Delex_POS.Application.Employees.Queries.EmployeeDTOs;
 
 namespace Delex_POS.Infrastructure.Repositories.UserAccess;
 
@@ -16,29 +13,31 @@ public class UserAccessQueryRepository : QueryHandlerBase<Domain.Entities.UserAc
     {
         var entity = await _dbContext.UserAccesses
             .FirstOrDefaultAsync(e => e.UserId == userId && 
-                                    e.AccessId == accessId &&
-                                    e.Type == AccessType.Read);
+                                    e.AccessId == accessId);
 
         Guard.Against.NotFound(userId, entity);
         return entity!;
     }
 
-    public IQueryable<UserAccessDto> GetByUserId(string id, string sortBy, TableSort sortDirection)
+    public IQueryable<UserAccessDto> GetByUserId(string id)
     {
         string query = $"""
-                        SELECT r.Id as [Id]
-                                , r.UserId
-                                , r.AccessId
-                              	, a.Name
-                              	, a.Feature
-                              	, a.BackendUrl
-                                , a.FrontendUrl
+                        SELECT r.Id as Id
+                                , r.UserId as UserId
+                                , r.AccessId as AccessId
+                              	, a.Name as Name
+                              	, r.HasRead as HasRead
+                              	, r.HasWrite as HasWrite
+                              	, r.HasDelete as HasDelete
+                              	, r.HasUpdate as HasUpdate
+                              	, r.IsActive as IsActive
                         FROM UserAccesses r
                         		INNER JOIN Accesses a
                         					ON r.accessid = a.id
-                        WHERE r.UserId = {id}
+                        WHERE r.UserId = '{id}'
+                        ORDER BY a.Name
                         """;
-        return _dbContext.Database.SqlQueryRaw<UserAccessDto>(query).OrderBy(sortBy, sortDirection);
+        return _dbContext.Database.SqlQueryRaw<UserAccessDto>(query);
     }
 
     // public async Task<Domain.Entities.Branch?> GetBranchByNameAsync(string name)

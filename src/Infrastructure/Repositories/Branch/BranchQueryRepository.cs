@@ -1,12 +1,45 @@
 ﻿using Delex_POS.Application.Branches.Queries.BranchDTOs;
 using Delex_POS.Application.Common.Interfaces.Repositories.Branch;
+using Delex_POS.Application.Common.Models;
+using Delex_POS.Application.Customers.Queries.CustomerDTOs;
 using Delex_POS.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Delex_POS.Infrastructure.Repositories.Branch;
 
 public class BranchQueryRepository : QueryHandlerBase<Domain.Entities.Branch>, IBranchQueryRepository
 {
     public BranchQueryRepository(ApplicationDbContext dbContext) : base(dbContext) { }
+     
+    public IQueryable<BranchDto> GetBranches()
+    {
+        string query = $"""
+                        SELECT b.Id as Id
+                              	, b.Name AS Name
+                              	, b.WarehouseId AS WarehouseId
+                              	, w.Name AS Warehouse
+                              	, b.RegionId AS RegionId
+                              	, r.Name AS Region
+                                , b.Address1
+                                , b.Address2
+                                , b.Address3
+                                , b.Phone
+                                , b.Fax
+                                , b.Email
+                                , b.TIN
+                              	, b.Created AS Created
+                        FROM Branches b
+                        		INNER JOIN Warehouses w
+                        					ON b.WarehouseId = w.Id
+                        		INNER JOIN Regions r
+                        					ON b.RegionId = r.Id
+                        WHERE b.IsActive = true
+                        """;
+
+        return _dbContext.Database.SqlQueryRaw<BranchDto>(query);
+    }
+
+
 
     // public async Task<Domain.Entities.Branch?> GetBranchByNameAsync(string name)
     // {

@@ -1,10 +1,7 @@
-﻿using Delex_POS.Application.Common.Extensions;
-using Delex_POS.Application.Common.Enums;
-using Delex_POS.Application.Common.Interfaces.Repositories.RoleAccess;
+﻿using Delex_POS.Application.Common.Interfaces.Repositories.RoleAccess;
 using Delex_POS.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Delex_POS.Application.Roles.Queries.RoleDTOs;
-using Delex_POS.Domain.Enums;
 
 namespace Delex_POS.Infrastructure.Repositories.RoleAccess;
 
@@ -16,28 +13,30 @@ public class RoleAccessQueryRepository : QueryHandlerBase<Domain.Entities.RoleAc
     {
         var entity = await _dbContext.RoleAccesses
             .FirstOrDefaultAsync(e => e.RoleId == roleId && 
-                                    e.AccessId == accessId && 
-                                    e.Type == AccessType.Read);
+                                    e.AccessId == accessId);
         Guard.Against.NotFound(roleId, entity);
         return entity!;
     }
 
-    public IQueryable<RoleAccessDto> GetByRoleId(string id, string sortBy, TableSort sortDirection)
+    public IQueryable<RoleAccessDto> GetByRoleId(string id)
     {
         string query = $"""
-                        SELECT r.Id as [Id]
+                        SELECT r.Id as Id
                                 , r.RoleId
                                 , r.AccessId
                               	, a.Name
-                              	, a.Feature
-                              	, a.BackendUrl
-                                , a.FrontendUrl
+                              	, r.HasRead
+                              	, r.HasWrite
+                              	, r.HasDelete
+                              	, r.HasUpdate
+                              	, r.IsActive
                         FROM RoleAccesses r
-                        		INNER JOIN Accesses a
-                        					ON r.accessid = a.id
-                        WHERE r.RoleId = {id}
+                            INNER JOIN Accesses a
+                        		ON r.accessid = a.id
+                        WHERE r.RoleId = '{id}'
+                        ORDER BY a.Name
                         """;
-        return _dbContext.Database.SqlQueryRaw<RoleAccessDto>(query).OrderBy(sortBy, sortDirection);
+        return _dbContext.Database.SqlQueryRaw<RoleAccessDto>(query);
     }
 
     // public async Task<Domain.Entities.Role?> GetRoleByNameAsync(string name)

@@ -8,8 +8,4 @@ public class PersonalInfoQueryRepository : QueryHandlerBase<Domain.Entities.Pers
 {
     public PersonalInfoQueryRepository(ApplicationDbContext dbContext) : base(dbContext) { }
 
-    public async Task<Domain.Entities.PersonalInfo?> GetByAccountIdAsync(int id, CancellationToken cancellationToken)
-    {
-        return await _dbContext.PersonalInfos.Where(p => p.AcctId == id).FirstOrDefaultAsync(cancellationToken);
-    }
 }

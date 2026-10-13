@@ -10,7 +10,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Delex_POS.Application.Roles.Queries.RoleDTOs;
 using Delex_POS.Infrastructure.Factories;
-using Delex_POS.Application.Users.Queries.UserDTOs;
+using Delex_POS.Application.Employees.Queries.EmployeeDTOs;
 
 namespace Delex_POS.Infrastructure.Identity;
 
@@ -56,24 +56,6 @@ public class IdentityService : IIdentityService
         return _mapper.Map<ApplicationUserDto>(user);
     }
 
-    public IQueryable<ApplicationUserDto> GetAllUsers(string? searchQuery, string sortBy, TableSort sort)
-    {
-        Expression<Func<ApplicationUser, bool>> filter = searchQuery switch
-        {
-            (null) => x => true,
-            (_) => x => x.FirstName.Contains(searchQuery)
-                        || x.LastName.Contains(searchQuery)
-                        || x.Email!.Contains(searchQuery),
-        };
-
-        IQueryable<ApplicationUser> users = _userManager.Users.AsNoTracking()
-            .Where(filter);
-
-        users = users.OrderBy(sortBy, sort);
-
-        return users.ProjectTo<ApplicationUserDto>(_mapper.ConfigurationProvider);
-    }
-
     public async Task<(Result Result, string UserId)> CreateUserAsync(string userName, string password)
     {
         var user = new ApplicationUser
@@ -93,14 +75,8 @@ public class IdentityService : IIdentityService
         {
             UserName = user.Email,
             Email = user.Email,
+            UserCode = user.UserCode
         };
-        newUser.Update(
-            lastName: user.LastName,
-            firstName: user.FirstName,
-            userCode: user.UserCode,
-            middleName: user.MiddleName
-        );
-        newUser.SetBranch(user.BranchId);
 
         var result = await _userManager.CreateAsync(newUser, password);
 
@@ -130,6 +106,11 @@ public class IdentityService : IIdentityService
         return result.Succeeded;
     }
 
+    public async Task<string> GetLastUserCode(CancellationToken cancellationToken)
+    {
+        return await _userManager.Users.MaxAsync(u => u.UserCode, cancellationToken);
+    }
+
     public async Task<Result> DeleteUserAsync(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
@@ -144,25 +125,36 @@ public class IdentityService : IIdentityService
         return result.ToApplicationResult();
     }
 
-    public async Task<Result> UpdateUserAsync(ApplicationUserDto user)
+    public async Task<Result> UpdateUserPinAsync(string userId, string newPIN)
     {
-        var entity = await _userManager.FindByIdAsync(user.Id);
-        Guard.Against.NotFound(user.Id, entity);
-        entity.Update(
-            userCode: user.UserCode,
-            lastName: user.LastName,
-            firstName: user.FirstName,
-            middleName: user.MiddleName
-            );
-        entity.SetBranch(user.BranchId);
-        return entity != null ? await UpdateUserAsync(entity) : Result.Success();
-    }
-    
-    private async Task<Result> UpdateUserAsync(ApplicationUser user)
-    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return Result.Failure(new[] { "User not found." });
+
+        user.UpdatePIN(newPIN);
         var result = await _userManager.UpdateAsync(user);
         return result.ToApplicationResult();
     }
+
+    public async Task<Result> ActivateUserAsync(string userId, string newPassword, string userPin)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return Result.Failure(new[] { "User not found." });
+        await _userManager.ChangePasswordAsync(user, "TempPwd123", newPassword);
+        user.Activate();
+        user.UpdatePIN(userPin);
+        var result = await _userManager.UpdateAsync(user);
+        return result.ToApplicationResult();
+    }
+
+    public async Task<Result> DeactivateUserAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return Result.Failure(new[] { "User not found." });
+        user.Deactivate();
+        var result = await _userManager.UpdateAsync(user);
+        return result.ToApplicationResult();
+    }
+    
 #endregion
 
 #region Role Management
@@ -243,7 +235,7 @@ public class IdentityService : IIdentityService
 
     public async Task<IList<IdentityRoleDto>> GetAllRolesAsync(CancellationToken cancellationToken)
     {
-        IQueryable<IdentityRole> roles = _roleManager.Roles.AsNoTracking();
+        IQueryable<IdentityRole> roles = _roleManager.Roles.AsNoTracking().Where(r => r.Name != Domain.Constants.Roles.Administrator);
 
         IQueryable<IdentityRoleDto> projectedRoles = roles.ProjectTo<IdentityRoleDto>(_mapper.ConfigurationProvider);
 
@@ -258,7 +250,7 @@ public class IdentityService : IIdentityService
             (_) => x => x.Name!.Contains(searchQuery),
         };
 
-        IQueryable<IdentityRole> roles = _roleManager.Roles
+        IQueryable<IdentityRole> roles = _roleManager.Roles.Where(r => r.Name != Domain.Constants.Roles.Administrator)
             .AsNoTracking()
             .Where(filter);
         
@@ -286,11 +278,37 @@ public class IdentityService : IIdentityService
     public async Task<TokenResponse?> LoginAsync(string userCode, string password, bool isPersistent = false)
     {
 
+        const int expiresInMinutes = 60;
+
         var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserCode.Equals(userCode));
 
         if (user is null)
         {
             return null;
+        }
+
+        bool isAdmin = await _userManager.IsInRoleAsync(user, Domain.Constants.Roles.Administrator);
+
+        if (user.IsActive == false && !isAdmin)
+        {
+            var passwordResult = await _signInManager.CheckPasswordSignInAsync(
+                user,
+                password,
+                lockoutOnFailure: true);
+
+            if (!passwordResult.Succeeded)
+            {
+                return null;
+            }
+
+            return new TokenResponse
+            {
+                IsActive = user.IsActive,
+                TokenType = null,
+                AccessToken = "",
+                ExpiresIn = 0,
+                RefreshToken = ""
+            }; 
         }
 
         user = await _userManager.FindByEmailAsync(user.Email!);
@@ -310,10 +328,57 @@ public class IdentityService : IIdentityService
             return null;
         }
 
+
+        return new TokenResponse
+        {
+            IsActive = user.IsActive,
+            TokenType = null,
+            AccessToken = _tokenFactory.GenerateAccessToken(user, expiresInMinutes),
+            ExpiresIn = expiresInMinutes * 60,
+            RefreshToken = _tokenFactory.GenerateRefreshToken()
+        };
+    }
+
+    public async Task<TokenResponse?> ActivateAsync(string userCode, string password, string pin)
+    {
+        if (string.IsNullOrEmpty(pin) ||
+            pin.Length != 6 ||
+            pin.Any(character => character < '0' || character > '9'))
+        {
+            return null;
+        }
+
+        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserCode.Equals(userCode));
+        if (user is null || user.IsActive || !string.IsNullOrEmpty(user.UserPin))
+        {
+            return null;
+        }
+
+        var passwordResult = await _signInManager.CheckPasswordSignInAsync(
+            user,
+            password,
+            lockoutOnFailure: true);
+
+        if (!passwordResult.Succeeded)
+        {
+            return null;
+        }
+
+        user.UpdatePIN(pin);
+        user.Activate();
+        var updateResult = await _userManager.UpdateAsync(user);
+
+        if (!updateResult.Succeeded)
+        {
+            var errors = string.Join("; ", updateResult.Errors.Select(error => error.Description));
+            throw new InvalidOperationException($"Unable to activate the user: {errors}");
+        }
+
         const int expiresInMinutes = 60;
 
         return new TokenResponse
         {
+            IsActive = user.IsActive,
             TokenType = null,
             AccessToken = _tokenFactory.GenerateAccessToken(user, expiresInMinutes),
             ExpiresIn = expiresInMinutes * 60,
