@@ -1,36 +1,52 @@
-// import { Counter } from "./components/Counter";
-// import { Weather } from "./components/Weather";
-// import { Tasks } from "./components/Todo";
-import { Home } from "./components/Home";
-import { LoginPage } from "./components/api-authorization/LoginPage";
-import { RegisterPage } from "./components/api-authorization/RegisterPage";
-import { ProtectedRoute } from "./components/api-authorization/ProtectedRoute";
+import { ActivationPage } from './components/api-authorization/ActivationPage.jsx';
+import { LoginPage } from './components/api-authorization/LoginPage.jsx';
+import { ProtectedRoute } from './components/api-authorization/ProtectedRoute.jsx';
+import {
+  AccessPanel,
+  BranchPanel,
+  CancelReasonPanel,
+  CustomerPanel,
+  CustomerTypePanel,
+  GenericPanel,
+  ProductAttributePanel,
+  ProductCategoryPanel,
+  ProductClassPanel,
+  ProductPanel,
+  RegionPanel,
+  RolePanel,
+  SupplierPanel,
+  UnitOfMeasurePanel,
+  UsersPanel,
+  WarehousePanel,
+} from './components/business-pages.jsx';
+import { AdminPage } from './features/administrator/AdminPage.jsx';
+import { RoleAccessPage } from './features/administrator/RoleAccessPage.jsx';
+import { Navigate } from 'react-router-dom';
 
+const protectedPage = element => <ProtectedRoute>{element}</ProtectedRoute>;
 const AppRoutes = [
-  {
-    index: true,
-    element: <LoginPage />
-  },
-  // {
-  //   path: '/counter',
-  //   element: <Counter />
-  // },
-  // {
-  //   path: '/weather',
-  //   element: <ProtectedRoute><Weather /></ProtectedRoute>
-  // },
-  // {
-  //   path: '/todo',
-  //   element: <ProtectedRoute><Tasks /></ProtectedRoute>
-  // },
-  {
-    path: '/login',
-    element: <LoginPage />
-  },
-  {
-    path: '/register',
-    element: <RegisterPage />
-  }
+  { index: true, element: protectedPage(<Navigate to="/users" replace />) },
+  { path: '/dashboard', element: protectedPage(<Navigate to="/users" replace />) },
+  { path: '/admin', element: protectedPage(<AdminPage />) },
+  { path: '/access', element: protectedPage(<AccessPanel />) },
+  { path: '/roles', element: protectedPage(<RolePanel />) },
+  { path: '/roles/:roleId/access', element: protectedPage(<RoleAccessPage />) },
+  { path: '/users', element: protectedPage(<UsersPanel />) },
+  { path: '/branches', element: protectedPage(<BranchPanel />) },
+  { path: '/warehouses', element: protectedPage(<WarehousePanel />) },
+  { path: '/regions', element: protectedPage(<RegionPanel />) },
+  { path: '/cancel-reasons', element: protectedPage(<CancelReasonPanel />) },
+  { path: '/customers', element: protectedPage(<CustomerPanel />) },
+  { path: '/customer-types', element: protectedPage(<CustomerTypePanel />) },
+  { path: '/suppliers', element: protectedPage(<SupplierPanel />) },
+  { path: '/products', element: protectedPage(<ProductPanel />) },
+  { path: '/product-attributes', element: protectedPage(<ProductAttributePanel />) },
+  { path: '/product-categories', element: protectedPage(<ProductCategoryPanel />) },
+  { path: '/product-classes', element: protectedPage(<ProductClassPanel />) },
+  { path: '/generics', element: protectedPage(<GenericPanel />) },
+  { path: '/units-of-measure', element: protectedPage(<UnitOfMeasurePanel />) },
+  { path: '/login', element: <LoginPage /> },
+  { path: '/activate', element: <ActivationPage /> },
 ];
 
 export default AppRoutes;

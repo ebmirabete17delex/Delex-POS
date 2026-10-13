@@ -1,37 +1,39 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { UsersClient, LoginRequest, RegisterRequest } from '../../web-api-client';
+import { createContext, useContext, useMemo, useState } from 'react';
+import { AuthenticationClient, LoginRequest } from '../../web-api-client.ts';
+import { clearAccessToken, createApiClient, getAccessToken, storeAccessToken } from '../api-client.js';
 
 const AuthContext = createContext(null);
-
-const client = new UsersClient();
+const authentication = createApiClient(AuthenticationClient);
 
 export function AuthProvider({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [accessToken, setAccessToken] = useState(() => getAccessToken());
+  const [isLoading] = useState(false);
 
-  useEffect(() => {
-    client.infoGET()
-      .then(() => setIsAuthenticated(true))
-      .catch(() => setIsAuthenticated(false))
-      .finally(() => setIsLoading(false));
-  }, []);
+  const value = useMemo(() => ({
+    accessToken,
+    isAuthenticated: Boolean(accessToken),
+    isLoading,
+    login: async (userId, password) => {
+      const response = await authentication.login(new LoginRequest({ userId, password }));
+      if (!response?.accessToken) throw new Error('The login response did not include an access token.');
+      storeAccessToken(response.accessToken);
+      setAccessToken(response.accessToken);
+    },
+    logout: async () => {
+      try {
+        await authentication.logout({});
+      } finally {
+        clearAccessToken();
+        setAccessToken(null);
+      }
+    },
+  }), [accessToken, isLoading]);
 
-  const login = (email, password) =>
-    client.login(true, undefined, new LoginRequest({ email, password }))
-      .then(() => setIsAuthenticated(true));
-
-  const register = (email, password) =>
-    client.register(new RegisterRequest({ email, password }));
-
-  const logout = () =>
-    client.logout({})
-      .then(() => setIsAuthenticated(false));
-
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, isLoading, login, register, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error('useAuth must be used inside AuthProvider.');
+  return context;
+}

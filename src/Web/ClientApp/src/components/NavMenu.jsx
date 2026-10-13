@@ -1,44 +1,46 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from './api-authorization/AuthContext';
-import { ThemeToggle } from './ThemeToggle';
-
-function AuthLinks() {
-  const { isAuthenticated, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = async (e) => {
-    e.preventDefault();
-    await logout();
-    navigate('/login');
-  };
-
-  if (isAuthenticated) {
-    return <li><a href="#" onClick={handleLogout}>Log out</a></li>;
-  }
-  return (
-    <>
-      {/* <li><Link to="/login">Log in</Link></li>
-      <li><Link to="/register">Register</Link></li> */}
-    </>
-  );
-}
+import { LogOut, Package } from 'lucide-react';
+import { useAuth } from './api-authorization/AuthContext.jsx';
+import { ThemeToggle } from './ThemeToggle.jsx';
+import { SidebarTrigger } from './SideBar.jsx';
 
 export function NavMenu() {
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+  async function signOut() {
+    try {
+      await logout();
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Sign out failed.', error);
+    }
+  }
+
   return (
     <header>
-      <nav>
-        <ul>
-          <li><Link to="/">Delex Pharma International Incorporated</Link></li>
+      <nav aria-label="Main navigation">
+        <ul className="top-nav-brand">
+          {isAuthenticated && <li><SidebarTrigger /></li>}
+          <li>
+            <Link to="/" className="brand-link">
+              <Package size={21} aria-hidden="true" />
+              <span>Delex POS</span>
+            </Link>
+          </li>
         </ul>
-        {/* <ul>
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/counter">Counter</Link></li>
-          <li><Link to="/weather">Weather</Link></li>
-          <li><Link to="/todo">Tasks</Link></li>
-        </ul> */}
-        <ul>
-          <AuthLinks />
-          <li aria-hidden="true" className="nav-separator"></li>
+        <ul className="top-nav-actions">
+          {isAuthenticated ? (
+            <>
+              <li>
+                <button type="button" className="nav-action-button" onClick={signOut} aria-label="Sign out">
+                  <LogOut size={17} aria-hidden="true" />
+                  <span>Sign out</span>
+                </button>
+              </li>
+            </>
+           ) : <li>
+          {/* <Link to="/login">Sign in</Link> */}
+           </li>}
           <li><ThemeToggle /></li>
         </ul>
       </nav>

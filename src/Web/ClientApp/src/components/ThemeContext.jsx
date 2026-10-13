@@ -14,12 +14,26 @@ export function ThemeProvider({ children }) {
   );
 
   useEffect(() => {
-    if (theme === 'auto') {
-      document.documentElement.removeAttribute('data-theme');
-    } else {
-      document.documentElement.setAttribute('data-theme', theme);
-    }
+    const root = document.documentElement;
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const applyTheme = () => {
+      const isDark = theme === 'dark' || (theme === 'auto' && systemTheme.matches);
+      root.classList.toggle('dark', isDark);
+
+      if (theme === 'auto') {
+        root.removeAttribute('data-theme');
+      } else {
+        root.setAttribute('data-theme', theme);
+      }
+    };
+
+    applyTheme();
     localStorage.setItem(STORAGE_KEY, theme);
+
+    if (theme === 'auto') {
+      systemTheme.addEventListener('change', applyTheme);
+      return () => systemTheme.removeEventListener('change', applyTheme);
+    }
   }, [theme]);
 
   return (

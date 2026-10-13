@@ -1,5 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import { fileURLToPath } from 'node:url';
+
+const clientRoot = fileURLToPath(new URL('.', import.meta.url));
+const srcRoot = fileURLToPath(new URL('./src', import.meta.url));
 
 const target =
   process.env['services__webapi__https__0'] ||
@@ -11,7 +16,17 @@ const proxyOptions = target
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
+  resolve: {
+    alias: [
+      { find: '@/components', replacement: `${srcRoot}/components` },
+      { find: '@/hooks', replacement: `${srcRoot}/hooks` },
+      { find: '@', replacement: clientRoot },
+    ],
+  },
   server: {
     port: parseInt(process.env.PORT!),
     proxy: proxyOptions

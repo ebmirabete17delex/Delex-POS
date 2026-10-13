@@ -1,48 +1,44 @@
 import { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from './AuthContext.jsx';
 
 export function LoginPage() {
-  const [email, setEmail] = useState('');
+  const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
-  const [invalid, setInvalid] = useState(false);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setBusy(true);
+    setError('');
     try {
-      await login(email, password);
+      await login(userId, password);
       const returnUrl = location.state?.returnUrl || '/';
       navigate(returnUrl, { replace: true });
-    } catch {
-      setInvalid(true);
+    } catch (requestError) {
+      setError(requestError?.message || 'Unable to sign in. Check your credentials and try again.');
+    } finally {
+      setBusy(false);
     }
   };
 
-  const handleChange = (setter) => (e) => {
-    setInvalid(false);
-    setter(e.target.value);
-  };
-
   return (
-    <article>
-      <h2>Log in</h2>
+    <article className="auth-page">
+      <h1>Sign in</h1>
+      <p>Sign in to access the Delex POS workspace.</p>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="email">User ID</label>
-        <input type="email" id="email" autoComplete="username"
-          value={email} onChange={handleChange(setEmail)}
-          aria-invalid={invalid || undefined}
-          aria-describedby={invalid ? 'login-error' : undefined} />
+        <label htmlFor="userId">User ID</label>
+        <input type="text" id="userId" autoComplete="username" required
+          value={userId} onChange={event => setUserId(event.target.value)} />
         <label htmlFor="password">Password</label>
-        <input type="password" id="password" autoComplete="current-password"
-          value={password} onChange={handleChange(setPassword)}
-          aria-invalid={invalid || undefined}
-          aria-describedby={invalid ? 'login-error' : undefined} />
-        {invalid && <small id="login-error">Invalid user ID or password.</small>}
-        <button type="submit">Log in</button>
-        {/* <p style={{ marginTop: '1rem' }}>Don't have an account? <Link to="/register">Register</Link></p> */}
+        <input type="password" id="password" autoComplete="current-password" required
+          value={password} onChange={event => setPassword(event.target.value)} />
+        {error && <p className="error" role="alert">{error}</p>}
+        <button type="submit" disabled={busy}>{busy ? 'Signing in...' : 'Sign in'}</button>
       </form>
     </article>
   );
