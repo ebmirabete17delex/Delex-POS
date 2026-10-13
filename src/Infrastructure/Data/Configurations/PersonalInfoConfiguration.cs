@@ -8,9 +8,7 @@ internal class PersonalInfoConfiguration : IEntityTypeConfiguration<PersonalInfo
 {
     public void Configure(EntityTypeBuilder<PersonalInfo> builder)
     {
-        builder.Property(pi => pi.AcctId)
-            .IsRequired();
-
+ 
         builder.Property(pi => pi.Title)
             .HasMaxLength(3);
 
@@ -38,9 +36,6 @@ internal class PersonalInfoConfiguration : IEntityTypeConfiguration<PersonalInfo
         builder.Property(pi => pi.CivilStatus)
             .IsRequired()
             .HasMaxLength(10);
-
-        builder.Property(pi => pi.NationalityId)
-            .IsRequired();
 
         builder.Property(pi => pi.Email)
             .HasMaxLength(50);
