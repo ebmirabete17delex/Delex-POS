@@ -1,6 +1,4 @@
-﻿using Delex_POS.Application.AccessClaims.Queries.AccessClaimDTOs;
-using Delex_POS.Application.AccessClaims.Queries.GetAccessClaim;
-using Delex_POS.Application.Common.Models;
+﻿using Delex_POS.Application.Common.Models;
 using Delex_POS.Application.CustomerTypes.Commands.CreateCustomerType;
 using Delex_POS.Application.CustomerTypes.Commands.DeleteCustomerType;
 using Delex_POS.Application.CustomerTypes.Commands.UpdateCustomerType;
@@ -21,7 +19,7 @@ public class CustomerType : IEndpointGroup
         groupBuilder.MapPost(CreateCustomerType);
         groupBuilder.MapPut(UpdateCustomerType, "{id}");
         groupBuilder.MapDelete(DeleteCustomerType, "{id}");
-        
+
         groupBuilder.MapGet(GetCustomerTypes);
         groupBuilder.MapGet(GetCustomerTypesList, "list");
         groupBuilder.MapGet(GetCustomerType, "{id}");

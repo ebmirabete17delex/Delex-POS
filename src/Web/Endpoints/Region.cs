@@ -31,7 +31,7 @@ public class Region : IEndpointGroup
     {
         int id = await sender.Send(command);
 
-        return TypedResults.Created($"/Region/{id}", id);
+        return TypedResults.Created($"/regions/{id}", id);
     }
 
     [EndpointSummary("Update an Region")]

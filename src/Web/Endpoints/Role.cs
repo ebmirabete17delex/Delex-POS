@@ -1,13 +1,14 @@
+using Delex_POS.Application.Common.Models;
+using Delex_POS.Application.Roles.Commands.UpdateRoleAccess;
+using Delex_POS.Application.Roles.Commands.AddRoleAccess;
 using Delex_POS.Application.Roles.Commands.CreateRole;
 using Delex_POS.Application.Roles.Commands.DeleteRole;
-using Delex_POS.Application.Roles.Commands.AddRoleAccess;
 using Delex_POS.Application.Roles.Commands.RemoveRoleAccess;
-using Delex_POS.Application.Common.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Delex_POS.Application.Roles.Queries.RoleDTOs;
-using Delex_POS.Application.Roles.Queries.GetRoles;
 using Delex_POS.Application.Roles.Queries.GetRole;
 using Delex_POS.Application.Roles.Queries.GetRoleAccess;
+using Delex_POS.Application.Roles.Queries.GetRoles;
+using Delex_POS.Application.Roles.Queries.RoleDTOs;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Delex_POS.Web.Endpoints;
 
@@ -26,6 +27,7 @@ public class Role : IEndpointGroup
 
         groupBuilder.MapGet(GetRoleAccess, "{roleId}/accesses");
         groupBuilder.MapPost(AddRoleAccess, "{roleId}/accesses/{accessId}");
+        groupBuilder.MapPut(UpdateRoleAccess, "{roleId}/accesses/{accessId}");
         groupBuilder.MapDelete(RemoveRoleAccess, "{roleId}/accesses/{accessId}");
     }
 
@@ -49,13 +51,13 @@ public class Role : IEndpointGroup
 
     [EndpointSummary("Get all roles")]
     [EndpointDescription("Retrieves all roles.")]
-    public static async Task<Ok<PaginatedList<IdentityRoleDto>>> GetRoles(ISender sender,[AsParameters] GetRolesQuery query)
+    public static async Task<Ok<PaginatedList<IdentityRoleDto>>> GetRoles(ISender sender, [AsParameters] GetRolesQuery query)
     {
         var vm = await sender.Send(query);
 
         return TypedResults.Ok(vm);
     }
-    
+
     [EndpointSummary("Get role")]
     [EndpointDescription("Retrieves a role.")]
     public static async Task<Ok<IdentityRoleDto>> GetRole(ISender sender, string roleId)
@@ -67,14 +69,14 @@ public class Role : IEndpointGroup
 
     [EndpointSummary("Get all role access")]
     [EndpointDescription("Retrieves all role access.")]
-    public static async Task<Ok<PaginatedList<RoleAccessDto>>> GetRoleAccess(ISender sender, string roleId, [AsParameters] GetRoleAccessQuery query)
+    public static async Task<Ok<List<RoleAccessDto>>> GetRoleAccess(ISender sender, string roleId, [AsParameters] GetRoleAccessQuery query)
     {
         var vm = await sender.Send(query with { RoleId = roleId });
 
         return TypedResults.Ok(vm);
     }
 
-    [EndpointSummary("Grant a aole access")]
+    [EndpointSummary("Grant a role access")]
     [EndpointDescription("Grants a role access using the provided details and returns the ID of the created item.")]
     public static async Task<Created<int>> AddRoleAccess(ISender sender, string roleId, int accessId)
     {
@@ -85,6 +87,21 @@ public class Role : IEndpointGroup
         });
 
         return TypedResults.Created($"/api/Roles/{roleId}/accesses/{result}", result);
+    }
+
+    [EndpointSummary("Update a role's access permissions")]
+    [EndpointDescription("Updates the permissions and active status for a role's access claim.")]
+    public static async Task<NoContent> UpdateRoleAccess(
+            ISender sender,
+            string roleId,
+            int accessId,
+            UpdateRoleAccessCommand command)
+    {
+        command.RoleId = roleId;
+        command.AccessId = accessId;
+        await sender.Send(command);
+
+        return TypedResults.NoContent();
     }
 
     [EndpointSummary("Revoke a Role Access")]

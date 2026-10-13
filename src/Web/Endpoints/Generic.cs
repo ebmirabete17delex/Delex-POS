@@ -31,7 +31,7 @@ public class Generic : IEndpointGroup
     {
         int id = await sender.Send(command);
 
-        return TypedResults.Created($"/Role/{id}", id);
+        return TypedResults.Created($"/generics/{id}", id);
     }
 
     [EndpointSummary("Update a Generic")]

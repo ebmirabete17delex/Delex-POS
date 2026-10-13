@@ -27,7 +27,7 @@ public class ProductAttribute : IEndpointGroup
     {
         int id = await sender.Send(command);
 
-        return TypedResults.Created($"/Role/{id}", id);
+        return TypedResults.Created($"/prodattributes/{id}", id);
     }
 
     [EndpointSummary("Update a Product Attribute")]

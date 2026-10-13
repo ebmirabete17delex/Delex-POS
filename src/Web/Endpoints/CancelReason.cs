@@ -31,7 +31,7 @@ public class CancelReason : IEndpointGroup
     {
         int id = await sender.Send(command);
 
-        return TypedResults.Created($"/Role/{id}", id);
+        return TypedResults.Created($"/cancelreasons/{id}", id);
     }
 
     [EndpointSummary("Update an Cancel Reason")]

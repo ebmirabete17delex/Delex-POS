@@ -20,8 +20,8 @@ public class Product : IEndpointGroup
         groupBuilder.RequireAuthorization();
 
         groupBuilder.MapPost(CreateProduct);
-        groupBuilder.MapPost(CreateProductSale,"{id}/sale");
-        groupBuilder.MapPost(CreateProductPurchasing,"{id}/purchasing");
+        groupBuilder.MapPost(CreateProductSale, "{id}/sale");
+        groupBuilder.MapPost(CreateProductPurchasing, "{id}/purchasing");
         groupBuilder.MapPut(UpdateProduct, "{id}");
         groupBuilder.MapDelete(DeleteProduct, "{id}");
 
@@ -37,7 +37,7 @@ public class Product : IEndpointGroup
     {
         int id = await sender.Send(command);
 
-        return TypedResults.Created($"/product/{id}", id);
+        return TypedResults.Created($"/products/{id}", id);
     }
 
     [EndpointSummary("Create a new Product Sale")]
@@ -104,7 +104,7 @@ public class Product : IEndpointGroup
 
         return TypedResults.Ok(vm);
     }
-     
+
     [EndpointSummary("Get Product Purchasing")]
     [EndpointDescription("Retrieves the product purchasing information with the specified ID.")]
     public static async Task<Ok<ProductPurchasingDto>> GetProductPurchasing(ISender sender, int id)

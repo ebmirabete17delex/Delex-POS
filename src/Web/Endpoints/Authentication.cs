@@ -12,6 +12,7 @@ public class Authentication : IEndpointGroup
     public static void Map(RouteGroupBuilder groupBuilder)
     {
         groupBuilder.MapPost(Login, "login");
+        groupBuilder.MapPost(Activate, "activate");
         groupBuilder.MapPost(Logout, "logout").RequireAuthorization();
     }
 
@@ -25,6 +26,29 @@ public class Authentication : IEndpointGroup
             request.UserId,
             request.Password,
             request.IsPersistent);
+
+        return result is not null
+            ? TypedResults.Ok(result)
+            : TypedResults.Unauthorized();
+    }
+
+    [EndpointSummary("Activate an account")]
+    [EndpointDescription("Sets a new user's six-digit PIN and activates their account.")]
+    public static async Task<Results<Ok<TokenResponse>, BadRequest<string>, UnauthorizedHttpResult>> Activate(
+        IIdentityService identityService,
+        ActivationRequest request)
+    {
+        if (string.IsNullOrEmpty(request.Pin) ||
+            request.Pin.Length != 6 ||
+            request.Pin.Any(character => character < '0' || character > '9'))
+        {
+            return TypedResults.BadRequest("PIN must be exactly six digits.");
+        }
+
+        var result = await identityService.ActivateAsync(
+            request.UserId,
+            request.Password,
+            request.Pin);
 
         return result is not null
             ? TypedResults.Ok(result)
@@ -50,3 +74,8 @@ public sealed record LoginRequest(
     string UserId,
     string Password,
     bool IsPersistent = false);
+
+public sealed record ActivationRequest(
+    string UserId,
+    string Password,
+    string Pin);

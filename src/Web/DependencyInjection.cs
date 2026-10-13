@@ -1,8 +1,6 @@
 using Azure.Identity;
 using Delex_POS.Application.Common.Interfaces;
-using Delex_POS.Infrastructure.Data;
 using Delex_POS.Web.Services;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Microsoft.Extensions.DependencyInjection;

@@ -1,5 +1,4 @@
-﻿using Delex_POS.Application.Common.Models;
-using Delex_POS.Application.ProductCategories.Commands.CreateProductCategory;
+﻿using Delex_POS.Application.ProductCategories.Commands.CreateProductCategory;
 using Delex_POS.Application.ProductCategories.Commands.DeleteProductCategory;
 using Delex_POS.Application.ProductCategories.Queries.GetProductCategories;
 using Delex_POS.Application.ProductCategories.Queries.ProductCategoryDTOs;
@@ -23,7 +22,7 @@ public class ProductCategory : IEndpointGroup
     {
         int id = await sender.Send(command);
 
-        return TypedResults.Created($"/Role/{id}", id);
+        return TypedResults.Created($"/prodcategories/{id}", id);
     }
 
     [EndpointSummary("Delete a Product Category")]

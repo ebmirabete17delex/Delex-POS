@@ -19,7 +19,7 @@ public class ProductClass : IEndpointGroup
         groupBuilder.MapPost(CreateProductClass);
         groupBuilder.MapPut(UpdateProductClass, "{id}");
         groupBuilder.MapDelete(DeleteProductClass, "{id}");
-        
+
         groupBuilder.MapGet(GetProductClasses);
         groupBuilder.MapGet(GetProductClassesList, "list");
         groupBuilder.MapGet(GetProductClass, "{id}");
@@ -31,7 +31,7 @@ public class ProductClass : IEndpointGroup
     {
         int id = await sender.Send(command);
 
-        return TypedResults.Created($"/Role/{id}", id);
+        return TypedResults.Created($"/productclasses/{id}", id);
     }
 
     [EndpointSummary("Update a product class")]

@@ -20,7 +20,7 @@ public class Warehouse : IEndpointGroup
         groupBuilder.MapPut(UpdateWarehouse, "{id}");
         groupBuilder.MapDelete(DeleteWarehouse, "{id}");
         groupBuilder.MapGet(GetWarehouses);
-        //groupBuilder.MapGet(GetWarehouseList);
+        groupBuilder.MapGet(GetWarehouseList, "list");
         groupBuilder.MapGet(GetWarehouse, "{id}");
 
     }
@@ -30,7 +30,7 @@ public class Warehouse : IEndpointGroup
     {
         int id = await sender.Send(command);
 
-        return TypedResults.Created($"/Role/{id}", id);
+        return TypedResults.Created($"/warehouse/{id}", id);
     }
 
     [EndpointSummary("Update an Warehouse")]
@@ -62,14 +62,14 @@ public class Warehouse : IEndpointGroup
         return TypedResults.Ok(vm);
     }
 
-    //[EndpointSummary("Get all Warehouses for dropdown list")]
-    //[EndpointDescription("Retrieves all warehouses for dropdown list.")]
-    //public static async Task<Ok<List<WarehouseListDto>>> GetWarehouseList(ISender sender, [AsParameters] GetWarehousesListQuery query)
-    //{
-    //    var vm = await sender.Send(query);
+    [EndpointSummary("Get all Warehouses for dropdown list")]
+    [EndpointDescription("Retrieves all warehouses for dropdown list.")]
+    public static async Task<Ok<List<WarehouseListDto>>> GetWarehouseList(ISender sender, [AsParameters] GetWarehousesListQuery query)
+    {
+        var vm = await sender.Send(query);
 
-    //    return TypedResults.Ok(vm);
-    //}
+        return TypedResults.Ok(vm);
+    }
 
     [EndpointSummary("Get warehouse")]
     [EndpointDescription("Retrieves a warehouse.")]
