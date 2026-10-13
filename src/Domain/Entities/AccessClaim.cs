@@ -6,18 +6,18 @@ public class AccessClaim : BaseAuditableEntity
     public string BackendUrl { get; private set; } = string.Empty;
     public string FrontendUrl { get; private set; } = string.Empty;
 
-    public AccessClaim(string name, string feature, string backendUrl, string frontendUrl)
+    public AccessClaim(string name, string feature)
     {
         Name = name;
         Feature = feature;
-        BackendUrl = backendUrl;
-        FrontendUrl = frontendUrl;
+        BackendUrl = $"/api/{feature}";
+        FrontendUrl = $"/{feature}";
     }
 
-    public void Update(string feature, string backendUrl, string frontendUrl)
+    public void Update(string feature)
     {
         Feature = feature;
-        BackendUrl = backendUrl;
-        FrontendUrl = frontendUrl;
+        BackendUrl = $"/api/{feature}";
+        FrontendUrl = $"/{feature}";
     }
 }

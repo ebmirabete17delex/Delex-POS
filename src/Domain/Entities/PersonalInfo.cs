@@ -2,40 +2,36 @@
 
 public class PersonalInfo : BaseAuditableEntity
 {
-    public int AcctId { get; init; }
-    public string? Title { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string? MiddleName { get; set; }
-    public string? NameExt { get; set; }
-    public DateOnly BirthDate { get; set; }
-    public string Gender { get; set; }
-    public string CivilStatus { get; set; }
-    public int NationalityId { get; set; }
-    public string? Email { get; set; }
-    public string? BillingAddress1 { get; set; }
-    public string? BillingAddress2 { get; set; }
-    public string? BillingAddress3 { get; set; }
-    public string? Phone { get; set; }
-    public string? Mobile { get; set; }
-    public string? Fax { get; set; }
-    public string? Tin { get; set; }
-    public string? ContactPerson { get; set; }
-    public PersonalInfo(int acctId, string? title, string? firstName, string? lastName, string? middleName,
-        string? nameExt, DateOnly birthDate, string? gender, string? civilStatus, int nationalityId,
+    public string? Title { get; private set; }
+    public string FirstName { get; private set; }
+    public string LastName { get; private set; }
+    public string? MiddleName { get; private set; }
+    public string? NameExt { get; private set; }
+    public DateOnly BirthDate { get; private set; }
+    public Gender Gender { get; private set; }
+    public CivilStatus CivilStatus { get; private set; }
+    public string? Email { get; private set; }
+    public string? BillingAddress1 { get; private set; }
+    public string? BillingAddress2 { get; private set; }
+    public string? BillingAddress3 { get; private set; }
+    public string? Phone { get; private set; }
+    public string? Mobile { get; private set; }
+    public string? Fax { get; private set; }
+    public string? Tin { get; private set; }
+    public string? ContactPerson { get; private set; }
+    public PersonalInfo(string? title, string? firstName, string? lastName, string? middleName,
+        string? nameExt, DateOnly birthDate, Gender gender, CivilStatus civilStatus, 
         string? email, string? billingAddress1, string? billingAddress2, string? billingAddress3, 
         string? phone, string? mobile, string? fax, string? tin, string? contactPerson)
     {
-        AcctId = acctId;
         Title = title ?? string.Empty;
         FirstName = firstName ?? string.Empty;
         LastName = lastName ?? string.Empty;
         MiddleName = middleName ?? string.Empty;
         NameExt = nameExt ?? string.Empty;
         BirthDate = birthDate;
-        Gender = gender ?? string.Empty;
-        CivilStatus = civilStatus ?? string.Empty;
-        NationalityId = nationalityId;
+        Gender = gender;
+        CivilStatus = civilStatus;
         Email = email ?? string.Empty;
         BillingAddress1 = billingAddress1 ?? string.Empty;
         BillingAddress2 = billingAddress2 ?? string.Empty;
@@ -48,7 +44,7 @@ public class PersonalInfo : BaseAuditableEntity
     }
 
     public void Update(string? title, string? firstName, string? lastName, string? middleName,
-        string? nameExt, DateOnly birthDate, string? gender, string? civilStatus, int nationalityId,
+        string? nameExt, DateOnly birthDate, Gender gender, CivilStatus civilStatus, 
         string? email, string? billingAddress1, string? billingAddress2, string? billingAddress3, 
         string? phone, string? mobile, string? fax, string? tin, string? contactPerson)
     {
@@ -58,9 +54,8 @@ public class PersonalInfo : BaseAuditableEntity
         MiddleName = middleName ?? string.Empty;
         NameExt = nameExt ?? string.Empty;
         BirthDate = birthDate;
-        Gender = gender ?? string.Empty;
-        CivilStatus = civilStatus ?? string.Empty;
-        NationalityId = nationalityId;
+        Gender = gender;
+        CivilStatus = civilStatus;
         Email = email ?? string.Empty;
         BillingAddress1 = billingAddress1 ?? string.Empty;
         BillingAddress2 = billingAddress2 ?? string.Empty;
