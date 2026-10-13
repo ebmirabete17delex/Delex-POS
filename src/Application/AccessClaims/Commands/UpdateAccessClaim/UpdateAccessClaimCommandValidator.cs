@@ -13,16 +13,6 @@ public class UpdateAccessClaimCommandValidator : AbstractValidator<UpdateAccessC
             .NotEmpty()
             .NotNull()
             .MaximumLength(200);
-        
-        RuleFor(v => v.BackendUrl)
-            .NotEmpty()
-            .NotNull()
-            .MaximumLength(200);
-
-        RuleFor(v => v.FrontendUrl)
-            .NotEmpty()
-            .NotNull()
-            .MaximumLength(200);
 
         RuleFor(v => v.Id)
             .NotEmpty()

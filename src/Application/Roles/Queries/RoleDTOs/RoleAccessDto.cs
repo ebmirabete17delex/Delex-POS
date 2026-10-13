@@ -1,3 +1,5 @@
+using Delex_POS.Domain.Entities;
+
 namespace Delex_POS.Application.Roles.Queries.RoleDTOs;
 
 public class RoleAccessDto
@@ -6,8 +8,17 @@ public class RoleAccessDto
     public string RoleId { get; init; } = string.Empty;
     public int AccessId { get; init; }
     public string Name { get; init; } = string.Empty;
-    public string Feature { get; init; } = string.Empty;
-    public string BackendUrl { get; init; } = string.Empty;
-    public string FrontendUrl { get; init; } = string.Empty;
-    public string[] Details { get; init; } = Array.Empty<string>();
+    public bool HasRead { get; init; }
+    public bool HasWrite { get; init; }
+    public bool HasDelete { get; init; }
+    public bool HasUpdate { get; init; }
+    public bool IsActive { get; init; }
+
+    public class Mapping : Profile
+    {
+        public Mapping()
+        {
+            CreateMap<RoleAccess, RoleAccessDto>();
+        }
+    }
 }

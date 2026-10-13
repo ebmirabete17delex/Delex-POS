@@ -1,4 +1,4 @@
-﻿using Delex_POS.Application.Common.Interfaces.Repositories.Account;
+﻿using Delex_POS.Application.Common.Interfaces.Repositories.Supplier;
 using Delex_POS.Application.Common.Interfaces.Repositories.Product;
 using Delex_POS.Application.Common.Interfaces.Repositories.UnitOfMeasure;
 
@@ -7,15 +7,15 @@ namespace Delex_POS.Application.ProductPurchasings.Commands.CreateProductPurchas
 public class CreateProductPurchasingCommandValidator : AbstractValidator<CreateProductPurchasingCommand>
 {
     private readonly IProductQueryRepository _productQueryRepository;
-    private readonly IAccountQueryRepository _accountQueryRepository;
+    private readonly ISupplierQueryRepository _supplierQueryRepository;
     private readonly IUnitOfMeasureQueryRepository _unitOfMeasureQueryRepository;
     public CreateProductPurchasingCommandValidator(
         IProductQueryRepository productQueryRepository, 
-        IAccountQueryRepository accountQueryRepository, 
+        ISupplierQueryRepository supplierQueryRepository, 
         IUnitOfMeasureQueryRepository unitOfMeasureQueryRepository)
     {
         _productQueryRepository = productQueryRepository;
-        _accountQueryRepository = accountQueryRepository;
+        _supplierQueryRepository = supplierQueryRepository;
         _unitOfMeasureQueryRepository = unitOfMeasureQueryRepository;
 
         RuleFor(v => v.ProductId)
@@ -48,9 +48,8 @@ public class CreateProductPurchasingCommandValidator : AbstractValidator<CreateP
     }
     private async Task<bool> PrimarySupplierIdExist(int id, CancellationToken cancellationToken)
     {
-        var exists = await _accountQueryRepository
-            .ExistAsync(e => e.Id == id && 
-            e.AccountType == Domain.Enums.AccountType.Supplier, 
+        var exists = await _supplierQueryRepository
+            .ExistAsync(e => e.Id == id, 
             cancellationToken);
         return exists;
     }

@@ -11,5 +11,5 @@ public interface IRoleAccessQueryRepository : IQueryHandlerBase<Domain.Entities.
 
     // Task<bool> UserExistInNonDraftCompanies(int userId);
     Task<Domain.Entities.RoleAccess> GetByRoleIdAndAccessIdAsync(string roleId, int accessId);
-    IQueryable<RoleAccessDto> GetByRoleId(string id, string sortBy, TableSort sortDirection);
+    IQueryable<RoleAccessDto> GetByRoleId(string id);
 }

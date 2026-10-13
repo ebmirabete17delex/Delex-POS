@@ -1,5 +1,4 @@
-﻿using Delex_POS.Application.Common.Interfaces.Repositories.Account;
-using Delex_POS.Application.Common.Interfaces.Repositories.Warehouse;
+﻿using Delex_POS.Application.Common.Interfaces.Repositories.Warehouse;
 
 namespace Delex_POS.Application.Warehouses.Commands.UpdateWarehouse;
 

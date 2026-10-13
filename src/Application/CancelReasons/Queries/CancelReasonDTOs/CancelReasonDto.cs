@@ -14,7 +14,7 @@ public class CancelReasonDto
     {
         public Mapping()
         {
-            CreateMap<CancelReason, CancelReasonDto>();
+            CreateMap<CancelReason, CancelReasonDto>(); 
         }
     }
 };

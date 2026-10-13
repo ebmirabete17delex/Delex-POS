@@ -6,10 +6,6 @@ public record UpdateAccessClaimCommand : IRequest
 {
     public int Id { get; set; }
     public string Feature { get; set; } = string.Empty;
-
-    public string BackendUrl { get; set; } = string.Empty;
-
-    public string FrontendUrl { get; set; } = string.Empty;
 }
 
 public class UpdateAccessClaimCommandHandler : IRequestHandler<UpdateAccessClaimCommand>
@@ -28,9 +24,7 @@ public class UpdateAccessClaimCommandHandler : IRequestHandler<UpdateAccessClaim
         var entity = await _accessClaimQueryRepository.GetByIdAsync(request.Id, cancellationToken);
         Guard.Against.NotFound(request.Id, entity);
         entity.Update(
-            request.Feature,
-            request.BackendUrl,
-            request.FrontendUrl
+            request.Feature
         );
         await _accessClaimCommandRepository.UpdateAsync(entity, cancellationToken);
     }

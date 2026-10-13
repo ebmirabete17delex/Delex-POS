@@ -5,7 +5,6 @@ using Delex_POS.Application.Common.Mappings;
 using Delex_POS.Application.Common.Models;
 using Delex_POS.Application.Common.Interfaces.Repositories.Branch;
 using Delex_POS.Application.Branches.Queries.BranchDTOs;
-using Delex_POS.Domain.Entities;
 
 namespace Delex_POS.Application.Branches.Queries.GetBranches;
 
@@ -33,7 +32,7 @@ public class GetBranchesQueryHandler : IRequestHandler<GetBranchesQuery, Paginat
     {
         string? searchQuery = request.SearchQuery;
 
-        Expression<Func<Branch, bool>> filter = (searchQuery) switch
+        Expression<Func<BranchDto, bool>> filter = (searchQuery) switch
         {
             (null) => x => true,
             (_) => x => x.Name.Contains(searchQuery)
@@ -45,12 +44,10 @@ public class GetBranchesQueryHandler : IRequestHandler<GetBranchesQuery, Paginat
         var sortBy = string.IsNullOrEmpty(request.SortBy) ? "Created" : request.SortBy;
         var sortDirection = request.Sort is null ? TableSort.DESC : (TableSort)request.Sort;
 
-        var query = _branchQueryRepository.GetAll().Where(filter);
+        var query = _branchQueryRepository.GetBranches().Where(filter);
 
         query = query.OrderBy(sortBy, sortDirection);
 
-        var projectedQuery = query.ProjectTo<BranchDto>(_mapper.ConfigurationProvider);
-
-        return await projectedQuery.PaginatedListAsync(request.PageNumber, request.PageSize);
+        return await query.PaginatedListAsync(request.PageNumber, request.PageSize);
     }
 }

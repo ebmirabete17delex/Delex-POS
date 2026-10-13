@@ -2,6 +2,7 @@ namespace Delex_POS.Application.Common.Models;
 
 public class TokenResponse
 {
+    public bool IsActive { get; init; }
     public string? TokenType { get; init; }
     public string AccessToken { get; init; } = string.Empty;
     public int ExpiresIn { get; init; }

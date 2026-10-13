@@ -6,6 +6,7 @@ public class AccessClaimListDto
 {
     public int Id { get; init; }
     public string Name { get; set; } = string.Empty;
+    public string Feature { get; set; } = string.Empty;
     public class Mapping : Profile
     {
         public Mapping()

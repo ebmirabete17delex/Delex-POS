@@ -6,8 +6,6 @@ public record CreateAccessClaimCommand : IRequest<int>
 {
     public string Name { get; set; } = string.Empty;
     public string Feature { get; set; } = string.Empty;
-    public string BackendUrl { get; set; } = string.Empty;
-    public string FrontendUrl { get; set; } = string.Empty;
 
 }
 
@@ -24,9 +22,7 @@ public class CreateAccessClaimCommandHandler : IRequestHandler<CreateAccessClaim
     {
         var entity = new Domain.Entities.AccessClaim(
             name: request.Name,
-            feature: request.Feature,
-            backendUrl: request.BackendUrl,
-            frontendUrl: request.FrontendUrl
+            feature: request.Feature
         );
 
         return await _accessClaimCommandRepository.AddAsync(entity,cancellationToken);

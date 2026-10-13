@@ -38,9 +38,7 @@ public class GetAccessClaimsQueryHandler : IRequestHandler<GetAccessClaimsQuery,
         {
             (null) => x => true,
             (_) => x => x.Name.Contains(searchQuery)
-                        || x.Feature.Contains(searchQuery)
-                        || x.BackendUrl.Contains(searchQuery)
-                        || x.FrontendUrl.Contains(searchQuery),
+                        || x.Feature.Contains(searchQuery),
         };
 
         var sortBy = string.IsNullOrEmpty(request.SortBy) ? "Created" : request.SortBy;

@@ -1,7 +1,7 @@
 ﻿using Delex_POS.Application.Common.Models;
 using Delex_POS.Application.Common.Enums;
 using Delex_POS.Application.Roles.Queries.RoleDTOs;
-using Delex_POS.Application.Users.Queries.UserDTOs;
+using Delex_POS.Application.Employees.Queries.EmployeeDTOs;
 namespace Delex_POS.Application.Common.Interfaces;
 
 public interface IIdentityService
@@ -11,13 +11,16 @@ public interface IIdentityService
     Task<string?> GetUserNameAsync(string userId);
 
     Task<ApplicationUserDto> GetUserByIdAsync(string userid);
-    IQueryable<ApplicationUserDto> GetAllUsers(string? searchQuery, string sortBy, TableSort sort);
     Task<bool> IsInRoleAsync(string userId, string role);
     Task<bool> AuthorizeAsync(string userId, string policyName);
+    Task<string> GetLastUserCode(CancellationToken cancellationToken);
     Task<(Result Result, string UserId)> CreateUserAsync(string userName, string password);
     Task<(Result Result, string UserId)> CreateUserAsync(ApplicationUserDto userName, string password);
     Task<Result> DeleteUserAsync(string userId);
-    Task<Result> UpdateUserAsync(ApplicationUserDto user);
+    Task<Result> UpdateUserPinAsync(string userId, string newPIN);
+    Task<Result> ActivateUserAsync(string userId, string newPassword, string userPin);
+    Task<Result> DeactivateUserAsync(string userId);
+    Task<TokenResponse?> ActivateAsync(string userCode, string password, string pin);
     #endregion
 
     // Role Management

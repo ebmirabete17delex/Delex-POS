@@ -14,14 +14,6 @@ public class CreateAccessClaimCommandValidator : AbstractValidator<CreateAccessC
             .NotNull()
             .MaximumLength(200);
 
-        RuleFor(v => v.BackendUrl)
-            .NotEmpty()
-            .NotNull();
-
-        RuleFor(v => v.FrontendUrl)
-            .NotEmpty()
-            .NotNull();
-
     }
 }
 

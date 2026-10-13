@@ -12,12 +12,12 @@ public class CreateRegionCommandValidator : AbstractValidator<CreateRegionComman
         RuleFor(v => v.Name)
             .NotNull()
             .NotEmpty()
-            .MustAsync(Exists);
+            .MustAsync(NotExists);
     }
-    private async Task<bool> Exists(string name, CancellationToken cancellationToken)
+    private async Task<bool> NotExists(string name, CancellationToken cancellationToken)
     {
         var exists = await _query.ExistAsync(e => e.Name == name, cancellationToken);
-        return exists;
+        return !exists;
     }
 
 }

@@ -1,5 +1,6 @@
-using Delex_POS.Application.Users.Queries.UserDTOs;
 using Delex_POS.Application.Common.Enums;
+using Delex_POS.Application.Employees.Queries.EmployeeDTOs;
+
 namespace Delex_POS.Application.Common.Interfaces.Repositories.UserAccess;
 public interface IUserAccessQueryRepository : IQueryHandlerBase<Domain.Entities.UserAccess>
 {
@@ -11,5 +12,5 @@ public interface IUserAccessQueryRepository : IQueryHandlerBase<Domain.Entities.
 
     // Task<bool> UserExistInNonDraftCompanies(int userId);
     Task<Domain.Entities.UserAccess> GetByUserIdAndAccessIdAsync(string userId, int accessId);
-    IQueryable<UserAccessDto> GetByUserId(string id, string sortBy, TableSort sortDirection);
+    IQueryable<UserAccessDto> GetByUserId(string id);
 }
