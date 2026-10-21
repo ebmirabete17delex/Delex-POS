@@ -8,10 +8,10 @@ public class Warehouse : BaseAuditableEntity
     public bool IsActive { get; private set; }
     public string? Address1 { get; private set; }
     public string? Address2 { get; private set; }
-    public string? RegionCode { get; private set; }
-    public string? ProvinceCode { get; private set; }
-    public string? MunicipalityCode { get; private set; }
-    public string? BarangayCode { get; private set; }
+    public string RegionCode { get; private set; }
+    public string ProvinceCode { get; private set; }
+    public string MunicipalityCode { get; private set; }
+    public string BarangayCode { get; private set; }
     public string? Phone { get; private set; }
     public string? Fax { get; private set; }
     public string? Email { get; private set; }

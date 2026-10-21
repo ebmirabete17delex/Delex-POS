@@ -411,10 +411,20 @@ export const businessPageDefinitions = {
       field('warehouseId', 'Warehouse code', 'text', true),
       field('name', 'Name', 'text', true),
       field('memo', 'Notes'),
-      field('isActive', 'Active', 'checkbox'),
       field('address1', 'Address 1'),
       field('address2', 'Address 2'),
-      field('address3', 'Address 3'),
+      field('regionCode', 'Region', 'select', true, async () => (
+        await api(PsgcClient).getRegions()
+      ).map(region => ({ value: region.code, label: region.areaName }))),
+      field('provinceCode', 'Province', 'select', true, async values => (
+        await api(PsgcClient).getProvinces(values.regionCode)
+      ).map(province => ({ value: province.code, label: province.areaName })), ['regionCode']),
+      field('municipalityCode', 'City/Municipality', 'select', true, async values => (
+        await api(PsgcClient).getMunicipalities(values.provinceCode)
+      ).map(municipality => ({ value: municipality.code, label: municipality.areaName })), ['provinceCode']),
+      field('barangayCode', 'Barangay', 'select', true, async values => (
+        await api(PsgcClient).getBarangays(values.municipalityCode)
+      ).map(barangay => ({ value: barangay.code, label: barangay.areaName })), ['municipalityCode']),
       field('phone', 'Phone'),
       field('fax', 'Fax'),
       field('email', 'Email', 'email'),
@@ -424,7 +434,18 @@ export const businessPageDefinitions = {
       field('memo', 'Notes'),
       field('address1', 'Address 1'),
       field('address2', 'Address 2'),
-      field('address3', 'Address 3'),
+      field('regionCode', 'Region', 'select', true, async () => (
+        await api(PsgcClient).getRegions()
+      ).map(region => ({ value: region.code, label: region.areaName }))),
+      field('provinceCode', 'Province', 'select', true, async values => (
+        await api(PsgcClient).getProvinces(values.regionCode)
+      ).map(province => ({ value: province.code, label: province.areaName })), ['regionCode']),
+      field('municipalityCode', 'City/Municipality', 'select', true, async values => (
+        await api(PsgcClient).getMunicipalities(values.provinceCode)
+      ).map(municipality => ({ value: municipality.code, label: municipality.areaName })), ['provinceCode']),
+      field('barangayCode', 'Barangay', 'select', true, async values => (
+        await api(PsgcClient).getBarangays(values.municipalityCode)
+      ).map(barangay => ({ value: barangay.code, label: barangay.areaName })), ['municipalityCode']),
       field('phone', 'Phone'),
       field('fax', 'Fax'),
       field('email', 'Email', 'email'),
@@ -433,7 +454,7 @@ export const businessPageDefinitions = {
     columns: [
       { name: 'warehouseId', label: 'Code' },
       { name: 'name', label: 'Name' },
-      { name: 'isActive', label: 'Active', type: 'checkbox' },
+      { name: 'email', label: 'Email Address' },
       { name: 'phone', label: 'Phone' },
     ],
   },

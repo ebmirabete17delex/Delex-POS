@@ -8906,7 +8906,6 @@ export class CreateWarehouseCommand implements ICreateWarehouseCommand {
     warehouseId?: string;
     name?: string;
     memo?: string | undefined;
-    isActive?: boolean;
     address1?: string | undefined;
     address2?: string | undefined;
     regionCode?: string;
@@ -8937,7 +8936,6 @@ export class CreateWarehouseCommand implements ICreateWarehouseCommand {
             this.warehouseId = _data["warehouseId"];
             this.name = _data["name"];
             this.memo = _data["memo"];
-            this.isActive = _data["isActive"];
             this.address1 = _data["address1"];
             this.address2 = _data["address2"];
             this.regionCode = _data["regionCode"];
@@ -8966,7 +8964,6 @@ export class CreateWarehouseCommand implements ICreateWarehouseCommand {
         data["warehouseId"] = this.warehouseId;
         data["name"] = this.name;
         data["memo"] = this.memo;
-        data["isActive"] = this.isActive;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
         data["regionCode"] = this.regionCode;
@@ -8984,7 +8981,6 @@ export interface ICreateWarehouseCommand {
     warehouseId?: string;
     name?: string;
     memo?: string | undefined;
-    isActive?: boolean;
     address1?: string | undefined;
     address2?: string | undefined;
     regionCode?: string;

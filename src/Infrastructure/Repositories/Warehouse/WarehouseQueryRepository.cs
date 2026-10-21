@@ -22,7 +22,7 @@ public class WarehouseQueryRepository : QueryHandlerBase<Domain.Entities.Warehou
                                 , w.RegionCode
                                 , r.AreaName AS Region
                                 , w.ProvinceCode
-                                , c.AreaName as Province
+                                , p.AreaName as Province
                                 , w.MunicipalityCode
                                 , m.AreaName as Municipality
                                 , w.BarangayCode

@@ -7,7 +7,6 @@ public record CreateWarehouseCommand : IRequest<int>
     public string WarehouseId { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string? Memo { get; set; }
-    public bool IsActive { get; set; }
     public string? Address1 { get; set; }
     public string? Address2 { get; set; }
     public string RegionCode { get; set; } = string.Empty;
