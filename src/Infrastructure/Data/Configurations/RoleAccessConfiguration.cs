@@ -8,6 +8,11 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<RoleAccess>
 {
     public void Configure(EntityTypeBuilder<RoleAccess> builder)
     {
+        builder.HasQueryFilter(ur => !ur.IsDeleted);
+
+        builder.HasIndex(ur => ur.IsDeleted)
+            .HasFilter("IsDeleted = 0");
+
         builder.Property(ur => ur.AccessId)
             .IsRequired();
 

@@ -1,23 +1,23 @@
 ﻿namespace Delex_POS.Domain.Entities;
 
-public class PsgcRegion : BaseAuditableEntity
+public class PsgcRegion : BaseEntity
 {
-    public string PsgcCode { get; private set; } = string.Empty;
-    public string PsgcAreaName { get; private set; } = string.Empty;
-    public string PsgcIslandRegion { get; private set; } = string.Empty;
-    public string PsgcVersion { get; private set; } = string.Empty;
+    public string Code { get; private set; } = string.Empty;
+    public string AreaName { get; private set; } = string.Empty;
+    public string IslandRegion { get; private set; } = string.Empty;
+    public string Version { get; private set; } = string.Empty;
 
-    public PsgcRegion(string code, string areaName, string islangRegion, string version)
+    public PsgcRegion(string code, string areaName, string islandRegion, string version)
     {
-        PsgcCode = code;
-        PsgcAreaName = areaName;
-        PsgcIslandRegion = islangRegion;
-        PsgcVersion = version;
+        Code = code;
+        AreaName = areaName;
+        IslandRegion = islandRegion;
+        Version = version;
     }
-    public void Update(string areaName, string islangRegion, string version)
+    public void Update(string areaName, string islandRegion, string version)
     {
-        PsgcAreaName = areaName;
-        PsgcIslandRegion = islangRegion;
-        PsgcVersion = version;
+        AreaName = areaName;
+        IslandRegion = islandRegion;
+        Version = version;
     }
 }

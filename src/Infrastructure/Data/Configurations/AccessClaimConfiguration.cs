@@ -8,6 +8,11 @@ public class AccessClaimConfiguration : IEntityTypeConfiguration<AccessClaim>
 {
     public void Configure(EntityTypeBuilder<AccessClaim> builder)
     {
+        builder.HasQueryFilter(ac => !ac.IsDeleted);
+
+        builder.HasIndex(ac => ac.IsDeleted)
+            .HasFilter("IsDeleted = 0");
+
         builder.Property(ac => ac.Name)
             .HasMaxLength(100)
             .IsRequired();

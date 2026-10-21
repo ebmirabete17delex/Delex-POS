@@ -8,22 +8,15 @@ public class UserAccessConfiguration : IEntityTypeConfiguration<UserAccess>
 {
     public void Configure(EntityTypeBuilder<UserAccess> builder)
     {
+        builder.HasQueryFilter(u => !u.IsDeleted);
+
+        builder.HasIndex(u => u.IsDeleted)
+            .HasFilter("IsDeleted = 0");
+
         builder.Property(u => u.UserId)
             .IsRequired();
 
         builder.Property(u => u.AccessId)
-            .IsRequired();
-
-        builder.Property(u => u.HasRead)
-            .IsRequired();
-
-        builder.Property(u => u.HasWrite)
-            .IsRequired();
-
-        builder.Property(u => u.HasDelete)
-            .IsRequired();
-
-        builder.Property(u => u.HasUpdate)
             .IsRequired();
 
         builder.Property(u => u.IsActive)

@@ -3,28 +3,19 @@ public class UserAccess : BaseAuditableEntity
 {
     public string UserId { get; init; }
     public int AccessId { get; init; }
-    public bool HasRead { get; private set; }
-    public bool HasWrite { get; private set; }
-    public bool HasDelete { get; private set; }
-    public bool HasUpdate { get; private set; }
     public bool IsActive { get; private set; }
-    public UserAccess(string userId, int accessId, bool hasWrite = false, bool hasDelete = false, bool hasUpdate = false)
+    public UserAccess(string userId, int accessId)
     {
         UserId = userId;
         AccessId = accessId;
-        HasRead = true;
-        HasWrite = hasWrite;
-        HasDelete = hasDelete;
-        HasUpdate = hasUpdate;
         IsActive = true;
     }
-
-    public void Update(bool hasRead, bool hasWrite, bool hasDelete, bool hasUpdate, bool isActive)
+    public void Activate()
     {
-        HasRead = hasRead;
-        HasWrite = hasWrite;
-        HasDelete = hasDelete;
-        HasUpdate = hasUpdate;
-        IsActive = isActive;
+        IsActive = true;
+    }
+    public void Deactivate()
+    {
+        IsActive = false;
     }
 }

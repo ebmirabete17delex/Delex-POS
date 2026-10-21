@@ -1,3 +1,5 @@
+using Delex_POS.Application.Warehouses.Queries.WarehouseDTOs;
+
 namespace Delex_POS.Application.Common.Interfaces.Repositories.Warehouse;
 public interface IWarehouseQueryRepository : IQueryHandlerBase<Domain.Entities.Warehouse>
 {
@@ -7,5 +9,6 @@ public interface IWarehouseQueryRepository : IQueryHandlerBase<Domain.Entities.W
     // Task<Domain.Entities.Company?> GetCompanyByQROnboadingDisplayId(Guid displayId);
     // IQueryable<CompanyDto> GetCompanies();
 
+    IQueryable<WarehouseDto> GetWarehouse(int id);
     // Task<bool> UserExistInNonDraftCompanies(int userId);
 }

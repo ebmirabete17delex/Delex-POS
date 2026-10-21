@@ -8,12 +8,16 @@ public class Warehouse : BaseAuditableEntity
     public bool IsActive { get; private set; }
     public string? Address1 { get; private set; }
     public string? Address2 { get; private set; }
-    public string? Address3 { get; private set; }
+    public string? RegionCode { get; private set; }
+    public string? ProvinceCode { get; private set; }
+    public string? MunicipalityCode { get; private set; }
+    public string? BarangayCode { get; private set; }
     public string? Phone { get; private set; }
     public string? Fax { get; private set; }
     public string? Email { get; private set; }
-    public Warehouse (string warehouseId, string name, string? memo, string? address1, string? address2, 
-        string? address3,  string? phone, string? fax, string email)
+    public Warehouse (string warehouseId, string name, string? memo, string? address1, 
+        string? address2, string regionCode, string provinceCode, string municipalityCode, 
+        string barangayCode, string? phone, string? fax, string email)
     {
         WarehouseId = warehouseId;
         Name = name;
@@ -21,19 +25,26 @@ public class Warehouse : BaseAuditableEntity
         IsActive = true;
         Address1 = address1;
         Address2 = address2;
-        Address3 = address3;
+        RegionCode = regionCode;
+        ProvinceCode = provinceCode;
+        MunicipalityCode = municipalityCode;
+        BarangayCode = barangayCode;
         Phone = phone;
         Fax = fax;
         Email = email;
     }
     public void Update(string? name, string? memo, string? address1, string? address2,
-        string? address3, string? phone, string? fax, string? email)
+        string regionCode, string provinceCode, string municipalityCode,
+        string barangayCode, string? phone, string? fax, string? email)
     {
         Name = name ?? string.Empty;
         Memo = memo;
         Address1 = address1;
         Address2 = address2;
-        Address3 = address3;
+        RegionCode = regionCode;
+        ProvinceCode = provinceCode;
+        MunicipalityCode = municipalityCode;
+        BarangayCode = barangayCode;
         Phone = phone;
         Fax = fax;
         Email = email;

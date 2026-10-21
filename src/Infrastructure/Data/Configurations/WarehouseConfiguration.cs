@@ -8,6 +8,11 @@ public class WarehouseConfiguration : IEntityTypeConfiguration<Warehouse>
 {
     public void Configure(EntityTypeBuilder<Warehouse> builder)
     {
+        builder.HasQueryFilter(b => !b.IsDeleted);
+
+        builder.HasIndex(b => b.IsDeleted)
+            .HasFilter("IsDeleted = 0");
+
         builder.Property(b => b.WarehouseId)
             .HasMaxLength(100)
             .IsRequired();
@@ -28,8 +33,21 @@ public class WarehouseConfiguration : IEntityTypeConfiguration<Warehouse>
         builder.Property(b => b.Address2)
             .HasMaxLength(200);
 
-        builder.Property(b => b.Address3)
-            .HasMaxLength(200);
+        builder.Property(b => b.RegionCode)
+            .IsRequired()
+            .HasMaxLength(10);
+
+        builder.Property(b => b.ProvinceCode)
+            .IsRequired()
+            .HasMaxLength(10);
+
+        builder.Property(b => b.MunicipalityCode)
+            .IsRequired()
+            .HasMaxLength(10);
+
+        builder.Property(b => b.BarangayCode)
+            .IsRequired()
+            .HasMaxLength(10);
 
         builder.Property(b => b.Phone)
             .HasMaxLength(15);

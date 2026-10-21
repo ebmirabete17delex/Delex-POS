@@ -6,17 +6,18 @@ namespace Delex_POS.Application.Warehouses.Queries.GetWarehouse;
 public record GetWarehouseQuery(int Id) : IRequest<WarehouseDto>;
 public class GetWarehouseQueryHandler : IRequestHandler<GetWarehouseQuery,WarehouseDto>
 {
-    private readonly IMapper _mapper;
     private readonly IWarehouseQueryRepository _warehouseQueryRepository;
-    public GetWarehouseQueryHandler(IMapper mapper, IWarehouseQueryRepository warehouseQueryRepository)
+    public GetWarehouseQueryHandler(
+        IWarehouseQueryRepository warehouseQueryRepository)
     {
-        _mapper = mapper;
         _warehouseQueryRepository = warehouseQueryRepository;
     }
     public async Task<WarehouseDto> Handle(GetWarehouseQuery request, CancellationToken cancellationToken)
     {
-        var entity = await _warehouseQueryRepository.GetByIdAsync(request.Id, cancellationToken);
+        var entity = await _warehouseQueryRepository
+            .GetWarehouse(request.Id)
+            .FirstAsync(e => e.Id == request.Id, cancellationToken);
         Guard.Against.NotFound(request.Id, entity);
-        return _mapper.Map<WarehouseDto>(entity);
+        return entity;
     }
 }

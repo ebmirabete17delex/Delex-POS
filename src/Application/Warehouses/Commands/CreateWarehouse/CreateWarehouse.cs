@@ -10,7 +10,10 @@ public record CreateWarehouseCommand : IRequest<int>
     public bool IsActive { get; set; }
     public string? Address1 { get; set; }
     public string? Address2 { get; set; }
-    public string? Address3 { get; set; }
+    public string RegionCode { get; set; } = string.Empty;
+    public string ProvinceCode { get; set; } = string.Empty;
+    public string MunicipalityCode { get; set; } = string.Empty;
+    public string BarangayCode { get; set; } = string.Empty;
     public string? Phone { get; set; }
     public string? Fax { get; set; }
     public string? Email { get; set; }
@@ -32,7 +35,10 @@ public class CreateWarehouseCommandHandler : IRequestHandler<CreateWarehouseComm
             memo: request.Memo ?? string.Empty,
             address1: request.Address1 ?? string.Empty,
             address2: request.Address2 ?? string.Empty,
-            address3: request.Address3 ?? string.Empty,
+            regionCode: request.RegionCode,
+            provinceCode: request.ProvinceCode,
+            municipalityCode: request.MunicipalityCode,
+            barangayCode: request.BarangayCode,
             phone: request.Phone ?? string.Empty,
             fax: request.Fax ?? string.Empty,
             email: request.Email ?? string.Empty);

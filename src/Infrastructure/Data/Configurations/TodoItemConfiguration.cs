@@ -8,6 +8,11 @@ public class TodoItemConfiguration : IEntityTypeConfiguration<TodoItem>
 {
     public void Configure(EntityTypeBuilder<TodoItem> builder)
     {
+        builder.HasQueryFilter(t => !t.IsDeleted);
+
+        builder.HasIndex(t => t.IsDeleted)
+            .HasFilter("IsDeleted = 0");
+
         builder.Property(t => t.Title)
             .HasMaxLength(200)
             .IsRequired();

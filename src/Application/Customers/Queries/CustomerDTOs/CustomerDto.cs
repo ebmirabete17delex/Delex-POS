@@ -19,7 +19,14 @@ public class CustomerDto
     public string? Email { get; set; }
     public string? BillingAddress1 { get; set; }
     public string? BillingAddress2 { get; set; }
-    public string? BillingAddress3 { get; set; }
+    public string RegionCode { get; set; } = string.Empty;
+    public string? Region { get; set; }
+    public string ProvinceCode { get; set; } = string.Empty;
+    public string? Province { get; set; }
+    public string MunicipalityCode { get; set; } = string.Empty;
+    public string? Municipality { get; set; }
+    public string BarangayCode { get; set; } = string.Empty;
+    public string? Barangay { get; set; }
     public string? Phone { get; set; }
     public string? Mobile { get; set; }
     public string? Fax { get; set; }

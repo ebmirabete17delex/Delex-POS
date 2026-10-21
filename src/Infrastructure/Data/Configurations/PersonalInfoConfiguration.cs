@@ -8,7 +8,11 @@ internal class PersonalInfoConfiguration : IEntityTypeConfiguration<PersonalInfo
 {
     public void Configure(EntityTypeBuilder<PersonalInfo> builder)
     {
- 
+        builder.HasQueryFilter(pi => !pi.IsDeleted);
+
+        builder.HasIndex(pi => pi.IsDeleted)
+            .HasFilter("IsDeleted = 0");
+
         builder.Property(pi => pi.Title)
             .HasMaxLength(3);
 
@@ -46,8 +50,21 @@ internal class PersonalInfoConfiguration : IEntityTypeConfiguration<PersonalInfo
         builder.Property(pi => pi.BillingAddress2)
             .HasMaxLength(200);
 
-        builder.Property(pi => pi.BillingAddress3)
-            .HasMaxLength(200);
+        builder.Property(b => b.RegionCode)
+            .IsRequired()
+            .HasMaxLength(10);
+
+        builder.Property(b => b.ProvinceCode)
+            .IsRequired()
+            .HasMaxLength(10);
+
+        builder.Property(b => b.MunicipalityCode)
+            .IsRequired()
+            .HasMaxLength(10);
+
+        builder.Property(b => b.BarangayCode)
+            .IsRequired()
+            .HasMaxLength(10);
 
         builder.Property(pi => pi.Phone)
             .HasMaxLength(15);

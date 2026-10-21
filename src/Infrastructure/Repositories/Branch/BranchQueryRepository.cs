@@ -1,7 +1,5 @@
 ﻿using Delex_POS.Application.Branches.Queries.BranchDTOs;
 using Delex_POS.Application.Common.Interfaces.Repositories.Branch;
-using Delex_POS.Application.Common.Models;
-using Delex_POS.Application.Customers.Queries.CustomerDTOs;
 using Delex_POS.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,19 +8,24 @@ namespace Delex_POS.Infrastructure.Repositories.Branch;
 public class BranchQueryRepository : QueryHandlerBase<Domain.Entities.Branch>, IBranchQueryRepository
 {
     public BranchQueryRepository(ApplicationDbContext dbContext) : base(dbContext) { }
-     
-    public IQueryable<BranchDto> GetBranches()
+
+    public IQueryable<BranchDto> GetBranch(int id)
     {
         string query = $"""
                         SELECT b.Id as Id
                               	, b.Name AS Name
                               	, b.WarehouseId AS WarehouseId
                               	, w.Name AS Warehouse
-                              	, b.RegionId AS RegionId
-                              	, r.Name AS Region
+                              	, b.RegionCode AS RegionCode
+                              	, r.AreaName AS Region
+                              	, b.ProvinceCode AS ProvinceCode
+                              	, p.AreaName AS Province
+                              	, b.MunicipalityCode AS MunicipalityCode
+                              	, m.AreaName AS Municipality
+                              	, b.BarangayCode AS BarangayCode
+                              	, s.AreaName AS Barangay
                                 , b.Address1
                                 , b.Address2
-                                , b.Address3
                                 , b.Phone
                                 , b.Fax
                                 , b.Email
@@ -32,13 +35,58 @@ public class BranchQueryRepository : QueryHandlerBase<Domain.Entities.Branch>, I
                         		INNER JOIN Warehouses w
                         					ON b.WarehouseId = w.Id
                         		INNER JOIN Regions r
-                        					ON b.RegionId = r.Id
+                        					ON b.RegionCode = r.Code
+                        		INNER JOIN Provinces p
+                        					ON b.ProvinceCode = p.Code
+                        		INNER JOIN Municipalities m
+                        					ON b.MunicipalityCode = m.Code
+                        		INNER JOIN Barangays s
+                        					ON b.BarangayCode = s.Code
+                        WHERE b.id = {id} 
+                        AND b.IsActive = true
+                        """;
+
+        return _dbContext.Database.SqlQueryRaw<BranchDto>(query).AsNoTracking();
+    }
+
+    public IQueryable<BranchDto> GetBranches()
+    {
+        string query = $"""
+                        SELECT b.Id as Id
+                              	, b.Name AS Name
+                              	, b.WarehouseId AS WarehouseId
+                              	, w.Name AS Warehouse
+                              	, b.RegionCode AS RegionCode
+                              	, r.AreaName AS Region
+                              	, b.ProvinceCode AS ProvinceCode
+                              	, p.AreaName AS Province
+                              	, b.MunicipalityCode AS MunicipalityCode
+                              	, m.AreaName AS Municipality
+                              	, b.BarangayCode AS BarangayCode
+                              	, s.AreaName AS Barangay
+                                , b.Address1
+                                , b.Address2
+                                , b.Phone
+                                , b.Fax
+                                , b.Email
+                                , b.TIN
+                              	, b.Created AS Created
+                        FROM Branches b
+                        		INNER JOIN Warehouses w
+                        					ON b.WarehouseId = w.Id
+                        		INNER JOIN Regions r
+                        					ON b.RegionCode = r.Code
+                        		INNER JOIN Provinces p
+                        					ON b.ProvinceCode = p.Code
+                        		INNER JOIN Municipalities m
+                        					ON b.MunicipalityCode = m.Code
+                        		INNER JOIN Barangays s
+                        					ON b.BarangayCode = s.Code
                         WHERE b.IsActive = true
                         """;
 
-        return _dbContext.Database.SqlQueryRaw<BranchDto>(query);
+        return _dbContext.Database.SqlQueryRaw<BranchDto>(query).AsNoTracking();
     }
-
 
 
     // public async Task<Domain.Entities.Branch?> GetBranchByNameAsync(string name)

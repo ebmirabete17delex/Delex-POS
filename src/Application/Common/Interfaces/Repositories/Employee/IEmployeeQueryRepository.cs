@@ -6,4 +6,5 @@ public interface IEmployeeQueryRepository : IQueryHandlerBase<Domain.Entities.Em
 {
     IQueryable<EmployeeListDto> GetEmployees();
     IQueryable<EmployeeSearchListDto> SearchEmployees();
+    IQueryable<EmployeeDto> GetEmployee(int id);
 }

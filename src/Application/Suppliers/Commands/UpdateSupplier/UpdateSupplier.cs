@@ -19,7 +19,10 @@ public record UpdateSupplierCommand : IRequest
     public string? Email { get; set; }
     public string? BillingAddress1 { get; set; }
     public string? BillingAddress2 { get; set; }
-    public string? BillingAddress3 { get; set; }
+    public string RegionCode { get; set; } = string.Empty;
+    public string ProvinceCode { get; set; } = string.Empty;
+    public string MunicipalityCode { get; set; } = string.Empty;
+    public string BarangayCode { get; set; } = string.Empty;
     public string? Phone { get; set; }
     public string? Mobile { get; set; }
     public string? Fax { get; set; }
@@ -67,7 +70,10 @@ public class UpdateSupplierCommandHandler : IRequestHandler<UpdateSupplierComman
             email: request.Email,
             billingAddress1: request.BillingAddress1,
             billingAddress2: request.BillingAddress2,
-            billingAddress3: request.BillingAddress3,
+            regionCode: request.RegionCode,
+            provinceCode: request.ProvinceCode,
+            municipalityCode: request.MunicipalityCode,
+            barangayCode: request.BarangayCode,
             phone: request.Phone,
             mobile: request.Mobile,
             fax: request.Fax,

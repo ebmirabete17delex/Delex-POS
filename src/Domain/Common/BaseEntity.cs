@@ -2,12 +2,13 @@
 
 namespace Delex_POS.Domain.Common;
 
-public abstract class BaseEntity
+public abstract class BaseEntity : ISoftDeletable
 {
     // This can easily be modified to be BaseEntity<T> and public T Id to support different key types.
     // Using non-generic integer types for simplicity
     public int Id { get; init; }
-
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedOnUtc { get; set; }
     private readonly List<BaseEvent> _domainEvents = new();
 
     [NotMapped]

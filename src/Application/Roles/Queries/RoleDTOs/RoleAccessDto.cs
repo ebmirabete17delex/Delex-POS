@@ -8,10 +8,6 @@ public class RoleAccessDto
     public string RoleId { get; init; } = string.Empty;
     public int AccessId { get; init; }
     public string Name { get; init; } = string.Empty;
-    public bool HasRead { get; init; }
-    public bool HasWrite { get; init; }
-    public bool HasDelete { get; init; }
-    public bool HasUpdate { get; init; }
     public bool IsActive { get; init; }
 
     public class Mapping : Profile

@@ -8,6 +8,11 @@ internal class ProductTypeConfiguration : IEntityTypeConfiguration<ProductType>
 {
     public void Configure(EntityTypeBuilder<ProductType> builder)
     {
+        builder.HasQueryFilter(pt => !pt.IsDeleted);
+
+        builder.HasIndex(pt => pt.IsDeleted)
+            .HasFilter("IsDeleted = 0");
+
         builder.Property(pt => pt.Name)
             .IsRequired()
             .HasMaxLength(100);

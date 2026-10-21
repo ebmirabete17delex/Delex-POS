@@ -11,6 +11,7 @@ import {
   Search,
   Trash2,
   X,
+  ShieldCogCorner
 } from 'lucide-react';
 
 const PAGE_SIZE = 7;
@@ -82,10 +83,27 @@ function displayValue(value, field) {
     const date = new Date(value);
     return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString();
   }
-  if (field?.type === 'select-number') {
-    return field.options?.find(option => Number(option.value) === Number(value))?.label ?? value;
+  if (field?.type === 'select-number' || field?.type === 'select') {
+    const options = Array.isArray(field.options) ? field.options : [];
+    return options.find(option => String(option.value) === String(value))?.label ?? value;
   }
   return String(value);
+}
+
+function getDependentFields(fields, fieldName) {
+  const dependentNames = new Set();
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const field of fields) {
+      if (!dependentNames.has(field.name)
+        && field.dependsOn?.some(dependency => dependency === fieldName || dependentNames.has(dependency))) {
+        dependentNames.add(field.name);
+        changed = true;
+      }
+    }
+  }
+  return fields.filter(field => dependentNames.has(field.name));
 }
 
 export function EntityPanel({ definition }) {
@@ -101,9 +119,12 @@ export function EntityPanel({ definition }) {
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [error, setError] = useState('');
   const [formError, setFormError] = useState('');
+  const [fieldOptions, setFieldOptions] = useState({});
+  const [optionsLoading, setOptionsLoading] = useState({});
   const pageRef = useRef(page);
   const searchRef = useRef('');
   const requestRef = useRef(0);
+  const optionRequestRef = useRef({});
 
   const fields = useMemo(
     () => editor?.mode === 'edit' ? definition.editFields ?? definition.fields : definition.fields,
@@ -111,6 +132,7 @@ export function EntityPanel({ definition }) {
   );
 
   const refresh = useCallback(async (requestedPage = pageRef.current, requestedSearch = searchRef.current) => {
+    console.log('refresh');
     const requestId = ++requestRef.current;
     setLoading(true);
     setError('');
@@ -171,23 +193,93 @@ export function EntityPanel({ definition }) {
     return () => { requestRef.current += 1; };
   }, [refresh]);
 
-  async function openEditor(item) {
-    setFormError('');
-    if (!item) {
-      setEditor({ mode: 'create', value: {} });
-      return;
-    }
+  async function loadFieldOptions(fieldsToLoad, values) {
+    await Promise.all(fieldsToLoad.map(async field => {
+      const requestId = (optionRequestRef.current[field.name] ?? 0) + 1;
+      optionRequestRef.current[field.name] = requestId;
+      const hasDependencies = field.dependsOn?.every(dependency => (
+        values[dependency] !== undefined && values[dependency] !== null && values[dependency] !== ''
+      )) ?? true;
 
+      if (!hasDependencies) {
+        setFieldOptions(current => ({ ...current, [field.name]: [] }));
+        setOptionsLoading(current => ({ ...current, [field.name]: false }));
+        return;
+      }
+
+      setOptionsLoading(current => ({
+        ...current,
+        [field.name]: typeof field.options === 'function',
+      }));
+      try {
+        try {
+          const options = typeof field.options === 'function'
+            ? await field.options(values)
+            : field.options;
+          if (options != null && !Array.isArray(options)) {
+            throw new Error(`Options for ${field.label} must be a list.`);
+          }
+          if (optionRequestRef.current[field.name] === requestId) {
+            setFieldOptions(current => ({ ...current, [field.name]: options ?? [] }));
+          }
+        } catch (requestError) {
+          if (optionRequestRef.current[field.name] === requestId) throw requestError;
+        }
+      } finally {
+        if (optionRequestRef.current[field.name] === requestId) {
+          setOptionsLoading(current => ({ ...current, [field.name]: false }));
+        }
+      }
+    }));
+  }
+
+  function handleSelectChange(field, value) {
+    console.log('handleSelectChange');
+    const nextValues = { ...editor.value, [field.name]: value };
+    console.log('nextValues: ' + nextValues);
+    const dependentFields = getDependentFields(fields, field.name);
+    console.log('dependentFields: ' + dependentFields);
+    for (const dependentField of dependentFields) {
+      nextValues[dependentField.name] = '';
+    }
+    setEditor(current => current && ({ ...current, value: nextValues }));
+    setFieldOptions(current => {
+      const nextOptions = { ...current };
+      for (const dependentField of dependentFields) {
+        nextOptions[dependentField.name] = [];
+      }
+      return nextOptions;
+    });
+
+    const directDependents = fields.filter(candidate => candidate.dependsOn?.includes(field.name));
+    loadFieldOptions(directDependents, nextValues).catch(requestError => {
+      setFormError(requestError?.message || `Could not load options for ${directDependents[0]?.label ?? field.label}.`);
+    });
+  }
+
+  async function openEditor(item) {
+    console.log('openEditor');
+    setFormError('');
+    setError('');
+    const editorFields = item ? definition.editFields ?? definition.fields : definition.fields;
     try {
       setBusy(true);
-      const details = definition.get ? await definition.get(item[definition.idField ?? 'id']) : item;
-      if (!details) throw new Error(`Could not load ${definition.singular.toLowerCase()} details.`);
-      const values = {};
-      for (const field of definition.editFields ?? definition.fields) {
-        values[field.name] = toInputValue(field, details[field.name]);
+      let values = {};
+      let details;
+      if (item) {
+        details = definition.get ? await definition.get(item[definition.idField ?? 'id']) : item;
+        if (!details) throw new Error(`Could not load ${definition.singular.toLowerCase()} details.`);
+        for (const field of editorFields) {
+          values[field.name] = toInputValue(field, details[field.name]);
+        }
       }
-      const idField = definition.idField ?? 'id';
-      setEditor({ mode: 'edit', value: values, item: { ...details, [idField]: item[idField] } });
+      await loadFieldOptions(editorFields, values);
+      if (item) {
+        const idField = definition.idField ?? 'id';
+        setEditor({ mode: 'edit', value: values, item: { ...details, [idField]: item[idField] } });
+      } else {
+        setEditor({ mode: 'create', value: values });
+      }
     } catch (requestError) {
       setError(requestError?.message || `Could not load ${definition.singular.toLowerCase()} details.`);
     } finally {
@@ -196,6 +288,7 @@ export function EntityPanel({ definition }) {
   }
 
   async function save(event) {
+    console.log('save');
     event.preventDefault();
     setBusy(true);
     setFormError('');
@@ -224,6 +317,7 @@ export function EntityPanel({ definition }) {
   }
 
   async function remove() {
+    console.log
     if (!deleteTarget) return;
     setDeleteBusy(true);
     setError('');
@@ -314,17 +408,17 @@ export function EntityPanel({ definition }) {
                           value: { ...current.value, [field.name]: event.target.checked },
                         }))}
                       />
-                    ) : field.type === 'select-number' ? (
+                    ) : field.type === 'select-number' || field.type === 'select' ? (
                       <select
                         value={editor.value[field.name] ?? ''}
                         required={field.required}
-                        onChange={event => setEditor(current => ({
-                          ...current,
-                          value: { ...current.value, [field.name]: event.target.value },
-                        }))}
+                        disabled={Boolean(optionsLoading[field.name]) || Boolean(field.dependsOn?.some(
+                          dependency => !editor.value[dependency],
+                        ))}
+                        onChange={event => handleSelectChange(field, event.target.value)}
                       >
                         <option value="">Select...</option>
-                        {field.options.map(option => (
+                        {(fieldOptions[field.name] ?? []).map(option => (
                           <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
                       </select>
@@ -428,6 +522,7 @@ export function EntityPanel({ definition }) {
                     )}
                     {definition.rowLink && (
                       <Link className="button secondary" to={definition.rowLink(item)}>
+                        <ShieldCogCorner size={15} aria-hidden="true"/>
                         {definition.rowLinkLabel ?? 'Open'}
                       </Link>
                     )}

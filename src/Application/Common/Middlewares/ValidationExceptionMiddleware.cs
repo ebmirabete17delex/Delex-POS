@@ -8,7 +8,6 @@ public class ValidationExceptionMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<ValidationExceptionMiddleware> _logger;
-
     public ValidationExceptionMiddleware(RequestDelegate next, ILogger<ValidationExceptionMiddleware> logger)
     {
         _next = next;

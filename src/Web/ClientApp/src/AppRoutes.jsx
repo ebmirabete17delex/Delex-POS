@@ -21,6 +21,7 @@ import {
 } from './components/business-pages.jsx';
 import { AdminPage } from './features/administrator/AdminPage.jsx';
 import { RoleAccessPage } from './features/administrator/RoleAccessPage.jsx';
+import { AccessPermissionPage } from './features/administrator/AccessPermissionPage.jsx';
 import { Navigate } from 'react-router-dom';
 
 const protectedPage = element => <ProtectedRoute>{element}</ProtectedRoute>;
@@ -29,8 +30,10 @@ const AppRoutes = [
   { path: '/dashboard', element: protectedPage(<Navigate to="/users" replace />) },
   { path: '/admin', element: protectedPage(<AdminPage />) },
   { path: '/access', element: protectedPage(<AccessPanel />) },
+  { path: '/access/:accessId/permission', element: protectedPage(<AccessPermissionPage />) },
   { path: '/roles', element: protectedPage(<RolePanel />) },
   { path: '/roles/:roleId/access', element: protectedPage(<RoleAccessPage />) },
+  // { path: '/roles/:roleId/permission', element: protectedPage(<RolePermissionPage />) },
   { path: '/users', element: protectedPage(<UsersPanel />) },
   { path: '/branches', element: protectedPage(<BranchPanel />) },
   { path: '/warehouses', element: protectedPage(<WarehousePanel />) },

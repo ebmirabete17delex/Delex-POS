@@ -1,6 +1,4 @@
-﻿using System.Reflection.PortableExecutable;
-
-namespace Delex_POS.Domain.Entities;
+﻿namespace Delex_POS.Domain.Entities;
 
 public class InventoryTransaction : BaseAuditableEntity
 {

@@ -8,6 +8,11 @@ public class CustomerTypeConfiguration : IEntityTypeConfiguration<CustomerType>
 {
     public void Configure(EntityTypeBuilder<CustomerType> builder)
     {
+        builder.HasQueryFilter(ct => !ct.IsDeleted);
+
+        builder.HasIndex(ct => ct.IsDeleted)
+            .HasFilter("IsDeleted = 0");
+
         builder.Property(ct => ct.Name)
             .IsRequired()
             .HasMaxLength(100);

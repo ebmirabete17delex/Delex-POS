@@ -10,18 +10,19 @@ public record GetBranchQuery() : IRequest<BranchDto>
 
 public class GetBranchQueryHandler : IRequestHandler<GetBranchQuery, BranchDto>
 {
-    private readonly IMapper _mapper;
     private readonly IBranchQueryRepository _branchQueryRepository;
 
-    public GetBranchQueryHandler(IMapper mapper, IBranchQueryRepository branchQueryRepository)
+    public GetBranchQueryHandler(IBranchQueryRepository branchQueryRepository)
     {
-        _mapper = mapper;
         _branchQueryRepository = branchQueryRepository;
     }
 
     public async Task<BranchDto> Handle(GetBranchQuery request,CancellationToken cancellationToken)
     {
-        var branch = await _branchQueryRepository.GetByIdAsync(request.Id, cancellationToken);
-        return _mapper.Map<BranchDto>(branch);
+        var branch = await _branchQueryRepository
+            .GetBranch(request.Id)
+            .FirstAsync(e => e.Id == request.Id, cancellationToken);
+        Guard.Against.NotFound(request.Id, branch);
+        return branch;
     }
 }

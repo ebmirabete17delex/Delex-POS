@@ -51,9 +51,4 @@ public class UpdateEmployeeCommandValidator : AbstractValidator<UpdateEmployeeCo
         var entity = await _employeeQueryRepository.ExistAsync(e => e.Id == id, cancellationToken);
         return entity;
     }
-    private async Task<bool> BranchExist(int id, CancellationToken cancellationToken)
-    {
-        var entity = await _branchQueryRepository.ExistAsync(e => e.Id == id, cancellationToken);
-        return entity;
-    }
 }

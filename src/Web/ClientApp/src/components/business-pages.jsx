@@ -10,7 +10,7 @@ import {
   ProductCategoryClient,
   ProductClassClient,
   ProductClient,
-  RegionClient,
+  PsgcClient,
   RoleClient,
   SupplierClient,
   UnitOfMeasureClient,
@@ -30,8 +30,10 @@ function api(ClientType) {
 const paged = (ClientType, method) => (page, pageSize, search) =>
   api(ClientType)[method](page, pageSize, search, undefined, undefined);
 const all = (ClientType, method) => () => api(ClientType)[method]();
-const field = (name, label, type = 'text', required = false, options) => ({
-  name, label, type, required, ...(options ? { options } : {}),
+const field = (name, label, type = 'text', required = false, options, dependsOn) => ({
+  name, label, type, required,
+  ...(options ? { options } : {}),
+  ...(dependsOn ? { dependsOn } : {}),
 });
 const gender = [
   { value: 0, label: 'Male' },
@@ -62,7 +64,6 @@ const contactFields = [
   field('email', 'Email', 'email'),
   field('billingAddress1', 'Billing address 1'),
   field('billingAddress2', 'Billing address 2'),
-  field('billingAddress3', 'Billing address 3'),
   field('phone', 'Phone'),
   field('mobile', 'Mobile'),
   field('fax', 'Fax'),
@@ -86,11 +87,15 @@ export const businessPageDefinitions = {
     create: body => api(AccessClient).createAccessClaim(body),
     update: (id, body) => api(AccessClient).updateAccessClaim(id, body),
     remove: id => api(AccessClient).deleteAccessClaim(id),
-    fields: [field('name', 'Name', 'text', true), field('feature', 'Feature', 'text', true)],
-    editFields: [field('feature', 'Feature', 'text', true)],
-    updateFields: [field('feature', 'Feature', 'text', true)],
-    updateIncludesId: true,
-    columns: [{ name: 'name', label: 'Name' }, { name: 'feature', label: 'Feature' }],
+    fields: [
+      field('name', 'Name', 'text', true), 
+      field('feature', 'Feature', 'text', true)],
+    rowLink: item=> `/access/${encodeURIComponent(item.id)}/permission`,
+    rowLinkLabel: "manage Permissions",
+    columns: [
+      { name: 'name', label: 'Name' }, 
+      { name: 'feature', label: 'Feature' }
+    ],
   },
   branches: {
     singular: 'Branch',
@@ -103,12 +108,24 @@ export const businessPageDefinitions = {
     remove: id => api(BranchClient).deleteBranch(id),
     fields: [
       field('name', 'Name', 'text', true),
-      field('warehouseId', 'Warehouse ID', 'number', true),
-      field('regionId', 'Region ID', 'number', true),
+      field('warehouseId', 'Warehouse', 'select', true, async () => (
+        await api(WarehouseClient).getWarehouseList()
+      ).map(warehouse => ({value: warehouse.id, label: warehouse.name }))),
       field('memo', 'Notes'),
       field('address1', 'Address 1'),
       field('address2', 'Address 2'),
-      field('address3', 'Address 3'),
+      field('regionCode', 'Region', 'select', true, async () => (
+        await api(PsgcClient).getRegions()
+      ).map(region => ({ value: region.code, label: region.areaName }))),
+      field('provinceCode', 'Province', 'select', true, async values => (
+        await api(PsgcClient).getProvinces(values.regionCode)
+      ).map(province => ({ value: province.code, label: province.areaName })), ['regionCode']),
+      field('municipalityCode', 'City/Municipality', 'select', true, async values => (
+        await api(PsgcClient).getMunicipalities(values.provinceCode)
+      ).map(municipality => ({ value: municipality.code, label: municipality.areaName })), ['provinceCode']),
+      field('barangayCode', 'Barangay', 'select', true, async values => (
+        await api(PsgcClient).getBarangays(values.municipalityCode)
+      ).map(barangay => ({ value: barangay.code, label: barangay.areaName })), ['municipalityCode']),
       field('phone', 'Phone'),
       field('fax', 'Fax'),
       field('email', 'Email', 'email'),
@@ -287,21 +304,6 @@ export const businessPageDefinitions = {
     updateIncludesId: true,
     columns: [{ name: 'name', label: 'Name' }, { name: 'productTypeId', label: 'Product type' }, { name: 'memo', label: 'Notes' }],
   },
-  regions: {
-    singular: 'Region',
-    plural: 'Regions',
-    description: 'Manage the regions used to organize branches.',
-    list: paged(RegionClient, 'getRegions'),
-    get: id => api(RegionClient).getRegion(id),
-    create: body => api(RegionClient).createRegion(body),
-    update: (id, body) => api(RegionClient).updateRegion(id, body),
-    remove: id => api(RegionClient).deleteRegion(id),
-    fields: [field('name', 'Name', 'text', true), field('memo', 'Notes')],
-    editFields: [field('isActive', 'Active', 'checkbox')],
-    updateFields: [field('isActive', 'Active', 'checkbox')],
-    updateIncludesId: true,
-    columns: [{ name: 'name', label: 'Name' }, { name: 'memo', label: 'Notes' }, { name: 'isActive', label: 'Active', type: 'checkbox' }],
-  },
   roles: {
     singular: 'Role',
     plural: 'Roles',
@@ -312,7 +314,7 @@ export const businessPageDefinitions = {
     remove: id => api(RoleClient).deleteRole(id),
     fields: [field('name', 'Name', 'text', true)],
     rowLink: item => `/roles/${encodeURIComponent(item.id)}/access`,
-    rowLinkLabel: 'Manage access',
+    rowLinkLabel: 'Manage Access',
     columns: [{ name: 'name', label: 'Name' }],
   },
   suppliers: {
@@ -377,9 +379,13 @@ export const businessPageDefinitions = {
       field('birthDate', 'Date of birth', 'date', true),
       field('gender', 'Gender', 'select-number', true, gender),
       field('civilStatus', 'Civil status', 'select-number', true, civilStatus),
-      field('branchId', 'Branch ID', 'number', true),
+      field('branchId', 'Branch', 'select', true, async () => (
+        await api(BranchClient).getBranchesList()
+      ).map(branch => ({value: branch.id, label: branch.name }))),
       field('email', 'Email', 'email', true),
-      field('roleId', 'Role ID', 'text', true),
+      field('roleId', 'Role', 'select', true, async () => (
+        await api(RoleClient).getRolesList()
+      ).map(role => ({ value: role.id, label: role.name }))),
     ],
     editFields: [
       field('employeeId', 'Employee ID', 'text', true),

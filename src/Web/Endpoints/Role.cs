@@ -1,4 +1,6 @@
 using Delex_POS.Application.Common.Models;
+using Delex_POS.Application.Roles.Commands.CreateRolePermission;
+using Delex_POS.Application.Roles.Commands.DeleteRolePermission;
 using Delex_POS.Application.Roles.Commands.UpdateRoleAccess;
 using Delex_POS.Application.Roles.Commands.AddRoleAccess;
 using Delex_POS.Application.Roles.Commands.CreateRole;
@@ -7,7 +9,10 @@ using Delex_POS.Application.Roles.Commands.RemoveRoleAccess;
 using Delex_POS.Application.Roles.Queries.GetRole;
 using Delex_POS.Application.Roles.Queries.GetRoleAccess;
 using Delex_POS.Application.Roles.Queries.GetRoles;
+using Delex_POS.Application.Roles.Queries.GetRolesList;
 using Delex_POS.Application.Roles.Queries.RoleDTOs;
+using Delex_POS.Application.Roles.Queries.GetRolePermissions;
+using Delex_POS.Application.Roles.Queries.GetRoleAccessPermissions;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Delex_POS.Web.Endpoints;
@@ -23,12 +28,19 @@ public class Role : IEndpointGroup
         groupBuilder.MapPost(CreateRole);
         groupBuilder.MapDelete(DeleteRole, "{roleId}");
         groupBuilder.MapGet(GetRoles);
+        groupBuilder.MapGet(GetRolesList,"list");
         groupBuilder.MapGet(GetRole, "{roleId}");
 
         groupBuilder.MapGet(GetRoleAccess, "{roleId}/accesses");
         groupBuilder.MapPost(AddRoleAccess, "{roleId}/accesses/{accessId}");
         groupBuilder.MapPut(UpdateRoleAccess, "{roleId}/accesses/{accessId}");
         groupBuilder.MapDelete(RemoveRoleAccess, "{roleId}/accesses/{accessId}");
+
+        groupBuilder.MapGet(GetRolePermissions, "{roleId}/permission");
+        groupBuilder.MapGet(GetRoleAccessPermissions, "{roleId}/accesspermission");
+        groupBuilder.MapPost(CreateRolePermission, "{roleId}/permission");
+        groupBuilder.MapDelete(DeleteRolePermission, "{roleId}/permission/{permissionId}");
+
     }
 
     [EndpointSummary("Create a new Role")]
@@ -52,6 +64,15 @@ public class Role : IEndpointGroup
     [EndpointSummary("Get all roles")]
     [EndpointDescription("Retrieves all roles.")]
     public static async Task<Ok<PaginatedList<IdentityRoleDto>>> GetRoles(ISender sender, [AsParameters] GetRolesQuery query)
+    {
+        var vm = await sender.Send(query);
+
+        return TypedResults.Ok(vm);
+    }
+
+    [EndpointSummary("Get all roles as List")]
+    [EndpointDescription("Retrieves all roles as List.")]
+    public static async Task<Ok<List<RoleDto>>> GetRolesList(ISender sender, [AsParameters] GetRolesListQuery query)
     {
         var vm = await sender.Send(query);
 
@@ -115,5 +136,42 @@ public class Role : IEndpointGroup
         });
 
         return TypedResults.NoContent();
+    }
+
+
+    [EndpointSummary("Create a new Role permission")]
+    [EndpointDescription("Creates a new role permission using the provided details and returns the ID of the created item.")]
+    public static async Task<Created<int>> CreateRolePermission(ISender sender, CreateRolePermissionCommand command)
+    {
+        var result = await sender.Send(command);
+
+        return TypedResults.Created($"/api/Roles/{command.RoleId}/permission/{result}", result);
+    }
+
+    [EndpointSummary("Delete a Role permission")]
+    [EndpointDescription("Deletes the role permission with the specified ID.")]
+    public static async Task<NoContent> DeleteRolePermission(ISender sender, string roleId, int permissionId)
+    {
+        await sender.Send(new DeleteRolePermissionCommand() { RoleId = roleId, PermissionId = permissionId});
+
+        return TypedResults.NoContent();
+    }
+
+    [EndpointSummary("Get all role permissions")]
+    [EndpointDescription("Retrieves all role permission.")]
+    public static async Task<Ok<List<RolePermissionDto>>> GetRolePermissions(ISender sender, string roleId, [AsParameters] GetRolePermissionsQuery query)
+    {
+        var vm = await sender.Send(query);
+
+        return TypedResults.Ok(vm);
+    }
+
+    [EndpointSummary("Get all role access permissions")]
+    [EndpointDescription("Retrieves all role access permissions.")]
+    public static async Task<Ok<List<RoleAccessPermissionDto>>> GetRoleAccessPermissions(ISender sender, [AsParameters] GetRoleAccessPermissionsQuery query)
+    {
+        var vm = await sender.Send(query);
+
+        return TypedResults.Ok(vm);
     }
 }

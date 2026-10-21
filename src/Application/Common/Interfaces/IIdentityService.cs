@@ -2,11 +2,14 @@
 using Delex_POS.Application.Common.Enums;
 using Delex_POS.Application.Roles.Queries.RoleDTOs;
 using Delex_POS.Application.Employees.Queries.EmployeeDTOs;
+using Microsoft.AspNetCore.Http;
 namespace Delex_POS.Application.Common.Interfaces;
 
 public interface IIdentityService
 {
     // User Management
+    string? Id { get; }
+
     #region User management
     Task<string?> GetUserNameAsync(string userId);
 
@@ -39,5 +42,8 @@ public interface IIdentityService
 
     #region Authentication
     Task<TokenResponse?> LoginAsync(string userCode, string password, bool isPersistent = false);
+    //Task<TokenResponse?> LoginAsync(string userCode, string password, HttpContext ctx, bool isPersistent = false);
+    //Task<Result> LogoutAsync(HttpContext ctx);
+    //Task<Result> RefreshAsync(HttpContext ctx);
     #endregion
 }

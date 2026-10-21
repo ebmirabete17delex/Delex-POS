@@ -7,10 +7,6 @@ public record UpdateUserAccessCommand : IRequest
 {
     public int UserId { get; set; }
     public int AccessId { get; set; }
-    public bool HasRead { get; set; }
-    public bool HasWrite { get; set; }
-    public bool HasUpdate { get; set; }
-    public bool HasDelete { get; set; }
     public bool IsActive { get; set; }
 }
 
@@ -39,12 +35,11 @@ public class UpdateUserAccessCommandHandler : IRequestHandler<UpdateUserAccessCo
             .GetByUserIdAndAccessIdAsync(employee.UserId, request.AccessId);
         Guard.Against.NotFound(request.AccessId, userAccess);
 
-        userAccess.Update(
-            request.HasRead,
-            request.HasWrite,
-            request.HasDelete,
-            request.HasUpdate,
-            request.IsActive);
+        if (request.IsActive)
+            userAccess.Activate();
+        else
+            userAccess.Deactivate();
+
 
         await _userAccessCommandRepository.UpdateAsync(userAccess, cancellationToken);
     }

@@ -6,9 +6,6 @@ public record AddUserAccessCommand : IRequest<int>
 {
     public int UserId { get; set; } 
     public int AccessId { get; set; }
-    public bool HasWrite { get; set; }
-    public bool HasDelete { get; set; }
-    public bool HasUpdate { get; set; }
 }
 
 public class AddUserAccessCommandHandler : IRequestHandler<AddUserAccessCommand, int>
@@ -31,9 +28,6 @@ public class AddUserAccessCommandHandler : IRequestHandler<AddUserAccessCommand,
         return await _userAccessCommandRepository
             .AddAsync(new Domain.Entities.UserAccess(
                 ee.UserId, 
-                request.AccessId, 
-                request.HasWrite, 
-                request.HasDelete, 
-                request.HasUpdate), cancellationToken);
+                request.AccessId), cancellationToken);
     }
 }

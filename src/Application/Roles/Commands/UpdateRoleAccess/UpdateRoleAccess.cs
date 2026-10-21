@@ -6,10 +6,6 @@ public record UpdateRoleAccessCommand : IRequest
 {
     public string RoleId { get; set; } = string.Empty;
     public int AccessId { get; set; }
-    public bool HasRead { get; set; }
-    public bool HasWrite { get; set; }
-    public bool HasUpdate { get; set; }
-    public bool HasDelete { get; set; }
     public bool IsActive { get; set; }
 }
 public class UpdateRoleAccessCommandHandler : IRequestHandler<UpdateRoleAccessCommand>
@@ -30,12 +26,14 @@ public class UpdateRoleAccessCommandHandler : IRequestHandler<UpdateRoleAccessCo
             .GetByRoleIdAndAccessIdAsync(request.RoleId, request.AccessId);
         Guard.Against.NotFound(request.AccessId, roleAccess);
 
-        roleAccess.Update(
-            request.HasRead,
-            request.HasWrite,
-            request.HasDelete,
-            request.HasUpdate,
-            request.IsActive);
+        if (request.IsActive)
+        {
+            roleAccess.Activate();
+        }
+        else
+        {
+            roleAccess.Dectivate();
+        }
 
         await _roleAccessCommandRepository.UpdateAsync(roleAccess, cancellationToken);
     }

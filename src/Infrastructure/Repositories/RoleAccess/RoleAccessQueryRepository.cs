@@ -25,10 +25,6 @@ public class RoleAccessQueryRepository : QueryHandlerBase<Domain.Entities.RoleAc
                                 , r.RoleId
                                 , r.AccessId
                               	, a.Name
-                              	, r.HasRead
-                              	, r.HasWrite
-                              	, r.HasDelete
-                              	, r.HasUpdate
                               	, r.IsActive
                         FROM RoleAccesses r
                             INNER JOIN Accesses a

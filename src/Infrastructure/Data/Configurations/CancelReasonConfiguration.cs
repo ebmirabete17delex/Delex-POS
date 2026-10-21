@@ -8,6 +8,11 @@ public class CancelReasonConfiguration : IEntityTypeConfiguration<CancelReason>
 {
     public void Configure(EntityTypeBuilder<CancelReason> builder)
     {
+        builder.HasQueryFilter(cr => !cr.IsDeleted);
+
+        builder.HasIndex(cr => cr.IsDeleted)
+            .HasFilter("IsDeleted = 0");
+
         builder.Property(cr => cr.Name)
             .HasMaxLength(100)
             .IsRequired();

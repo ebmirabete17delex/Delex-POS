@@ -1,4 +1,5 @@
 ﻿using Delex_POS.Application.Common.Interfaces.Repositories.Branch;
+using Delex_POS.Application.Common.Interfaces.Repositories.Psgc;
 using Delex_POS.Application.Common.Interfaces.Repositories.Supplier;
 namespace Delex_POS.Application.Suppliers.Commands.UpdateSupplier;
 
@@ -6,12 +7,24 @@ public class UpdateSupplierCommandValidator : AbstractValidator<UpdateSupplierCo
 {
     private readonly ISupplierQueryRepository _supplierQueryRepository;
     private readonly IBranchQueryRepository _branchQueryRepository;
+    private readonly IPsgcRegionQueryRepository _regionQueryRepository;
+    private readonly IPsgcProvinceQueryRepository _provinceQueryRepository;
+    private readonly IPsgcMunicipalityQueryRepository _municipalityQueryRepository;
+    private readonly IPsgcBarangayQueryRepository _barangayQueryRepository;
     public UpdateSupplierCommandValidator(
         ISupplierQueryRepository supplierQueryRepository,
-        IBranchQueryRepository branchQueryRepository)
+        IBranchQueryRepository branchQueryRepository,
+        IPsgcRegionQueryRepository regionQueryRepository,
+        IPsgcProvinceQueryRepository provinceQueryRepository,
+        IPsgcMunicipalityQueryRepository municipalityQueryRepository,
+        IPsgcBarangayQueryRepository barangayQueryRepository)
     {
         _branchQueryRepository = branchQueryRepository;
         _supplierQueryRepository = supplierQueryRepository;
+        _regionQueryRepository = regionQueryRepository;
+        _provinceQueryRepository = provinceQueryRepository;
+        _municipalityQueryRepository = municipalityQueryRepository;
+        _barangayQueryRepository = barangayQueryRepository;
 
         RuleFor(v => v.Id)
         .NotEmpty().WithMessage("Customer Id is required.")
@@ -41,6 +54,26 @@ public class UpdateSupplierCommandValidator : AbstractValidator<UpdateSupplierCo
         RuleFor(v => v.CivilStatus)
             .IsInEnum().WithMessage("A valid civil status is required.");
 
+        RuleFor(v => v.RegionCode)
+            .NotEmpty().WithMessage("Region is required.")
+            .NotNull().WithMessage("Region is required.")
+            .MustAsync(RegionCodeExists).WithMessage("A valid region is required.");
+
+        RuleFor(v => v.ProvinceCode)
+            .NotEmpty().WithMessage("Province is required.")
+            .NotNull().WithMessage("Province is required.")
+            .MustAsync(ProvinceCodeExists).WithMessage("A valid province code is required.");
+
+        RuleFor(v => v.MunicipalityCode)
+            .NotEmpty().WithMessage("Municipality is required.")
+            .NotNull().WithMessage("Municipality is required.")
+            .MustAsync(MunicipalityExists).WithMessage("A valid municipality code is required.");
+
+        RuleFor(v => v.BarangayCode)
+            .NotEmpty().WithMessage("Barangay is required.")
+            .NotNull().WithMessage("Barangay is required.")
+            .MustAsync(BarangayExists).WithMessage("A valid barangay code is required.");
+
         RuleFor(v => v.Email)
             .EmailAddress().WithMessage("Invalid Email format.");
 
@@ -56,6 +89,26 @@ public class UpdateSupplierCommandValidator : AbstractValidator<UpdateSupplierCo
     private async Task<bool> BranchExist(int id, CancellationToken cancellationToken)
     {
         var entity = await _branchQueryRepository.ExistAsync(e => e.Id == id, cancellationToken);
+        return entity;
+    }
+    private async Task<bool> RegionCodeExists(string code, CancellationToken cancellationToken)
+    {
+        var entity = await _regionQueryRepository.ExistAsync(e => e.Code == code, cancellationToken);
+        return entity;
+    }
+    private async Task<bool> ProvinceCodeExists(string code, CancellationToken cancellationToken)
+    {
+        var entity = await _provinceQueryRepository.ExistAsync(e => e.Code == code, cancellationToken);
+        return entity;
+    }
+    private async Task<bool> MunicipalityExists(string code, CancellationToken cancellationToken)
+    {
+        var entity = await _municipalityQueryRepository.ExistAsync(e => e.Code == code, cancellationToken);
+        return entity;
+    }
+    private async Task<bool> BarangayExists(string code, CancellationToken cancellationToken)
+    {
+        var entity = await _barangayQueryRepository.ExistAsync(e => e.Code == code, cancellationToken);
         return entity;
     }
 }

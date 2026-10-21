@@ -37,4 +37,34 @@ public static class Services
     /// This is the name of the database connection string that will be used by the application to connect to the database.
     /// </summary>
     public const int DbPort = 3390;
+
+    /// <summary>
+    /// The name of the Web Frontend service.
+    /// This service is responsible for hosting the frontend application.
+    /// </summary>
+    public const string PgWebFrontend = "webfrontend";
+
+    /// <summary>
+    /// The name of the Web API service.
+    /// This service is responsible for hosting the Web API application.
+    /// </summary>
+    public const string PgWebApi = "webapi";
+
+    /// <summary>
+    /// The name of the Database Server service.
+    /// This service is responsible for hosting the database server (e.g., PostgreSQL, SQL Server, or SQLite).
+    /// </summary>
+    public const string PostgresServer = "postgrescentralserver";
+
+    /// <summary>
+    /// The name of the connection String.
+    /// This is the name of the database connection string that will be used by the application to connect to the database.
+    /// </summary>
+    public const int PostgresPort = 3395;
+
+    /// <summary>
+    /// The name of the Database.
+    /// This is the name of the database that will be created and used by the application.
+    /// </summary>
+    public const string PostgresDatabase = "DelexPOSCentralDb";
 }

@@ -7,6 +7,11 @@ public class GenericConfiguration : IEntityTypeConfiguration<Generic>
 {
     public void Configure(EntityTypeBuilder<Generic> builder)
     {
+        builder.HasQueryFilter(x => !x.IsDeleted);
+
+        builder.HasIndex(x => x.IsDeleted)
+            .HasFilter("IsDeleted = 0");
+
         builder.Property(x => x.Code)
             .IsRequired()
             .HasMaxLength(50);

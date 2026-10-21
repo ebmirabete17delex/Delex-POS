@@ -8,6 +8,10 @@ public class BranchConfiguration : IEntityTypeConfiguration<Branch>
 {
     public void Configure(EntityTypeBuilder<Branch> builder)
     {
+        builder.HasQueryFilter(b => !b.IsDeleted);
+
+        builder.HasIndex(b => b.IsDeleted)
+            .HasFilter("IsDeleted = 0");
 
         builder.Property(b => b.Name)
             .HasMaxLength(200)
@@ -19,14 +23,24 @@ public class BranchConfiguration : IEntityTypeConfiguration<Branch>
         builder.Property(b => b.WarehouseId)
             .IsRequired();
 
-        builder.Property(b => b.RegionId)
-            .IsRequired();
-
         builder.Property(b => b.Address2)
             .HasMaxLength(200);
 
-        builder.Property(b => b.Address3)
-            .HasMaxLength(200);
+        builder.Property(b => b.RegionCode)
+            .IsRequired()
+            .HasMaxLength(10);
+
+        builder.Property(b => b.ProvinceCode)
+            .IsRequired()
+            .HasMaxLength(10);
+
+        builder.Property(b => b.MunicipalityCode)
+            .IsRequired()
+            .HasMaxLength(10);
+
+        builder.Property(b => b.BarangayCode)
+            .IsRequired()
+            .HasMaxLength(10);
 
         builder.Property(b => b.Phone)
             .HasMaxLength(15);

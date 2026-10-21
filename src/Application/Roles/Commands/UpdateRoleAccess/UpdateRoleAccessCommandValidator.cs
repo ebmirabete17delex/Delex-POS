@@ -6,16 +6,10 @@ namespace Delex_POS.Application.Roles.Commands.UpdateRoleAccess;
 
 public class UpdateRoleAccessCommandValidator : AbstractValidator<UpdateRoleAccessCommand>
 {
-    private readonly IIdentityService _identityService;
-    private readonly IAccessClaimQueryRepository _accessClaimQueryRepository;
     private readonly IRoleAccessQueryRepository _roleAccessQueryRepository;
     public UpdateRoleAccessCommandValidator(
-        IIdentityService identityService,
-        IAccessClaimQueryRepository accessClaimQueryRepository,
         IRoleAccessQueryRepository roleAccessQueryRepository)
     {
-        _identityService = identityService;
-        _accessClaimQueryRepository = accessClaimQueryRepository;
         _roleAccessQueryRepository = roleAccessQueryRepository;
 
         RuleFor(v => v)

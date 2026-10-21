@@ -8,6 +8,11 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
 {
     public void Configure(EntityTypeBuilder<Employee> builder)
     {
+        builder.HasQueryFilter(e => !e.IsDeleted);
+
+        builder.HasIndex(e => e.IsDeleted)
+            .HasFilter("IsDeleted = 0");
+
         builder.Property(e => e.UserId)
             .IsRequired();
 

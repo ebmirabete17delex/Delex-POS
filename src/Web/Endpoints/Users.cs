@@ -6,6 +6,8 @@ using Delex_POS.Application.Employees.Commands.DismissRole;
 using Delex_POS.Application.Employees.Commands.AddUserAccess;
 using Delex_POS.Application.Employees.Commands.RemoveUserAccess;
 using Delex_POS.Application.Employees.Commands.UpdateUserAccess;
+using Delex_POS.Application.Employees.Commands.CreateUserPermission;
+using Delex_POS.Application.Employees.Commands.DeleteUserPermission;
 using Delex_POS.Application.Employees.Queries.GetEmployee;
 using Delex_POS.Application.Employees.Queries.GetEmployees;
 using Delex_POS.Application.Employees.Queries.GetUserRoles;
@@ -13,7 +15,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Delex_POS.Application.Common.Models;
 using Delex_POS.Application.Employees.Queries.GetUserAccess;
 using Delex_POS.Application.Employees.Queries.EmployeeDTOs;
-
+using Delex_POS.Application.Employees.Queries.GetUserPermissions;
+using Delex_POS.Application.Employees.Queries.GetAccessPermissions;
 namespace Delex_POS.Web.Endpoints;
 
 public class Users : IEndpointGroup
@@ -39,6 +42,11 @@ public class Users : IEndpointGroup
         groupBuilder.MapGet(GetUserRoles, "{userId}/roles");
         groupBuilder.MapPost(AssignUserRole, "{userId}/roles/{roleId}");
         groupBuilder.MapDelete(DismissUserRole, "{userId}/roles/{roleId}");
+
+        groupBuilder.MapGet(GetUserPermissions, "{userId}/permission");
+        groupBuilder.MapGet(GetUserAccessPermissions, "{userId}/accesspermission");
+        groupBuilder.MapPost(CreateUserPermission, "{userId}/permission/");
+        groupBuilder.MapDelete(DeleteUserPermission, "{userId}/permission/{id}");
 
     }
 
@@ -169,6 +177,50 @@ public class Users : IEndpointGroup
         {
             UserId = userId,
             AccessId = accessId
+        });
+
+        return TypedResults.NoContent();
+    }
+
+    [EndpointSummary("Get User Permissions")]
+    [EndpointDescription("Retrieves user permissions along with their items.")]
+    public static async Task<Ok<List<UserPermissionDto>>> GetUserPermissions(ISender sender, int userId)
+    {
+        var vm = await sender.Send(new GetUserPermissionsQuery(UserId: userId));
+
+        return TypedResults.Ok(vm);
+    }
+
+    [EndpointSummary("Get User Access Permissions")]
+    [EndpointDescription("Retrieves user access permissions along with their items.")]
+    public static async Task<Ok<List<UserAccessPermissionDto>>> GetUserAccessPermissions(ISender sender, [AsParameters] GetAccessPermissionsQuery query)
+    {
+        var vm = await sender.Send(query);
+
+        return TypedResults.Ok(vm);
+    }
+
+    [EndpointSummary("Create user permission")]
+    [EndpointDescription("Creates a permission to user using the provided details and returns the ID of the created item.")]
+    public static async Task<Created<int>> CreateUserPermission(ISender sender, int userId, int permissionId)
+    {
+        var result = await sender.Send(new CreateUserPermissionCommand
+        {
+            UserId = userId,
+            PermissionId = permissionId
+        });
+
+        return TypedResults.Created($"/api/Users/{userId}/permission/{result}", result);
+    }
+
+    [EndpointSummary("Delete a permission from a user")]
+    [EndpointDescription("Deletes a permission from a user with the specified IDs.")]
+    public static async Task<NoContent> DeleteUserPermission(ISender sender, int userId, int id)
+    {
+        await sender.Send(new DeleteUserPermissionCommand
+        {
+            Id = id,
+            UserId = userId
         });
 
         return TypedResults.NoContent();

@@ -8,6 +8,11 @@ public class ProductPurchasingConfiguration : IEntityTypeConfiguration<ProductPu
 {
     public void Configure(EntityTypeBuilder<ProductPurchasing> builder)
     {
+        builder.HasQueryFilter(pp => !pp.IsDeleted);
+
+        builder.HasIndex(pp => pp.IsDeleted)
+            .HasFilter("IsDeleted = 0");
+
         builder.Property(pp => pp.ProductId)
             .IsRequired();
 

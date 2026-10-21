@@ -6,4 +6,5 @@ public interface ISupplierQueryRepository : IQueryHandlerBase<Domain.Entities.Su
 {
     IQueryable<SupplierListDto> GetSuppliers();
     IQueryable<SupplierSearchListDto> SearchSuppliers();
+    IQueryable<SupplierDto> GetSupplier(int id);
 }

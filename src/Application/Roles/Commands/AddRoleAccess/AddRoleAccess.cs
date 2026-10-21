@@ -5,9 +5,6 @@ public record AddRoleAccessCommand : IRequest<int>
 {
     public string RoleId { get; set; } = string.Empty;
     public int AccessId { get; set; }
-    public bool HasWrite { get; set; }
-    public bool HasDelete { get; set; }
-    public bool HasUpdate { get; set; }
 }
 
 public class AddRoleAccessCommandHandler : IRequestHandler<AddRoleAccessCommand, int>
@@ -24,10 +21,7 @@ public class AddRoleAccessCommandHandler : IRequestHandler<AddRoleAccessCommand,
         return await _roleAccessCommandRepository
             .AddAsync(new Domain.Entities.RoleAccess(
                 request.RoleId, 
-                request.AccessId,
-                request.HasWrite,
-                request.HasDelete,
-                request.HasUpdate), cancellationToken);
+                request.AccessId), cancellationToken);
 
     }
 }

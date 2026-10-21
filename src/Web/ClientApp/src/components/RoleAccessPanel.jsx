@@ -4,13 +4,6 @@ import { createApiClient } from './api-client.js';
 
 const roleClient = createApiClient(RoleClient);
 const accessClient = createApiClient(AccessClient);
-const permissions = [
-  ['hasRead', 'Read'],
-  ['hasWrite', 'Write'],
-  ['hasUpdate', 'Update'],
-  ['hasDelete', 'Delete'],
-  ['isActive', 'Active'],
-];
 
 export default function RoleAccessPanel({ roleId }) {
   const [assignments, setAssignments] = useState([]);
@@ -19,6 +12,7 @@ export default function RoleAccessPanel({ roleId }) {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [roleName, setRoleName] = useState(''); 
 
   const refresh = useCallback(async () => {
     if (!roleId) {
@@ -30,11 +24,14 @@ export default function RoleAccessPanel({ roleId }) {
     setError('');
     try {
       const [roleAccess, accessClaims] = await Promise.all([
-        roleClient.getRoleAccess(roleId),
-        accessClient.getAccessClaimsList(),
+        roleClient.getRoleAccessPermissions(roleId),
+        accessClient.getAccessClaimsList()
       ]);
+      console.log(roleAccess);
+      setRoleName(roleClient.roleName ?? '');
       setAssignments(roleAccess ?? []);
       setAvailable(accessClaims ?? []);
+      console.log('assignments: ' + assignments);
     } catch (requestError) {
       setError(requestError?.message || 'Could not load role access assignments.');
     } finally {
@@ -59,19 +56,22 @@ export default function RoleAccessPanel({ roleId }) {
     }
   }
 
-  async function changePermission(assignment, permission, value) {
+  async function changePermission(permissionId, value) {
     setBusy(true);
     setError('');
+    console.log('roleId: ' + roleId);
     try {
-      await roleClient.updateRoleAccess(roleId, assignment.accessId, {
-        roleId,
-        accessId: assignment.accessId,
-        hasRead: permission === 'hasRead' ? value : Boolean(assignment.hasRead),
-        hasWrite: permission === 'hasWrite' ? value : Boolean(assignment.hasWrite),
-        hasUpdate: permission === 'hasUpdate' ? value : Boolean(assignment.hasUpdate),
-        hasDelete: permission === 'hasDelete' ? value : Boolean(assignment.hasDelete),
-        isActive: permission === 'isActive' ? value : Boolean(assignment.isActive),
-      });
+      if(value === true){
+        await roleClient.createRolePermission({
+          roleId: String(roleId),
+          permissionId: Number(permissionId)
+        });
+      }else{
+        await roleClient.deleteRolePermission(
+          roleId,
+          permissionId 
+        );
+      }
       await refresh();
     } catch (requestError) {
       setError(requestError?.message || 'Could not update role permissions.');
@@ -98,7 +98,7 @@ export default function RoleAccessPanel({ roleId }) {
       <header className="entity-toolbar">
         <div>
           <h2>Access permissions</h2>
-          <p>Role ID: {roleId}</p>
+          <p>Role: {roleName}</p>
         </div>
         <button type="button" className="secondary" onClick={refresh} disabled={loading}>Refresh</button>
       </header>
@@ -119,30 +119,36 @@ export default function RoleAccessPanel({ roleId }) {
             <thead>
               <tr>
                 <th>Access claim</th>
-                {permissions.map(([, label]) => <th key={label}>{label}</th>)}
+                <th>Permissions</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {assignments.map(assignment => (
+              {assignments.length === 0 && 
+                <tr><td colSpan={3}>No access claims assigned to this role.</td></tr>}
+              {assignments.length !== 0 && assignments.map(assignment => (
                 <tr key={assignment.accessId}>
                   <th scope="row">{assignment.name}</th>
-                  {permissions.map(([key, label]) => (
-                    <td key={key}>
-                      <input type="checkbox" aria-label={`${label} for ${assignment.name}`}
-                        checked={Boolean(assignment[key])} disabled={busy}
-                        onChange={event => changePermission(assignment, key, event.target.checked)} />
-                    </td>
-                  ))}
+                  {assignment.permissions.length === 0 ? <p aria-busy="true">No Set permissions</p> :                  
+                  <td>
+                    {assignment.permissions.map(perm => (
+                      <label key={perm.permissionId}>
+                        <input type="checkbox"
+                          aria-label={`${perm.name} for ${assignment.name}`}
+                          checked={Boolean(perm.rolePermissionId !== null)} disabled={busy}
+                          onChange={event => changePermission(perm.permissionId, event.target.checked)}
+                          />
+                        {perm.name}
+                      </label>
+                    ))}
+                  </td>
+                  }
                   <td>
                     <button type="button" className="contrast" disabled={busy}
                       onClick={() => removeAccess(assignment.accessId)}>Remove</button>
                   </td>
                 </tr>
               ))}
-              {assignments.length === 0 && (
-                <tr><td colSpan={permissions.length + 2}>No access claims assigned to this role.</td></tr>
-              )}
             </tbody>
           </table>
         </div>

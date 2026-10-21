@@ -1,5 +1,6 @@
 ﻿using Delex_POS.Application.Common.Interfaces;
 using Delex_POS.Application.Common.Interfaces.Repositories.AccessClaim;
+using Delex_POS.Application.Common.Interfaces.Repositories.AuditLog;
 using Delex_POS.Application.Common.Interfaces.Repositories.Branch;
 using Delex_POS.Application.Common.Interfaces.Repositories.CancelReason;
 using Delex_POS.Application.Common.Interfaces.Repositories.Customer;
@@ -7,6 +8,7 @@ using Delex_POS.Application.Common.Interfaces.Repositories.CustomerType;
 using Delex_POS.Application.Common.Interfaces.Repositories.Employee;
 using Delex_POS.Application.Common.Interfaces.Repositories.Generic;
 using Delex_POS.Application.Common.Interfaces.Repositories.PersonalInfo;
+using Delex_POS.Application.Common.Interfaces.Repositories.Permission;
 using Delex_POS.Application.Common.Interfaces.Repositories.Product;
 using Delex_POS.Application.Common.Interfaces.Repositories.ProductAttribute;
 using Delex_POS.Application.Common.Interfaces.Repositories.ProductCategory;
@@ -14,19 +16,23 @@ using Delex_POS.Application.Common.Interfaces.Repositories.ProductClass;
 using Delex_POS.Application.Common.Interfaces.Repositories.ProductPurchasing;
 using Delex_POS.Application.Common.Interfaces.Repositories.ProductSale;
 using Delex_POS.Application.Common.Interfaces.Repositories.ProductType;
-using Delex_POS.Application.Common.Interfaces.Repositories.Region;
+using Delex_POS.Application.Common.Interfaces.Repositories.Psgc;
 using Delex_POS.Application.Common.Interfaces.Repositories.RoleAccess;
+using Delex_POS.Application.Common.Interfaces.Repositories.RolePermission;
 using Delex_POS.Application.Common.Interfaces.Repositories.Supplier;
 using Delex_POS.Application.Common.Interfaces.Repositories.UnitOfMeasure;
 using Delex_POS.Application.Common.Interfaces.Repositories.UserAccess;
+using Delex_POS.Application.Common.Interfaces.Repositories.UserPermission;
 using Delex_POS.Application.Common.Interfaces.Repositories.UserHistory;
 using Delex_POS.Application.Common.Interfaces.Repositories.Warehouse;
 using Delex_POS.Infrastructure.Data;
 using Delex_POS.Infrastructure.Data.Interceptors;
 using Delex_POS.Infrastructure.Factories;
 using Delex_POS.Infrastructure.Identity;
+using Delex_POS.Infrastructure.Jwt;
 using Delex_POS.Infrastructure.Mapping.IdentityProfile;
 using Delex_POS.Infrastructure.Repositories.AccessClaim;
+using Delex_POS.Infrastructure.Repositories.AuditLog;
 using Delex_POS.Infrastructure.Repositories.Branch;
 using Delex_POS.Infrastructure.Repositories.CancelReason;
 using Delex_POS.Infrastructure.Repositories.Customer;
@@ -34,6 +40,7 @@ using Delex_POS.Infrastructure.Repositories.CustomerType;
 using Delex_POS.Infrastructure.Repositories.Employee;
 using Delex_POS.Infrastructure.Repositories.Generic;
 using Delex_POS.Infrastructure.Repositories.PersonalInfo;
+using Delex_POS.Infrastructure.Repositories.Permission;
 using Delex_POS.Infrastructure.Repositories.Product;
 using Delex_POS.Infrastructure.Repositories.ProductAttribute;
 using Delex_POS.Infrastructure.Repositories.ProductCategory;
@@ -41,11 +48,13 @@ using Delex_POS.Infrastructure.Repositories.ProductClass;
 using Delex_POS.Infrastructure.Repositories.ProductPurchasing;
 using Delex_POS.Infrastructure.Repositories.ProductSale;
 using Delex_POS.Infrastructure.Repositories.ProductType;
-using Delex_POS.Infrastructure.Repositories.Region;
+using Delex_POS.Infrastructure.Repositories.Psgc;
 using Delex_POS.Infrastructure.Repositories.RoleAccess;
+using Delex_POS.Infrastructure.Repositories.RolePermission;
 using Delex_POS.Infrastructure.Repositories.Supplier;
 using Delex_POS.Infrastructure.Repositories.UnitOfMeasure;
 using Delex_POS.Infrastructure.Repositories.UserAccess;
+using Delex_POS.Infrastructure.Repositories.UserPermission;
 using Delex_POS.Infrastructure.Repositories.UserHistory;
 using Delex_POS.Infrastructure.Repositories.Warehouse;
 using Microsoft.AspNetCore.Identity;
@@ -53,6 +62,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using System.Runtime.CompilerServices;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -67,6 +77,7 @@ public static class DependencyInjection
 
         builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
         builder.Services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
+        builder.Services.AddScoped<ISaveChangesInterceptor, SoftDeleteInterceptor>();
 
         builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
@@ -82,7 +93,7 @@ public static class DependencyInjection
         // });
 
         builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
-
+        builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
         builder.Services.AddScoped<ApplicationDbContextInitialiser>();
 
         builder.Services.AddAuthentication(options =>
@@ -99,7 +110,7 @@ public static class DependencyInjection
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddSignInManager()
-            .AddDefaultTokenProviders()
+            .AddDefaultTokenProviders()            
             .AddApiEndpoints();
 
         builder.Services.AddSingleton(TimeProvider.System);
@@ -110,6 +121,7 @@ public static class DependencyInjection
         #region Repository
         builder.Services.AddScoped<IAccessClaimCommandRepository, AccessClaimCommandRepository>();
         builder.Services.AddScoped<IAccessClaimQueryRepository, AccessClaimQueryRepository>();
+        builder.Services.AddScoped<IAuditLogCommandRepository, AuditLogCommandRepository>();
         builder.Services.AddScoped<IBranchCommandRepository, BranchCommandRepository>();
         builder.Services.AddScoped<IBranchQueryRepository, BranchQueryRepository>();
         builder.Services.AddScoped<ICancelReasonCommandRepository, CancelReasonCommandRepository>();
@@ -123,6 +135,8 @@ public static class DependencyInjection
         builder.Services.AddScoped<IGenericCommandRepository, GenericCommandRepository>();
         builder.Services.AddScoped<IGenericQueryRepository, GenericQueryRepository>();
         builder.Services.AddScoped<IPersonalInfoCommandRepository, PersonalInfoCommandRepository>();
+        builder.Services.AddScoped<IPermissionQueryRepository, PermissionQueryRepository>();
+        builder.Services.AddScoped<IPermissionCommandRepository, PermissionCommandRepository>();
         builder.Services.AddScoped<IPersonalInfoQueryRepository, PersonalInfoQueryRepository>();
         builder.Services.AddScoped<IProductCommandRepository, ProductCommandRepository>();
         builder.Services.AddScoped<IProductQueryRepository, ProductQueryRepository>();
@@ -138,16 +152,22 @@ public static class DependencyInjection
         builder.Services.AddScoped<IProductSaleQueryRepository, ProductSaleQueryRepository>();
         builder.Services.AddScoped<IProductTypeCommandRepository, ProductTypeCommandRepository>();
         builder.Services.AddScoped<IProductTypeQueryRepository, ProductTypeQueryRepository>();
-        builder.Services.AddScoped<IRegionCommandRepository, RegionCommandRepository>();
-        builder.Services.AddScoped<IRegionQueryRepository, RegionQueryRepository>();
+        builder.Services.AddScoped<IPsgcRegionQueryRepository, PsgcRegionQueryRepository>();
+        builder.Services.AddScoped<IPsgcProvinceQueryRepository, PsgcProvinceQueryRepository>();
+        builder.Services.AddScoped<IPsgcMunicipalityQueryRepository, PsgcMunicipalityQueryRepository>();
+        builder.Services.AddScoped<IPsgcBarangayQueryRepository, PsgcBarangayQueryRepository>();
         builder.Services.AddScoped<IRoleAccessCommandRepository, RoleAccessCommandRepository>();
         builder.Services.AddScoped<IRoleAccessQueryRepository, RoleAccessQueryRepository>();
+        builder.Services.AddScoped<IRolePermissionCommandRepository, RolePermissionCommandRepository>();
+        builder.Services.AddScoped<IRolePermissionQueryRepository, RolePermissionQueryRepository>();
         builder.Services.AddScoped<ISupplierCommandRepository, SupplierCommandRepository>();
         builder.Services.AddScoped<ISupplierQueryRepository, SupplierQueryRepository>();
         builder.Services.AddScoped<IUnitOfMeasureCommandRepository, UnitOfMeasureCommandRepository>();
         builder.Services.AddScoped<IUnitOfMeasureQueryRepository, UnitOfMeasureQueryRepository>();
         builder.Services.AddScoped<IUserAccessCommandRepository, UserAccessCommandRepository>();
         builder.Services.AddScoped<IUserAccessQueryRepository, UserAccessQueryRepository>();
+        builder.Services.AddScoped<IUserPermissionCommandRepository, UserPermissionCommandRepository>();
+        builder.Services.AddScoped<IUserPermissionQueryRepository, UserPermissionQueryRepository>();
         builder.Services.AddScoped<IUserHistoryCommandRepository, UserHistoryCommandRepository>();
         builder.Services.AddScoped<IUserHistoryQueryRepository, UserHistoryQueryRepository>();
         builder.Services.AddScoped<IWarehouseCommandRepository, WarehouseCommandRepository>();

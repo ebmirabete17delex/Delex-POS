@@ -8,6 +8,11 @@ internal class UnitOfMeasureConfiguration : IEntityTypeConfiguration<UnitOfMeasu
 {
     public void Configure(EntityTypeBuilder<UnitOfMeasure> builder)
     {
+        builder.HasQueryFilter(u => !u.IsDeleted);
+
+        builder.HasIndex(u => u.IsDeleted)
+            .HasFilter("IsDeleted = 0");
+
         builder.Property(u => u.UnitOfMeasureId)
             .IsRequired()
             .HasMaxLength(50);

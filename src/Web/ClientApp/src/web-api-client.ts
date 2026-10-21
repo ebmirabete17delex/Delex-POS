@@ -251,11 +251,11 @@ export class AccessClient {
      * Get access
      * @return OK
      */
-    getAccessClaim(idPath: string): Promise<AccessClaimDto> {
+    getAccessClaim(id: number): Promise<AccessClaimDto> {
         let url_ = this.baseUrl + "/api/Access/{id}";
-        if (idPath === undefined || idPath === null)
-            throw new globalThis.Error("The parameter 'idPath' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + idPath));
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -355,6 +355,177 @@ export class AccessClient {
             });
         }
         return Promise.resolve<AccessClaimListDto[]>(null as any);
+    }
+
+    /**
+     * Create a new Access Permission
+     * @return Created
+     */
+    createAccessPermission(accessId: number, body: CreatePermissionCommand): Promise<number> {
+        let url_ = this.baseUrl + "/api/Access/{accessId}/permission";
+        if (accessId === undefined || accessId === null)
+            throw new globalThis.Error("The parameter 'accessId' must be defined.");
+        url_ = url_.replace("{accessId}", encodeURIComponent("" + accessId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateAccessPermission(_response);
+        });
+    }
+
+    protected processCreateAccessPermission(response: Response): Promise<number> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result201 = resultData201 !== undefined ? resultData201 : null as any;
+    
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<number>(null as any);
+    }
+
+    /**
+     * Get accesses permissions
+     * @return OK
+     */
+    getAccessPermissions(id: number): Promise<AccessPermissionDto[]> {
+        let url_ = this.baseUrl + "/api/Access/{accessId}/permission?";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetAccessPermissions(_response);
+        });
+    }
+
+    protected processGetAccessPermissions(response: Response): Promise<AccessPermissionDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(AccessPermissionDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<AccessPermissionDto[]>(null as any);
+    }
+
+    /**
+     * Delete a access permission
+     * @return No Content
+     */
+    deleteAccessPermission(id: number, accessId: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/Access/{accessId}/permission/{id}";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (accessId === undefined || accessId === null)
+            throw new globalThis.Error("The parameter 'accessId' must be defined.");
+        url_ = url_.replace("{accessId}", encodeURIComponent("" + accessId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteAccessPermission(_response);
+        });
+    }
+
+    protected processDeleteAccessPermission(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 204) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
     }
 }
 
@@ -3552,7 +3723,7 @@ export class ProductClassClient {
     }
 }
 
-export class RegionClient {
+export class PsgcClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -3563,89 +3734,11 @@ export class RegionClient {
     }
 
     /**
-     * Create a new Region
-     * @return Created
-     */
-    createRegion(body: CreateRegionCommand): Promise<number> {
-        let url_ = this.baseUrl + "/api/Region";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_: RequestInit = {
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processCreateRegion(_response);
-        });
-    }
-
-    protected processCreateRegion(response: Response): Promise<number> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 201) {
-            return response.text().then((_responseText) => {
-            let result201: any = null;
-            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                result201 = resultData201 !== undefined ? resultData201 : null as any;
-    
-            return result201;
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-            return throwException("Bad Request", status, _responseText, _headers);
-            });
-        } else if (status === 401) {
-            return response.text().then((_responseText) => {
-            return throwException("Unauthorized", status, _responseText, _headers);
-            });
-        } else if (status === 403) {
-            return response.text().then((_responseText) => {
-            return throwException("Forbidden", status, _responseText, _headers);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<number>(null as any);
-    }
-
-    /**
      * Get all regions
-     * @param searchQuery (optional) 
-     * @param sortBy (optional) 
-     * @param sort (optional) 
      * @return OK
      */
-    getRegions(pageNumber: number, pageSize: number, searchQuery: string | undefined, sortBy: string | undefined, sort: number | undefined): Promise<PaginatedListOfRegionDto> {
-        let url_ = this.baseUrl + "/api/Region?";
-        if (pageNumber === undefined || pageNumber === null)
-            throw new globalThis.Error("The parameter 'pageNumber' must be defined and cannot be null.");
-        else
-            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
-        if (pageSize === undefined || pageSize === null)
-            throw new globalThis.Error("The parameter 'pageSize' must be defined and cannot be null.");
-        else
-            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
-        if (searchQuery === null)
-            throw new globalThis.Error("The parameter 'searchQuery' cannot be null.");
-        else if (searchQuery !== undefined)
-            url_ += "SearchQuery=" + encodeURIComponent("" + searchQuery) + "&";
-        if (sortBy === null)
-            throw new globalThis.Error("The parameter 'sortBy' cannot be null.");
-        else if (sortBy !== undefined)
-            url_ += "SortBy=" + encodeURIComponent("" + sortBy) + "&";
-        if (sort === null)
-            throw new globalThis.Error("The parameter 'sort' cannot be null.");
-        else if (sort !== undefined)
-            url_ += "Sort=" + encodeURIComponent("" + sort) + "&";
+    getRegions(): Promise<RegionDto[]> {
+        let url_ = this.baseUrl + "/api/Psgc/regions";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -3660,212 +3753,7 @@ export class RegionClient {
         });
     }
 
-    protected processGetRegions(response: Response): Promise<PaginatedListOfRegionDto> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PaginatedListOfRegionDto.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-            return throwException("Bad Request", status, _responseText, _headers);
-            });
-        } else if (status === 401) {
-            return response.text().then((_responseText) => {
-            return throwException("Unauthorized", status, _responseText, _headers);
-            });
-        } else if (status === 403) {
-            return response.text().then((_responseText) => {
-            return throwException("Forbidden", status, _responseText, _headers);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<PaginatedListOfRegionDto>(null as any);
-    }
-
-    /**
-     * Update an Region
-     * @return No Content
-     */
-    updateRegion(id: number, body: UpdateRegionCommand): Promise<void> {
-        let url_ = this.baseUrl + "/api/Region/{id}";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_: RequestInit = {
-            body: content_,
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processUpdateRegion(_response);
-        });
-    }
-
-    protected processUpdateRegion(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 204) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-            return throwException("Bad Request", status, _responseText, _headers);
-            });
-        } else if (status === 401) {
-            return response.text().then((_responseText) => {
-            return throwException("Unauthorized", status, _responseText, _headers);
-            });
-        } else if (status === 403) {
-            return response.text().then((_responseText) => {
-            return throwException("Forbidden", status, _responseText, _headers);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(null as any);
-    }
-
-    /**
-     * Delete a Region
-     * @return No Content
-     */
-    deleteRegion(id: number): Promise<void> {
-        let url_ = this.baseUrl + "/api/Region/{id}";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "DELETE",
-            headers: {
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processDeleteRegion(_response);
-        });
-    }
-
-    protected processDeleteRegion(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 204) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-            return throwException("Bad Request", status, _responseText, _headers);
-            });
-        } else if (status === 401) {
-            return response.text().then((_responseText) => {
-            return throwException("Unauthorized", status, _responseText, _headers);
-            });
-        } else if (status === 403) {
-            return response.text().then((_responseText) => {
-            return throwException("Forbidden", status, _responseText, _headers);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(null as any);
-    }
-
-    /**
-     * Get region
-     * @return OK
-     */
-    getRegion(idPath: number): Promise<RegionDto> {
-        let url_ = this.baseUrl + "/api/Region/{id}";
-        if (idPath === undefined || idPath === null)
-            throw new globalThis.Error("The parameter 'idPath' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + idPath));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetRegion(_response);
-        });
-    }
-
-    protected processGetRegion(response: Response): Promise<RegionDto> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = RegionDto.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-            return throwException("Bad Request", status, _responseText, _headers);
-            });
-        } else if (status === 401) {
-            return response.text().then((_responseText) => {
-            return throwException("Unauthorized", status, _responseText, _headers);
-            });
-        } else if (status === 403) {
-            return response.text().then((_responseText) => {
-            return throwException("Forbidden", status, _responseText, _headers);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<RegionDto>(null as any);
-    }
-
-    /**
-     * Get regions List
-     * @return OK
-     */
-    getRegionsList(): Promise<RegionListDto[]> {
-        let url_ = this.baseUrl + "/api/Region/list";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetRegionsList(_response);
-        });
-    }
-
-    protected processGetRegionsList(response: Response): Promise<RegionListDto[]> {
+    protected processGetRegions(response: Response): Promise<RegionDto[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -3875,7 +3763,7 @@ export class RegionClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(RegionListDto.fromJS(item));
+                    result200!.push(RegionDto.fromJS(item));
             }
             else {
                 result200 = null as any;
@@ -3899,7 +3787,187 @@ export class RegionClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<RegionListDto[]>(null as any);
+        return Promise.resolve<RegionDto[]>(null as any);
+    }
+
+    /**
+     * Get provinces
+     * @return OK
+     */
+    getProvinces(regionCode: string): Promise<ProvinceDto[]> {
+        let url_ = this.baseUrl + "/api/Psgc/provinces/{regionCode}";
+        if (regionCode === undefined || regionCode === null)
+            throw new globalThis.Error("The parameter 'regionCode' must be defined.");
+        url_ = url_.replace("{regionCode}", encodeURIComponent("" + regionCode));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetProvinces(_response);
+        });
+    }
+
+    protected processGetProvinces(response: Response): Promise<ProvinceDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(ProvinceDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ProvinceDto[]>(null as any);
+    }
+
+    /**
+     * Get municipalities
+     * @return OK
+     */
+    getMunicipalities(provinceCode: string): Promise<MunicipalityDto[]> {
+        let url_ = this.baseUrl + "/api/Psgc/municipalities/{provinceCode}";
+        if (provinceCode === undefined || provinceCode === null)
+            throw new globalThis.Error("The parameter 'provinceCode' must be defined.");
+        url_ = url_.replace("{provinceCode}", encodeURIComponent("" + provinceCode));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetMunicipalities(_response);
+        });
+    }
+
+    protected processGetMunicipalities(response: Response): Promise<MunicipalityDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(MunicipalityDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<MunicipalityDto[]>(null as any);
+    }
+
+    /**
+     * Get barangays
+     * @return OK
+     */
+    getBarangays(municipalityCode: string): Promise<BarangayDto[]> {
+        let url_ = this.baseUrl + "/api/Psgc/barangays/{municipalityCode}";
+        if (municipalityCode === undefined || municipalityCode === null)
+            throw new globalThis.Error("The parameter 'municipalityCode' must be defined.");
+        url_ = url_.replace("{municipalityCode}", encodeURIComponent("" + municipalityCode));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetBarangays(_response);
+        });
+    }
+
+    protected processGetBarangays(response: Response): Promise<BarangayDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(BarangayDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<BarangayDto[]>(null as any);
     }
 }
 
@@ -4144,6 +4212,63 @@ export class RoleClient {
     }
 
     /**
+     * Get all roles as List
+     * @return OK
+     */
+    getRolesList(): Promise<RoleDto[]> {
+        let url_ = this.baseUrl + "/api/Roles/list";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetRolesList(_response);
+        });
+    }
+
+    protected processGetRolesList(response: Response): Promise<RoleDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(RoleDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<RoleDto[]>(null as any);
+    }
+
+    /**
      * Get all role access
      * @return OK
      */
@@ -4342,6 +4467,237 @@ export class RoleClient {
     }
 
     protected processRemoveRoleAccess(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 204) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * Get all role permissions
+     * @return OK
+     */
+    getRolePermissions(roleId: string, id: string): Promise<RolePermissionDto[]> {
+        let url_ = this.baseUrl + "/api/Roles/{roleId}/permission?";
+        if (roleId === undefined || roleId === null)
+            throw new globalThis.Error("The parameter 'roleId' must be defined.");
+        url_ = url_.replace("{roleId}", encodeURIComponent("" + roleId));
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetRolePermissions(_response);
+        });
+    }
+
+    protected processGetRolePermissions(response: Response): Promise<RolePermissionDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(RolePermissionDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<RolePermissionDto[]>(null as any);
+    }
+
+    /**
+     * Create a new Role permission
+     * @return Created
+     */
+    createRolePermission(body: CreateRolePermissionCommand): Promise<number> {
+        let url_ = this.baseUrl + "/api/Roles/{roleId}/permission";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateRolePermission(_response);
+        });
+    }
+
+    protected processCreateRolePermission(response: Response): Promise<number> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result201 = resultData201 !== undefined ? resultData201 : null as any;
+    
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<number>(null as any);
+    }
+
+    /**
+     * Get all role access permissions
+     * @return OK
+     */
+    getRoleAccessPermissions(roleId: string): Promise<RoleAccessPermissionDto[]> {
+        let url_ = this.baseUrl + "/api/Roles/{roleId}/accesspermission";
+        if (roleId === undefined || roleId === null)
+            throw new globalThis.Error("The parameter 'roleId' must be defined.");
+        url_ = url_.replace("{roleId}", encodeURIComponent("" + roleId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetRoleAccessPermissions(_response);
+        });
+    }
+
+    protected processGetRoleAccessPermissions(response: Response): Promise<RoleAccessPermissionDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(RoleAccessPermissionDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<RoleAccessPermissionDto[]>(null as any);
+    }
+
+    /**
+     * Delete a Role permission
+     * @return No Content
+     */
+    deleteRolePermission(roleId: string, permissionId: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/Roles/{roleId}/permission/{permissionId}";
+        if (roleId === undefined || roleId === null)
+            throw new globalThis.Error("The parameter 'roleId' must be defined.");
+        url_ = url_.replace("{roleId}", encodeURIComponent("" + roleId));
+        if (permissionId === undefined || permissionId === null)
+            throw new globalThis.Error("The parameter 'permissionId' must be defined.");
+        url_ = url_.replace("{permissionId}", encodeURIComponent("" + permissionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteRolePermission(_response);
+        });
+    }
+
+    protected processDeleteRolePermission(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 204) {
@@ -6055,6 +6411,204 @@ export class UsersClient {
         }
         return Promise.resolve<void>(null as any);
     }
+
+    /**
+     * Get User Permissions
+     * @return OK
+     */
+    getUserPermissions(userId: number): Promise<UserPermissionDto[]> {
+        let url_ = this.baseUrl + "/api/Users/{userId}/permission";
+        if (userId === undefined || userId === null)
+            throw new globalThis.Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetUserPermissions(_response);
+        });
+    }
+
+    protected processGetUserPermissions(response: Response): Promise<UserPermissionDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(UserPermissionDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UserPermissionDto[]>(null as any);
+    }
+
+    /**
+     * Create user permission
+     * @return Created
+     */
+    createUserPermission(userId: number, permissionId: number): Promise<number> {
+        let url_ = this.baseUrl + "/api/Users/{userId}/permission?";
+        if (userId === undefined || userId === null)
+            throw new globalThis.Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        if (permissionId === undefined || permissionId === null)
+            throw new globalThis.Error("The parameter 'permissionId' must be defined and cannot be null.");
+        else
+            url_ += "permissionId=" + encodeURIComponent("" + permissionId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateUserPermission(_response);
+        });
+    }
+
+    protected processCreateUserPermission(response: Response): Promise<number> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result201 = resultData201 !== undefined ? resultData201 : null as any;
+    
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<number>(null as any);
+    }
+
+    /**
+     * Get User Access Permissions
+     * @return OK
+     */
+    getUserAccessPermissions(userId: number): Promise<UserAccessPermissionDto[]> {
+        let url_ = this.baseUrl + "/api/Users/{userId}/accesspermission";
+        if (userId === undefined || userId === null)
+            throw new globalThis.Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetUserAccessPermissions(_response);
+        });
+    }
+
+    protected processGetUserAccessPermissions(response: Response): Promise<UserAccessPermissionDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(UserAccessPermissionDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UserAccessPermissionDto[]>(null as any);
+    }
+
+    /**
+     * Delete a permission from a user
+     * @return No Content
+     */
+    deleteUserPermission(userId: number, id: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/Users/{userId}/permission/{id}";
+        if (userId === undefined || userId === null)
+            throw new globalThis.Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteUserPermission(_response);
+        });
+    }
+
+    protected processDeleteUserPermission(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 204) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
 
 export class WarehouseClient {
@@ -6592,6 +7146,62 @@ export interface IAccessClaimListDto {
     [key: string]: any;
 }
 
+export class AccessPermissionDto implements IAccessPermissionDto {
+    id?: number;
+    feature?: string;
+    name?: string;
+
+    [key: string]: any;
+
+    constructor(data?: IAccessPermissionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.id = _data["id"];
+            this.feature = _data["feature"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): AccessPermissionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AccessPermissionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["id"] = this.id;
+        data["feature"] = this.feature;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface IAccessPermissionDto {
+    id?: number;
+    feature?: string;
+    name?: string;
+
+    [key: string]: any;
+}
+
 export class ActivationRequest implements IActivationRequest {
     userId!: string;
     password!: string;
@@ -6648,16 +7258,73 @@ export interface IActivationRequest {
     [key: string]: any;
 }
 
+export class BarangayDto implements IBarangayDto {
+    code?: string;
+    areaName?: string;
+
+    [key: string]: any;
+
+    constructor(data?: IBarangayDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.code = _data["code"];
+            this.areaName = _data["areaName"];
+        }
+    }
+
+    static fromJS(data: any): BarangayDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BarangayDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["code"] = this.code;
+        data["areaName"] = this.areaName;
+        return data;
+    }
+}
+
+export interface IBarangayDto {
+    code?: string;
+    areaName?: string;
+
+    [key: string]: any;
+}
+
 export class BranchDto implements IBranchDto {
     id?: number;
     name?: string;
     warehouseId?: number;
     warehouse?: string | undefined;
-    regionId?: number;
+    regionCode?: string;
     region?: string | undefined;
+    provinceCode?: string;
+    province?: string | undefined;
+    municipalityCode?: string;
+    municipality?: string | undefined;
+    barangayCode?: string;
+    barangay?: string | undefined;
     address1?: string | undefined;
     address2?: string | undefined;
-    address3?: string | undefined;
     phone?: string | undefined;
     fax?: string | undefined;
     email?: string | undefined;
@@ -6685,11 +7352,16 @@ export class BranchDto implements IBranchDto {
             this.name = _data["name"];
             this.warehouseId = _data["warehouseId"];
             this.warehouse = _data["warehouse"];
-            this.regionId = _data["regionId"];
+            this.regionCode = _data["regionCode"];
             this.region = _data["region"];
+            this.provinceCode = _data["provinceCode"];
+            this.province = _data["province"];
+            this.municipalityCode = _data["municipalityCode"];
+            this.municipality = _data["municipality"];
+            this.barangayCode = _data["barangayCode"];
+            this.barangay = _data["barangay"];
             this.address1 = _data["address1"];
             this.address2 = _data["address2"];
-            this.address3 = _data["address3"];
             this.phone = _data["phone"];
             this.fax = _data["fax"];
             this.email = _data["email"];
@@ -6715,11 +7387,16 @@ export class BranchDto implements IBranchDto {
         data["name"] = this.name;
         data["warehouseId"] = this.warehouseId;
         data["warehouse"] = this.warehouse;
-        data["regionId"] = this.regionId;
+        data["regionCode"] = this.regionCode;
         data["region"] = this.region;
+        data["provinceCode"] = this.provinceCode;
+        data["province"] = this.province;
+        data["municipalityCode"] = this.municipalityCode;
+        data["municipality"] = this.municipality;
+        data["barangayCode"] = this.barangayCode;
+        data["barangay"] = this.barangay;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
-        data["address3"] = this.address3;
         data["phone"] = this.phone;
         data["fax"] = this.fax;
         data["email"] = this.email;
@@ -6734,11 +7411,16 @@ export interface IBranchDto {
     name?: string;
     warehouseId?: number;
     warehouse?: string | undefined;
-    regionId?: number;
+    regionCode?: string;
     region?: string | undefined;
+    provinceCode?: string;
+    province?: string | undefined;
+    municipalityCode?: string;
+    municipality?: string | undefined;
+    barangayCode?: string;
+    barangay?: string | undefined;
     address1?: string | undefined;
     address2?: string | undefined;
-    address3?: string | undefined;
     phone?: string | undefined;
     fax?: string | undefined;
     email?: string | undefined;
@@ -7027,11 +7709,13 @@ export interface ICreateAccessClaimCommand {
 export class CreateBranchCommand implements ICreateBranchCommand {
     name?: string;
     warehouseId?: number;
-    regionId?: number;
     memo?: string | undefined;
     address1?: string | undefined;
     address2?: string | undefined;
-    address3?: string | undefined;
+    regionCode?: string;
+    provinceCode?: string;
+    municipalityCode?: string;
+    barangayCode?: string;
     phone?: string | undefined;
     fax?: string | undefined;
     email?: string | undefined;
@@ -7056,11 +7740,13 @@ export class CreateBranchCommand implements ICreateBranchCommand {
             }
             this.name = _data["name"];
             this.warehouseId = _data["warehouseId"];
-            this.regionId = _data["regionId"];
             this.memo = _data["memo"];
             this.address1 = _data["address1"];
             this.address2 = _data["address2"];
-            this.address3 = _data["address3"];
+            this.regionCode = _data["regionCode"];
+            this.provinceCode = _data["provinceCode"];
+            this.municipalityCode = _data["municipalityCode"];
+            this.barangayCode = _data["barangayCode"];
             this.phone = _data["phone"];
             this.fax = _data["fax"];
             this.email = _data["email"];
@@ -7083,11 +7769,13 @@ export class CreateBranchCommand implements ICreateBranchCommand {
         }
         data["name"] = this.name;
         data["warehouseId"] = this.warehouseId;
-        data["regionId"] = this.regionId;
         data["memo"] = this.memo;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
-        data["address3"] = this.address3;
+        data["regionCode"] = this.regionCode;
+        data["provinceCode"] = this.provinceCode;
+        data["municipalityCode"] = this.municipalityCode;
+        data["barangayCode"] = this.barangayCode;
         data["phone"] = this.phone;
         data["fax"] = this.fax;
         data["email"] = this.email;
@@ -7099,11 +7787,13 @@ export class CreateBranchCommand implements ICreateBranchCommand {
 export interface ICreateBranchCommand {
     name?: string;
     warehouseId?: number;
-    regionId?: number;
     memo?: string | undefined;
     address1?: string | undefined;
     address2?: string | undefined;
-    address3?: string | undefined;
+    regionCode?: string;
+    provinceCode?: string;
+    municipalityCode?: string;
+    barangayCode?: string;
     phone?: string | undefined;
     fax?: string | undefined;
     email?: string | undefined;
@@ -7428,6 +8118,58 @@ export interface ICreateGenericCommand {
     code?: string;
     name?: string;
     memo?: string | undefined;
+
+    [key: string]: any;
+}
+
+export class CreatePermissionCommand implements ICreatePermissionCommand {
+    accessId?: number;
+    name?: string;
+
+    [key: string]: any;
+
+    constructor(data?: ICreatePermissionCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.accessId = _data["accessId"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): CreatePermissionCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreatePermissionCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["accessId"] = this.accessId;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface ICreatePermissionCommand {
+    accessId?: number;
+    name?: string;
 
     [key: string]: any;
 }
@@ -7816,58 +8558,6 @@ export interface ICreateProductSaleCommand {
     [key: string]: any;
 }
 
-export class CreateRegionCommand implements ICreateRegionCommand {
-    name?: string;
-    memo?: string;
-
-    [key: string]: any;
-
-    constructor(data?: ICreateRegionCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            for (var property in _data) {
-                if (_data.hasOwnProperty(property))
-                    this[property] = _data[property];
-            }
-            this.name = _data["name"];
-            this.memo = _data["memo"];
-        }
-    }
-
-    static fromJS(data: any): CreateRegionCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateRegionCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        for (var property in this) {
-            if (this.hasOwnProperty(property))
-                data[property] = this[property];
-        }
-        data["name"] = this.name;
-        data["memo"] = this.memo;
-        return data;
-    }
-}
-
-export interface ICreateRegionCommand {
-    name?: string;
-    memo?: string;
-
-    [key: string]: any;
-}
-
 export class CreateRoleCommand implements ICreateRoleCommand {
     name?: string;
 
@@ -7912,6 +8602,58 @@ export class CreateRoleCommand implements ICreateRoleCommand {
 
 export interface ICreateRoleCommand {
     name?: string;
+
+    [key: string]: any;
+}
+
+export class CreateRolePermissionCommand implements ICreateRolePermissionCommand {
+    roleId?: string;
+    permissionId?: number;
+
+    [key: string]: any;
+
+    constructor(data?: ICreateRolePermissionCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.roleId = _data["roleId"];
+            this.permissionId = _data["permissionId"];
+        }
+    }
+
+    static fromJS(data: any): CreateRolePermissionCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateRolePermissionCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["roleId"] = this.roleId;
+        data["permissionId"] = this.permissionId;
+        return data;
+    }
+}
+
+export interface ICreateRolePermissionCommand {
+    roleId?: string;
+    permissionId?: number;
 
     [key: string]: any;
 }
@@ -8167,7 +8909,10 @@ export class CreateWarehouseCommand implements ICreateWarehouseCommand {
     isActive?: boolean;
     address1?: string | undefined;
     address2?: string | undefined;
-    address3?: string | undefined;
+    regionCode?: string;
+    provinceCode?: string;
+    municipalityCode?: string;
+    barangayCode?: string;
     phone?: string | undefined;
     fax?: string | undefined;
     email?: string | undefined;
@@ -8195,7 +8940,10 @@ export class CreateWarehouseCommand implements ICreateWarehouseCommand {
             this.isActive = _data["isActive"];
             this.address1 = _data["address1"];
             this.address2 = _data["address2"];
-            this.address3 = _data["address3"];
+            this.regionCode = _data["regionCode"];
+            this.provinceCode = _data["provinceCode"];
+            this.municipalityCode = _data["municipalityCode"];
+            this.barangayCode = _data["barangayCode"];
             this.phone = _data["phone"];
             this.fax = _data["fax"];
             this.email = _data["email"];
@@ -8221,7 +8969,10 @@ export class CreateWarehouseCommand implements ICreateWarehouseCommand {
         data["isActive"] = this.isActive;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
-        data["address3"] = this.address3;
+        data["regionCode"] = this.regionCode;
+        data["provinceCode"] = this.provinceCode;
+        data["municipalityCode"] = this.municipalityCode;
+        data["barangayCode"] = this.barangayCode;
         data["phone"] = this.phone;
         data["fax"] = this.fax;
         data["email"] = this.email;
@@ -8236,7 +8987,10 @@ export interface ICreateWarehouseCommand {
     isActive?: boolean;
     address1?: string | undefined;
     address2?: string | undefined;
-    address3?: string | undefined;
+    regionCode?: string;
+    provinceCode?: string;
+    municipalityCode?: string;
+    barangayCode?: string;
     phone?: string | undefined;
     fax?: string | undefined;
     email?: string | undefined;
@@ -8260,7 +9014,14 @@ export class CustomerDto implements ICustomerDto {
     email?: string | undefined;
     billingAddress1?: string | undefined;
     billingAddress2?: string | undefined;
-    billingAddress3?: string | undefined;
+    regionCode?: string;
+    region?: string | undefined;
+    provinceCode?: string;
+    province?: string | undefined;
+    municipalityCode?: string;
+    municipality?: string | undefined;
+    barangayCode?: string;
+    barangay?: string | undefined;
     phone?: string | undefined;
     mobile?: string | undefined;
     fax?: string | undefined;
@@ -8299,7 +9060,14 @@ export class CustomerDto implements ICustomerDto {
             this.email = _data["email"];
             this.billingAddress1 = _data["billingAddress1"];
             this.billingAddress2 = _data["billingAddress2"];
-            this.billingAddress3 = _data["billingAddress3"];
+            this.regionCode = _data["regionCode"];
+            this.region = _data["region"];
+            this.provinceCode = _data["provinceCode"];
+            this.province = _data["province"];
+            this.municipalityCode = _data["municipalityCode"];
+            this.municipality = _data["municipality"];
+            this.barangayCode = _data["barangayCode"];
+            this.barangay = _data["barangay"];
             this.phone = _data["phone"];
             this.mobile = _data["mobile"];
             this.fax = _data["fax"];
@@ -8336,7 +9104,14 @@ export class CustomerDto implements ICustomerDto {
         data["email"] = this.email;
         data["billingAddress1"] = this.billingAddress1;
         data["billingAddress2"] = this.billingAddress2;
-        data["billingAddress3"] = this.billingAddress3;
+        data["regionCode"] = this.regionCode;
+        data["region"] = this.region;
+        data["provinceCode"] = this.provinceCode;
+        data["province"] = this.province;
+        data["municipalityCode"] = this.municipalityCode;
+        data["municipality"] = this.municipality;
+        data["barangayCode"] = this.barangayCode;
+        data["barangay"] = this.barangay;
         data["phone"] = this.phone;
         data["mobile"] = this.mobile;
         data["fax"] = this.fax;
@@ -8362,7 +9137,14 @@ export interface ICustomerDto {
     email?: string | undefined;
     billingAddress1?: string | undefined;
     billingAddress2?: string | undefined;
-    billingAddress3?: string | undefined;
+    regionCode?: string;
+    region?: string | undefined;
+    provinceCode?: string;
+    province?: string | undefined;
+    municipalityCode?: string;
+    municipality?: string | undefined;
+    barangayCode?: string;
+    barangay?: string | undefined;
     phone?: string | undefined;
     mobile?: string | undefined;
     fax?: string | undefined;
@@ -8572,7 +9354,14 @@ export class EmployeeDto implements IEmployeeDto {
     email?: string | undefined;
     billingAddress1?: string | undefined;
     billingAddress2?: string | undefined;
-    billingAddress3?: string | undefined;
+    regionCode?: string;
+    region?: string | undefined;
+    provinceCode?: string;
+    province?: string | undefined;
+    municipalityCode?: string;
+    municipality?: string | undefined;
+    barangayCode?: string;
+    barangay?: string | undefined;
     phone?: string | undefined;
     mobile?: string | undefined;
     fax?: string | undefined;
@@ -8611,7 +9400,14 @@ export class EmployeeDto implements IEmployeeDto {
             this.email = _data["email"];
             this.billingAddress1 = _data["billingAddress1"];
             this.billingAddress2 = _data["billingAddress2"];
-            this.billingAddress3 = _data["billingAddress3"];
+            this.regionCode = _data["regionCode"];
+            this.region = _data["region"];
+            this.provinceCode = _data["provinceCode"];
+            this.province = _data["province"];
+            this.municipalityCode = _data["municipalityCode"];
+            this.municipality = _data["municipality"];
+            this.barangayCode = _data["barangayCode"];
+            this.barangay = _data["barangay"];
             this.phone = _data["phone"];
             this.mobile = _data["mobile"];
             this.fax = _data["fax"];
@@ -8648,7 +9444,14 @@ export class EmployeeDto implements IEmployeeDto {
         data["email"] = this.email;
         data["billingAddress1"] = this.billingAddress1;
         data["billingAddress2"] = this.billingAddress2;
-        data["billingAddress3"] = this.billingAddress3;
+        data["regionCode"] = this.regionCode;
+        data["region"] = this.region;
+        data["provinceCode"] = this.provinceCode;
+        data["province"] = this.province;
+        data["municipalityCode"] = this.municipalityCode;
+        data["municipality"] = this.municipality;
+        data["barangayCode"] = this.barangayCode;
+        data["barangay"] = this.barangay;
         data["phone"] = this.phone;
         data["mobile"] = this.mobile;
         data["fax"] = this.fax;
@@ -8674,7 +9477,14 @@ export interface IEmployeeDto {
     email?: string | undefined;
     billingAddress1?: string | undefined;
     billingAddress2?: string | undefined;
-    billingAddress3?: string | undefined;
+    regionCode?: string;
+    region?: string | undefined;
+    provinceCode?: string;
+    province?: string | undefined;
+    municipalityCode?: string;
+    municipality?: string | undefined;
+    barangayCode?: string;
+    barangay?: string | undefined;
     phone?: string | undefined;
     mobile?: string | undefined;
     fax?: string | undefined;
@@ -9039,6 +9849,58 @@ export class LookupDto implements ILookupDto {
 export interface ILookupDto {
     id?: number;
     title?: string | undefined;
+
+    [key: string]: any;
+}
+
+export class MunicipalityDto implements IMunicipalityDto {
+    code?: string;
+    areaName?: string;
+
+    [key: string]: any;
+
+    constructor(data?: IMunicipalityDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.code = _data["code"];
+            this.areaName = _data["areaName"];
+        }
+    }
+
+    static fromJS(data: any): MunicipalityDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MunicipalityDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["code"] = this.code;
+        data["areaName"] = this.areaName;
+        return data;
+    }
+}
+
+export interface IMunicipalityDto {
+    code?: string;
+    areaName?: string;
 
     [key: string]: any;
 }
@@ -9912,85 +10774,6 @@ export interface IPaginatedListOfProductDto {
     [key: string]: any;
 }
 
-export class PaginatedListOfRegionDto implements IPaginatedListOfRegionDto {
-    items!: RegionDto[];
-    pageNumber!: number;
-    totalPages?: number;
-    totalCount?: number;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-
-    [key: string]: any;
-
-    constructor(data?: IPaginatedListOfRegionDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-        if (!data) {
-            this.items = [];
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            for (var property in _data) {
-                if (_data.hasOwnProperty(property))
-                    this[property] = _data[property];
-            }
-            if (Array.isArray(_data["items"])) {
-                this.items = [] as any;
-                for (let item of _data["items"])
-                    this.items!.push(RegionDto.fromJS(item));
-            }
-            this.pageNumber = _data["pageNumber"];
-            this.totalPages = _data["totalPages"];
-            this.totalCount = _data["totalCount"];
-            this.hasPreviousPage = _data["hasPreviousPage"];
-            this.hasNextPage = _data["hasNextPage"];
-        }
-    }
-
-    static fromJS(data: any): PaginatedListOfRegionDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PaginatedListOfRegionDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        for (var property in this) {
-            if (this.hasOwnProperty(property))
-                data[property] = this[property];
-        }
-        if (Array.isArray(this.items)) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item ? item.toJSON() : undefined as any);
-        }
-        data["pageNumber"] = this.pageNumber;
-        data["totalPages"] = this.totalPages;
-        data["totalCount"] = this.totalCount;
-        data["hasPreviousPage"] = this.hasPreviousPage;
-        data["hasNextPage"] = this.hasNextPage;
-        return data;
-    }
-}
-
-export interface IPaginatedListOfRegionDto {
-    items: RegionDto[];
-    pageNumber: number;
-    totalPages?: number;
-    totalCount?: number;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-
-    [key: string]: any;
-}
-
 export class PaginatedListOfSupplierListDto implements IPaginatedListOfSupplierListDto {
     items!: SupplierListDto[];
     pageNumber!: number;
@@ -10700,12 +11483,61 @@ export interface IProductSaleDto {
     [key: string]: any;
 }
 
+export class ProvinceDto implements IProvinceDto {
+    code?: string;
+    areaName?: string;
+
+    [key: string]: any;
+
+    constructor(data?: IProvinceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.code = _data["code"];
+            this.areaName = _data["areaName"];
+        }
+    }
+
+    static fromJS(data: any): ProvinceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProvinceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["code"] = this.code;
+        data["areaName"] = this.areaName;
+        return data;
+    }
+}
+
+export interface IProvinceDto {
+    code?: string;
+    areaName?: string;
+
+    [key: string]: any;
+}
+
 export class RegionDto implements IRegionDto {
-    id?: number;
-    name?: string;
-    memo?: string | undefined;
-    isActive?: boolean;
-    created?: Date;
+    code?: string;
+    areaName?: string;
 
     [key: string]: any;
 
@@ -10724,11 +11556,8 @@ export class RegionDto implements IRegionDto {
                 if (_data.hasOwnProperty(property))
                     this[property] = _data[property];
             }
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.memo = _data["memo"];
-            this.isActive = _data["isActive"];
-            this.created = _data["created"] ? new Date(_data["created"].toString()) : undefined as any;
+            this.code = _data["code"];
+            this.areaName = _data["areaName"];
         }
     }
 
@@ -10745,73 +11574,15 @@ export class RegionDto implements IRegionDto {
             if (this.hasOwnProperty(property))
                 data[property] = this[property];
         }
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["memo"] = this.memo;
-        data["isActive"] = this.isActive;
-        data["created"] = this.created ? this.created.toISOString() : undefined as any;
+        data["code"] = this.code;
+        data["areaName"] = this.areaName;
         return data;
     }
 }
 
 export interface IRegionDto {
-    id?: number;
-    name?: string;
-    memo?: string | undefined;
-    isActive?: boolean;
-    created?: Date;
-
-    [key: string]: any;
-}
-
-export class RegionListDto implements IRegionListDto {
-    id?: number;
-    name?: string;
-
-    [key: string]: any;
-
-    constructor(data?: IRegionListDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            for (var property in _data) {
-                if (_data.hasOwnProperty(property))
-                    this[property] = _data[property];
-            }
-            this.id = _data["id"];
-            this.name = _data["name"];
-        }
-    }
-
-    static fromJS(data: any): RegionListDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new RegionListDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        for (var property in this) {
-            if (this.hasOwnProperty(property))
-                data[property] = this[property];
-        }
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data;
-    }
-}
-
-export interface IRegionListDto {
-    id?: number;
-    name?: string;
+    code?: string;
+    areaName?: string;
 
     [key: string]: any;
 }
@@ -10821,10 +11592,6 @@ export class RoleAccessDto implements IRoleAccessDto {
     roleId?: string;
     accessId?: number;
     name?: string;
-    hasRead?: boolean;
-    hasWrite?: boolean;
-    hasDelete?: boolean;
-    hasUpdate?: boolean;
     isActive?: boolean;
 
     [key: string]: any;
@@ -10848,10 +11615,6 @@ export class RoleAccessDto implements IRoleAccessDto {
             this.roleId = _data["roleId"];
             this.accessId = _data["accessId"];
             this.name = _data["name"];
-            this.hasRead = _data["hasRead"];
-            this.hasWrite = _data["hasWrite"];
-            this.hasDelete = _data["hasDelete"];
-            this.hasUpdate = _data["hasUpdate"];
             this.isActive = _data["isActive"];
         }
     }
@@ -10873,10 +11636,6 @@ export class RoleAccessDto implements IRoleAccessDto {
         data["roleId"] = this.roleId;
         data["accessId"] = this.accessId;
         data["name"] = this.name;
-        data["hasRead"] = this.hasRead;
-        data["hasWrite"] = this.hasWrite;
-        data["hasDelete"] = this.hasDelete;
-        data["hasUpdate"] = this.hasUpdate;
         data["isActive"] = this.isActive;
         return data;
     }
@@ -10887,11 +11646,187 @@ export interface IRoleAccessDto {
     roleId?: string;
     accessId?: number;
     name?: string;
-    hasRead?: boolean;
-    hasWrite?: boolean;
-    hasDelete?: boolean;
-    hasUpdate?: boolean;
     isActive?: boolean;
+
+    [key: string]: any;
+}
+
+export class RoleAccessPermissionDto implements IRoleAccessPermissionDto {
+    accessId?: number;
+    name?: string;
+    feature?: string;
+    permissions?: RolePermissionDto[];
+
+    [key: string]: any;
+
+    constructor(data?: IRoleAccessPermissionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.accessId = _data["accessId"];
+            this.name = _data["name"];
+            this.feature = _data["feature"];
+            if (Array.isArray(_data["permissions"])) {
+                this.permissions = [] as any;
+                for (let item of _data["permissions"])
+                    this.permissions!.push(RolePermissionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): RoleAccessPermissionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RoleAccessPermissionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["accessId"] = this.accessId;
+        data["name"] = this.name;
+        data["feature"] = this.feature;
+        if (Array.isArray(this.permissions)) {
+            data["permissions"] = [];
+            for (let item of this.permissions)
+                data["permissions"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface IRoleAccessPermissionDto {
+    accessId?: number;
+    name?: string;
+    feature?: string;
+    permissions?: RolePermissionDto[];
+
+    [key: string]: any;
+}
+
+export class RoleDto implements IRoleDto {
+    id?: string;
+    name?: string;
+
+    [key: string]: any;
+
+    constructor(data?: IRoleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.id = _data["id"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): RoleDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RoleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface IRoleDto {
+    id?: string;
+    name?: string;
+
+    [key: string]: any;
+}
+
+export class RolePermissionDto implements IRolePermissionDto {
+    permissionId?: number;
+    feature?: string;
+    name?: string;
+    rolePermissionId?: number | undefined;
+
+    [key: string]: any;
+
+    constructor(data?: IRolePermissionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.permissionId = _data["permissionId"];
+            this.feature = _data["feature"];
+            this.name = _data["name"];
+            this.rolePermissionId = _data["rolePermissionId"];
+        }
+    }
+
+    static fromJS(data: any): RolePermissionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RolePermissionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["permissionId"] = this.permissionId;
+        data["feature"] = this.feature;
+        data["name"] = this.name;
+        data["rolePermissionId"] = this.rolePermissionId;
+        return data;
+    }
+}
+
+export interface IRolePermissionDto {
+    permissionId?: number;
+    feature?: string;
+    name?: string;
+    rolePermissionId?: number | undefined;
 
     [key: string]: any;
 }
@@ -10911,7 +11846,14 @@ export class SupplierDto implements ISupplierDto {
     email?: string | undefined;
     billingAddress1?: string | undefined;
     billingAddress2?: string | undefined;
-    billingAddress3?: string | undefined;
+    regionCode?: string;
+    region?: string | undefined;
+    provinceCode?: string;
+    province?: string | undefined;
+    municipalityCode?: string;
+    municipality?: string | undefined;
+    barangayCode?: string;
+    barangay?: string | undefined;
     phone?: string | undefined;
     mobile?: string | undefined;
     fax?: string | undefined;
@@ -10949,7 +11891,14 @@ export class SupplierDto implements ISupplierDto {
             this.email = _data["email"];
             this.billingAddress1 = _data["billingAddress1"];
             this.billingAddress2 = _data["billingAddress2"];
-            this.billingAddress3 = _data["billingAddress3"];
+            this.regionCode = _data["regionCode"];
+            this.region = _data["region"];
+            this.provinceCode = _data["provinceCode"];
+            this.province = _data["province"];
+            this.municipalityCode = _data["municipalityCode"];
+            this.municipality = _data["municipality"];
+            this.barangayCode = _data["barangayCode"];
+            this.barangay = _data["barangay"];
             this.phone = _data["phone"];
             this.mobile = _data["mobile"];
             this.fax = _data["fax"];
@@ -10985,7 +11934,14 @@ export class SupplierDto implements ISupplierDto {
         data["email"] = this.email;
         data["billingAddress1"] = this.billingAddress1;
         data["billingAddress2"] = this.billingAddress2;
-        data["billingAddress3"] = this.billingAddress3;
+        data["regionCode"] = this.regionCode;
+        data["region"] = this.region;
+        data["provinceCode"] = this.provinceCode;
+        data["province"] = this.province;
+        data["municipalityCode"] = this.municipalityCode;
+        data["municipality"] = this.municipality;
+        data["barangayCode"] = this.barangayCode;
+        data["barangay"] = this.barangay;
         data["phone"] = this.phone;
         data["mobile"] = this.mobile;
         data["fax"] = this.fax;
@@ -11010,7 +11966,14 @@ export interface ISupplierDto {
     email?: string | undefined;
     billingAddress1?: string | undefined;
     billingAddress2?: string | undefined;
-    billingAddress3?: string | undefined;
+    regionCode?: string;
+    region?: string | undefined;
+    provinceCode?: string;
+    province?: string | undefined;
+    municipalityCode?: string;
+    municipality?: string | undefined;
+    barangayCode?: string;
+    barangay?: string | undefined;
     phone?: string | undefined;
     mobile?: string | undefined;
     fax?: string | undefined;
@@ -11603,12 +12566,14 @@ export interface IUpdateAccessClaimCommand {
 export class UpdateBranchCommand implements IUpdateBranchCommand {
     id?: number;
     name?: string;
-    regionId?: number;
     warehouseId?: number;
     memo?: string | undefined;
     address1?: string | undefined;
     address2?: string | undefined;
-    address3?: string | undefined;
+    regionCode?: string;
+    provinceCode?: string;
+    municipalityCode?: string;
+    barangayCode?: string;
     phone?: string | undefined;
     fax?: string | undefined;
     tin?: string | undefined;
@@ -11633,12 +12598,14 @@ export class UpdateBranchCommand implements IUpdateBranchCommand {
             }
             this.id = _data["id"];
             this.name = _data["name"];
-            this.regionId = _data["regionId"];
             this.warehouseId = _data["warehouseId"];
             this.memo = _data["memo"];
             this.address1 = _data["address1"];
             this.address2 = _data["address2"];
-            this.address3 = _data["address3"];
+            this.regionCode = _data["regionCode"];
+            this.provinceCode = _data["provinceCode"];
+            this.municipalityCode = _data["municipalityCode"];
+            this.barangayCode = _data["barangayCode"];
             this.phone = _data["phone"];
             this.fax = _data["fax"];
             this.tin = _data["tin"];
@@ -11661,12 +12628,14 @@ export class UpdateBranchCommand implements IUpdateBranchCommand {
         }
         data["id"] = this.id;
         data["name"] = this.name;
-        data["regionId"] = this.regionId;
         data["warehouseId"] = this.warehouseId;
         data["memo"] = this.memo;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
-        data["address3"] = this.address3;
+        data["regionCode"] = this.regionCode;
+        data["provinceCode"] = this.provinceCode;
+        data["municipalityCode"] = this.municipalityCode;
+        data["barangayCode"] = this.barangayCode;
         data["phone"] = this.phone;
         data["fax"] = this.fax;
         data["tin"] = this.tin;
@@ -11678,12 +12647,14 @@ export class UpdateBranchCommand implements IUpdateBranchCommand {
 export interface IUpdateBranchCommand {
     id?: number;
     name?: string;
-    regionId?: number;
     warehouseId?: number;
     memo?: string | undefined;
     address1?: string | undefined;
     address2?: string | undefined;
-    address3?: string | undefined;
+    regionCode?: string;
+    provinceCode?: string;
+    municipalityCode?: string;
+    barangayCode?: string;
     phone?: string | undefined;
     fax?: string | undefined;
     tin?: string | undefined;
@@ -11760,7 +12731,10 @@ export class UpdateCustomerCommand implements IUpdateCustomerCommand {
     email?: string | undefined;
     billingAddress1?: string | undefined;
     billingAddress2?: string | undefined;
-    billingAddress3?: string | undefined;
+    regionCode?: string;
+    provinceCode?: string;
+    municipalityCode?: string;
+    barangayCode?: string;
     phone?: string | undefined;
     mobile?: string | undefined;
     fax?: string | undefined;
@@ -11799,7 +12773,10 @@ export class UpdateCustomerCommand implements IUpdateCustomerCommand {
             this.email = _data["email"];
             this.billingAddress1 = _data["billingAddress1"];
             this.billingAddress2 = _data["billingAddress2"];
-            this.billingAddress3 = _data["billingAddress3"];
+            this.regionCode = _data["regionCode"];
+            this.provinceCode = _data["provinceCode"];
+            this.municipalityCode = _data["municipalityCode"];
+            this.barangayCode = _data["barangayCode"];
             this.phone = _data["phone"];
             this.mobile = _data["mobile"];
             this.fax = _data["fax"];
@@ -11836,7 +12813,10 @@ export class UpdateCustomerCommand implements IUpdateCustomerCommand {
         data["email"] = this.email;
         data["billingAddress1"] = this.billingAddress1;
         data["billingAddress2"] = this.billingAddress2;
-        data["billingAddress3"] = this.billingAddress3;
+        data["regionCode"] = this.regionCode;
+        data["provinceCode"] = this.provinceCode;
+        data["municipalityCode"] = this.municipalityCode;
+        data["barangayCode"] = this.barangayCode;
         data["phone"] = this.phone;
         data["mobile"] = this.mobile;
         data["fax"] = this.fax;
@@ -11862,7 +12842,10 @@ export interface IUpdateCustomerCommand {
     email?: string | undefined;
     billingAddress1?: string | undefined;
     billingAddress2?: string | undefined;
-    billingAddress3?: string | undefined;
+    regionCode?: string;
+    provinceCode?: string;
+    municipalityCode?: string;
+    barangayCode?: string;
     phone?: string | undefined;
     mobile?: string | undefined;
     fax?: string | undefined;
@@ -11937,7 +12920,10 @@ export class UpdateEmployeeCommand implements IUpdateEmployeeCommand {
     nameExt?: string | undefined;
     billingAddress1?: string | undefined;
     billingAddress2?: string | undefined;
-    billingAddress3?: string | undefined;
+    regionCode?: string;
+    provinceCode?: string;
+    municipalityCode?: string;
+    barangayCode?: string;
     phone?: string | undefined;
     mobile?: string | undefined;
     fax?: string | undefined;
@@ -11973,7 +12959,10 @@ export class UpdateEmployeeCommand implements IUpdateEmployeeCommand {
             this.nameExt = _data["nameExt"];
             this.billingAddress1 = _data["billingAddress1"];
             this.billingAddress2 = _data["billingAddress2"];
-            this.billingAddress3 = _data["billingAddress3"];
+            this.regionCode = _data["regionCode"];
+            this.provinceCode = _data["provinceCode"];
+            this.municipalityCode = _data["municipalityCode"];
+            this.barangayCode = _data["barangayCode"];
             this.phone = _data["phone"];
             this.mobile = _data["mobile"];
             this.fax = _data["fax"];
@@ -12007,7 +12996,10 @@ export class UpdateEmployeeCommand implements IUpdateEmployeeCommand {
         data["nameExt"] = this.nameExt;
         data["billingAddress1"] = this.billingAddress1;
         data["billingAddress2"] = this.billingAddress2;
-        data["billingAddress3"] = this.billingAddress3;
+        data["regionCode"] = this.regionCode;
+        data["provinceCode"] = this.provinceCode;
+        data["municipalityCode"] = this.municipalityCode;
+        data["barangayCode"] = this.barangayCode;
         data["phone"] = this.phone;
         data["mobile"] = this.mobile;
         data["fax"] = this.fax;
@@ -12030,7 +13022,10 @@ export interface IUpdateEmployeeCommand {
     nameExt?: string | undefined;
     billingAddress1?: string | undefined;
     billingAddress2?: string | undefined;
-    billingAddress3?: string | undefined;
+    regionCode?: string;
+    provinceCode?: string;
+    municipalityCode?: string;
+    barangayCode?: string;
     phone?: string | undefined;
     mobile?: string | undefined;
     fax?: string | undefined;
@@ -12284,65 +13279,9 @@ export interface IUpdateProductCommand {
     [key: string]: any;
 }
 
-export class UpdateRegionCommand implements IUpdateRegionCommand {
-    id?: number;
-    isActive?: boolean;
-
-    [key: string]: any;
-
-    constructor(data?: IUpdateRegionCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            for (var property in _data) {
-                if (_data.hasOwnProperty(property))
-                    this[property] = _data[property];
-            }
-            this.id = _data["id"];
-            this.isActive = _data["isActive"];
-        }
-    }
-
-    static fromJS(data: any): UpdateRegionCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateRegionCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        for (var property in this) {
-            if (this.hasOwnProperty(property))
-                data[property] = this[property];
-        }
-        data["id"] = this.id;
-        data["isActive"] = this.isActive;
-        return data;
-    }
-}
-
-export interface IUpdateRegionCommand {
-    id?: number;
-    isActive?: boolean;
-
-    [key: string]: any;
-}
-
 export class UpdateRoleAccessCommand implements IUpdateRoleAccessCommand {
     roleId?: string;
     accessId?: number;
-    hasRead?: boolean;
-    hasWrite?: boolean;
-    hasUpdate?: boolean;
-    hasDelete?: boolean;
     isActive?: boolean;
 
     [key: string]: any;
@@ -12364,10 +13303,6 @@ export class UpdateRoleAccessCommand implements IUpdateRoleAccessCommand {
             }
             this.roleId = _data["roleId"];
             this.accessId = _data["accessId"];
-            this.hasRead = _data["hasRead"];
-            this.hasWrite = _data["hasWrite"];
-            this.hasUpdate = _data["hasUpdate"];
-            this.hasDelete = _data["hasDelete"];
             this.isActive = _data["isActive"];
         }
     }
@@ -12387,10 +13322,6 @@ export class UpdateRoleAccessCommand implements IUpdateRoleAccessCommand {
         }
         data["roleId"] = this.roleId;
         data["accessId"] = this.accessId;
-        data["hasRead"] = this.hasRead;
-        data["hasWrite"] = this.hasWrite;
-        data["hasUpdate"] = this.hasUpdate;
-        data["hasDelete"] = this.hasDelete;
         data["isActive"] = this.isActive;
         return data;
     }
@@ -12399,10 +13330,6 @@ export class UpdateRoleAccessCommand implements IUpdateRoleAccessCommand {
 export interface IUpdateRoleAccessCommand {
     roleId?: string;
     accessId?: number;
-    hasRead?: boolean;
-    hasWrite?: boolean;
-    hasUpdate?: boolean;
-    hasDelete?: boolean;
     isActive?: boolean;
 
     [key: string]: any;
@@ -12423,7 +13350,10 @@ export class UpdateSupplierCommand implements IUpdateSupplierCommand {
     email?: string | undefined;
     billingAddress1?: string | undefined;
     billingAddress2?: string | undefined;
-    billingAddress3?: string | undefined;
+    regionCode?: string;
+    provinceCode?: string;
+    municipalityCode?: string;
+    barangayCode?: string;
     phone?: string | undefined;
     mobile?: string | undefined;
     fax?: string | undefined;
@@ -12461,7 +13391,10 @@ export class UpdateSupplierCommand implements IUpdateSupplierCommand {
             this.email = _data["email"];
             this.billingAddress1 = _data["billingAddress1"];
             this.billingAddress2 = _data["billingAddress2"];
-            this.billingAddress3 = _data["billingAddress3"];
+            this.regionCode = _data["regionCode"];
+            this.provinceCode = _data["provinceCode"];
+            this.municipalityCode = _data["municipalityCode"];
+            this.barangayCode = _data["barangayCode"];
             this.phone = _data["phone"];
             this.mobile = _data["mobile"];
             this.fax = _data["fax"];
@@ -12497,7 +13430,10 @@ export class UpdateSupplierCommand implements IUpdateSupplierCommand {
         data["email"] = this.email;
         data["billingAddress1"] = this.billingAddress1;
         data["billingAddress2"] = this.billingAddress2;
-        data["billingAddress3"] = this.billingAddress3;
+        data["regionCode"] = this.regionCode;
+        data["provinceCode"] = this.provinceCode;
+        data["municipalityCode"] = this.municipalityCode;
+        data["barangayCode"] = this.barangayCode;
         data["phone"] = this.phone;
         data["mobile"] = this.mobile;
         data["fax"] = this.fax;
@@ -12522,7 +13458,10 @@ export interface IUpdateSupplierCommand {
     email?: string | undefined;
     billingAddress1?: string | undefined;
     billingAddress2?: string | undefined;
-    billingAddress3?: string | undefined;
+    regionCode?: string;
+    provinceCode?: string;
+    municipalityCode?: string;
+    barangayCode?: string;
     phone?: string | undefined;
     mobile?: string | undefined;
     fax?: string | undefined;
@@ -12775,10 +13714,6 @@ export interface IUpdateUnitOfMeasureCommand {
 export class UpdateUserAccessCommand implements IUpdateUserAccessCommand {
     userId?: number;
     accessId?: number;
-    hasRead?: boolean;
-    hasWrite?: boolean;
-    hasUpdate?: boolean;
-    hasDelete?: boolean;
     isActive?: boolean;
 
     [key: string]: any;
@@ -12800,10 +13735,6 @@ export class UpdateUserAccessCommand implements IUpdateUserAccessCommand {
             }
             this.userId = _data["userId"];
             this.accessId = _data["accessId"];
-            this.hasRead = _data["hasRead"];
-            this.hasWrite = _data["hasWrite"];
-            this.hasUpdate = _data["hasUpdate"];
-            this.hasDelete = _data["hasDelete"];
             this.isActive = _data["isActive"];
         }
     }
@@ -12823,10 +13754,6 @@ export class UpdateUserAccessCommand implements IUpdateUserAccessCommand {
         }
         data["userId"] = this.userId;
         data["accessId"] = this.accessId;
-        data["hasRead"] = this.hasRead;
-        data["hasWrite"] = this.hasWrite;
-        data["hasUpdate"] = this.hasUpdate;
-        data["hasDelete"] = this.hasDelete;
         data["isActive"] = this.isActive;
         return data;
     }
@@ -12835,10 +13762,6 @@ export class UpdateUserAccessCommand implements IUpdateUserAccessCommand {
 export interface IUpdateUserAccessCommand {
     userId?: number;
     accessId?: number;
-    hasRead?: boolean;
-    hasWrite?: boolean;
-    hasUpdate?: boolean;
-    hasDelete?: boolean;
     isActive?: boolean;
 
     [key: string]: any;
@@ -12850,7 +13773,10 @@ export class UpdateWarehouseCommand implements IUpdateWarehouseCommand {
     memo?: string | undefined;
     address1?: string | undefined;
     address2?: string | undefined;
-    address3?: string | undefined;
+    regionCode?: string;
+    provinceCode?: string;
+    municipalityCode?: string;
+    barangayCode?: string;
     phone?: string | undefined;
     fax?: string | undefined;
     email?: string | undefined;
@@ -12877,7 +13803,10 @@ export class UpdateWarehouseCommand implements IUpdateWarehouseCommand {
             this.memo = _data["memo"];
             this.address1 = _data["address1"];
             this.address2 = _data["address2"];
-            this.address3 = _data["address3"];
+            this.regionCode = _data["regionCode"];
+            this.provinceCode = _data["provinceCode"];
+            this.municipalityCode = _data["municipalityCode"];
+            this.barangayCode = _data["barangayCode"];
             this.phone = _data["phone"];
             this.fax = _data["fax"];
             this.email = _data["email"];
@@ -12902,7 +13831,10 @@ export class UpdateWarehouseCommand implements IUpdateWarehouseCommand {
         data["memo"] = this.memo;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
-        data["address3"] = this.address3;
+        data["regionCode"] = this.regionCode;
+        data["provinceCode"] = this.provinceCode;
+        data["municipalityCode"] = this.municipalityCode;
+        data["barangayCode"] = this.barangayCode;
         data["phone"] = this.phone;
         data["fax"] = this.fax;
         data["email"] = this.email;
@@ -12916,7 +13848,10 @@ export interface IUpdateWarehouseCommand {
     memo?: string | undefined;
     address1?: string | undefined;
     address2?: string | undefined;
-    address3?: string | undefined;
+    regionCode?: string;
+    provinceCode?: string;
+    municipalityCode?: string;
+    barangayCode?: string;
     phone?: string | undefined;
     fax?: string | undefined;
     email?: string | undefined;
@@ -12929,10 +13864,6 @@ export class UserAccessDto implements IUserAccessDto {
     userId?: string;
     accessId?: number;
     name?: string;
-    hasRead?: boolean;
-    hasWrite?: boolean;
-    hasDelete?: boolean;
-    hasUpdate?: boolean;
     isActive?: boolean;
 
     [key: string]: any;
@@ -12956,10 +13887,6 @@ export class UserAccessDto implements IUserAccessDto {
             this.userId = _data["userId"];
             this.accessId = _data["accessId"];
             this.name = _data["name"];
-            this.hasRead = _data["hasRead"];
-            this.hasWrite = _data["hasWrite"];
-            this.hasDelete = _data["hasDelete"];
-            this.hasUpdate = _data["hasUpdate"];
             this.isActive = _data["isActive"];
         }
     }
@@ -12981,10 +13908,6 @@ export class UserAccessDto implements IUserAccessDto {
         data["userId"] = this.userId;
         data["accessId"] = this.accessId;
         data["name"] = this.name;
-        data["hasRead"] = this.hasRead;
-        data["hasWrite"] = this.hasWrite;
-        data["hasDelete"] = this.hasDelete;
-        data["hasUpdate"] = this.hasUpdate;
         data["isActive"] = this.isActive;
         return data;
     }
@@ -12995,11 +13918,135 @@ export interface IUserAccessDto {
     userId?: string;
     accessId?: number;
     name?: string;
-    hasRead?: boolean;
-    hasWrite?: boolean;
-    hasDelete?: boolean;
-    hasUpdate?: boolean;
     isActive?: boolean;
+
+    [key: string]: any;
+}
+
+export class UserAccessPermissionDto implements IUserAccessPermissionDto {
+    accessId?: number;
+    name?: string;
+    feature?: string;
+    permissions?: UserPermissionDto[];
+
+    [key: string]: any;
+
+    constructor(data?: IUserAccessPermissionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.accessId = _data["accessId"];
+            this.name = _data["name"];
+            this.feature = _data["feature"];
+            if (Array.isArray(_data["permissions"])) {
+                this.permissions = [] as any;
+                for (let item of _data["permissions"])
+                    this.permissions!.push(UserPermissionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UserAccessPermissionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserAccessPermissionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["accessId"] = this.accessId;
+        data["name"] = this.name;
+        data["feature"] = this.feature;
+        if (Array.isArray(this.permissions)) {
+            data["permissions"] = [];
+            for (let item of this.permissions)
+                data["permissions"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface IUserAccessPermissionDto {
+    accessId?: number;
+    name?: string;
+    feature?: string;
+    permissions?: UserPermissionDto[];
+
+    [key: string]: any;
+}
+
+export class UserPermissionDto implements IUserPermissionDto {
+    permisionId?: number;
+    feature?: string;
+    name?: string;
+    userPermissionId?: number;
+
+    [key: string]: any;
+
+    constructor(data?: IUserPermissionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.permisionId = _data["permisionId"];
+            this.feature = _data["feature"];
+            this.name = _data["name"];
+            this.userPermissionId = _data["userPermissionId"];
+        }
+    }
+
+    static fromJS(data: any): UserPermissionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserPermissionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["permisionId"] = this.permisionId;
+        data["feature"] = this.feature;
+        data["name"] = this.name;
+        data["userPermissionId"] = this.userPermissionId;
+        return data;
+    }
+}
+
+export interface IUserPermissionDto {
+    permisionId?: number;
+    feature?: string;
+    name?: string;
+    userPermissionId?: number;
 
     [key: string]: any;
 }
@@ -13068,7 +14115,14 @@ export class WarehouseDto implements IWarehouseDto {
     isActive?: boolean;
     address1?: string | undefined;
     address2?: string | undefined;
-    address3?: string | undefined;
+    regionCode?: string;
+    region?: string | undefined;
+    provinceCode?: string;
+    province?: string | undefined;
+    municipalityCode?: string;
+    municipality?: string | undefined;
+    barangayCode?: string;
+    barangay?: string | undefined;
     phone?: string | undefined;
     fax?: string | undefined;
     email?: string | undefined;
@@ -13097,7 +14151,14 @@ export class WarehouseDto implements IWarehouseDto {
             this.isActive = _data["isActive"];
             this.address1 = _data["address1"];
             this.address2 = _data["address2"];
-            this.address3 = _data["address3"];
+            this.regionCode = _data["regionCode"];
+            this.region = _data["region"];
+            this.provinceCode = _data["provinceCode"];
+            this.province = _data["province"];
+            this.municipalityCode = _data["municipalityCode"];
+            this.municipality = _data["municipality"];
+            this.barangayCode = _data["barangayCode"];
+            this.barangay = _data["barangay"];
             this.phone = _data["phone"];
             this.fax = _data["fax"];
             this.email = _data["email"];
@@ -13124,7 +14185,14 @@ export class WarehouseDto implements IWarehouseDto {
         data["isActive"] = this.isActive;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
-        data["address3"] = this.address3;
+        data["regionCode"] = this.regionCode;
+        data["region"] = this.region;
+        data["provinceCode"] = this.provinceCode;
+        data["province"] = this.province;
+        data["municipalityCode"] = this.municipalityCode;
+        data["municipality"] = this.municipality;
+        data["barangayCode"] = this.barangayCode;
+        data["barangay"] = this.barangay;
         data["phone"] = this.phone;
         data["fax"] = this.fax;
         data["email"] = this.email;
@@ -13140,7 +14208,14 @@ export interface IWarehouseDto {
     isActive?: boolean;
     address1?: string | undefined;
     address2?: string | undefined;
-    address3?: string | undefined;
+    regionCode?: string;
+    region?: string | undefined;
+    provinceCode?: string;
+    province?: string | undefined;
+    municipalityCode?: string;
+    municipality?: string | undefined;
+    barangayCode?: string;
+    barangay?: string | undefined;
     phone?: string | undefined;
     fax?: string | undefined;
     email?: string | undefined;

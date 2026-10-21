@@ -1,22 +1,29 @@
 using System.Linq.Expressions;
-using Delex_POS.Application.Common.Enums;
-using Delex_POS.Application.Common.Interfaces;
-using Delex_POS.Application.Common.Models;
-using Delex_POS.Application.Common.Extensions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Delex_POS.Application.Roles.Queries.RoleDTOs;
-using Delex_POS.Infrastructure.Factories;
+using Delex_POS.Application.Common.Enums;
+using Delex_POS.Application.Common.Extensions;
+using Delex_POS.Application.Common.Interfaces;
+using Delex_POS.Application.Common.Interfaces.Repositories.RefreshToken;
+using Delex_POS.Application.Common.Models;
 using Delex_POS.Application.Employees.Queries.EmployeeDTOs;
+using Delex_POS.Application.Roles.Queries.RoleDTOs;
+using Delex_POS.Domain.Constants;
+using Delex_POS.Infrastructure.Factories;
+using Delex_POS.Infrastructure.Jwt;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Delex_POS.Infrastructure.Identity;
 
 public class IdentityService : IIdentityService
 {
     private readonly IMapper _mapper;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
@@ -26,6 +33,7 @@ public class IdentityService : IIdentityService
 
     public IdentityService(
         IMapper mapper,
+        IHttpContextAccessor httpContextAccessor,
         RoleManager<IdentityRole> roleManager,
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
@@ -34,6 +42,7 @@ public class IdentityService : IIdentityService
         IAuthorizationService authorizationService)
     {
         _mapper = mapper;
+        _httpContextAccessor = httpContextAccessor;
         _roleManager = roleManager;
         _userManager = userManager;
         _signInManager = signInManager;
@@ -42,6 +51,7 @@ public class IdentityService : IIdentityService
         _authorizationService = authorizationService;
     }
 #region User Management
+    public string? Id => _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
     public async Task<string?> GetUserNameAsync(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
@@ -274,9 +284,42 @@ public class IdentityService : IIdentityService
     }
     #endregion
 
-#region Login Management
+
+    #region Login Management
+    public record LoginRequest(
+        string UserId,
+        string Password,
+        bool IsPersistent = false
+    );
+    //public async Task<TokenResponse?> LoginAsync(string userCode, string password, HttpContext ctx, bool isPersistent = false)
+    //{ 
+    //    var token = await LoginAsync(userCode, password, isPersistent);
+    //    // Generate access token with roles included (RBAC)
+    //    var refresh = JwtHelper.MakeRandomToken();
+    //    var hashed = JwtHelper.HashToken(refresh);
+    //    var sessionId = Guid.NewGuid().ToString("n");
+    //    var rec = new Domain.Entities.RefreshToken
+    //    {
+    //        HashedToken = hashed,
+    //        SessionId = sessionId,
+    //        UserId = userCode,
+    //        Expires = DateTimeOffset.UtcNow.Add(TimeSpan.FromDays(30)),
+    //        Revoked = false,
+    //        CreatedAt = DateTimeOffset.UtcNow
+    //    };
+    //    await _tokenCommand.AddAsync(rec, new CancellationToken());
+    //    ctx.Response.Cookies.Append(Roles.RefreshCookieName, refresh, new CookieOptions
+    //    {
+    //        HttpOnly = true,
+    //        Secure = true,
+    //        SameSite = SameSiteMode.Strict,
+    //        Expires = rec.Expires.UtcDateTime
+    //    });
+
+    //    return token;
+    //}
     public async Task<TokenResponse?> LoginAsync(string userCode, string password, bool isPersistent = false)
-    {
+    {       
 
         const int expiresInMinutes = 60;
 
@@ -333,7 +376,7 @@ public class IdentityService : IIdentityService
         {
             IsActive = user.IsActive,
             TokenType = null,
-            AccessToken = _tokenFactory.GenerateAccessToken(user, expiresInMinutes),
+            AccessToken = await _tokenFactory.GenerateAccessTokenAsync(user, expiresInMinutes),
             ExpiresIn = expiresInMinutes * 60,
             RefreshToken = _tokenFactory.GenerateRefreshToken()
         };
@@ -380,10 +423,10 @@ public class IdentityService : IIdentityService
         {
             IsActive = user.IsActive,
             TokenType = null,
-            AccessToken = _tokenFactory.GenerateAccessToken(user, expiresInMinutes),
+            AccessToken = await _tokenFactory.GenerateAccessTokenAsync(user, expiresInMinutes),
             ExpiresIn = expiresInMinutes * 60,
             RefreshToken = _tokenFactory.GenerateRefreshToken()
         };
     }
-#endregion
+    #endregion
 }

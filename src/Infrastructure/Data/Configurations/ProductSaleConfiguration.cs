@@ -11,6 +11,11 @@ internal class ProductSaleConfiguration : IEntityTypeConfiguration<ProductSale>
 {
     public void Configure(EntityTypeBuilder<ProductSale> builder)
     {
+        builder.HasQueryFilter(ps => !ps.IsDeleted);
+
+        builder.HasIndex(ps => ps.IsDeleted)
+            .HasFilter("IsDeleted = 0");
+
         builder.Property(ps => ps.ProductId)
             .IsRequired();
 

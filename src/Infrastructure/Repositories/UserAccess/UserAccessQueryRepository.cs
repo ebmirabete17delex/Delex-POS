@@ -26,10 +26,6 @@ public class UserAccessQueryRepository : QueryHandlerBase<Domain.Entities.UserAc
                                 , r.UserId as UserId
                                 , r.AccessId as AccessId
                               	, a.Name as Name
-                              	, r.HasRead as HasRead
-                              	, r.HasWrite as HasWrite
-                              	, r.HasDelete as HasDelete
-                              	, r.HasUpdate as HasUpdate
                               	, r.IsActive as IsActive
                         FROM UserAccesses r
                         		INNER JOIN Accesses a
