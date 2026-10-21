@@ -34,14 +34,20 @@ public class BranchQueryRepository : QueryHandlerBase<Domain.Entities.Branch>, I
                         FROM Branches b
                         		INNER JOIN Warehouses w
                         					ON b.WarehouseId = w.Id
+                                            AND b.IsDeleted = 0
+                                            AND w.IsDeleted = 0
                         		INNER JOIN Regions r
                         					ON b.RegionCode = r.Code
+                                            AND r.IsDeleted = 0
                         		INNER JOIN Provinces p
                         					ON b.ProvinceCode = p.Code
+                                            AND p.IsDeleted = 0
                         		INNER JOIN Municipalities m
                         					ON b.MunicipalityCode = m.Code
+                                            AND m.IsDeleted = 0
                         		INNER JOIN Barangays s
                         					ON b.BarangayCode = s.Code
+                                            AND s.IsDeleted = 0
                         WHERE b.id = {id} 
                         AND b.IsActive = true
                         """;
@@ -74,14 +80,20 @@ public class BranchQueryRepository : QueryHandlerBase<Domain.Entities.Branch>, I
                         FROM Branches b
                         		INNER JOIN Warehouses w
                         					ON b.WarehouseId = w.Id
+                                            AND b.IsDeleted = 0
+                                            AND w.IsDeleted = 0
                         		INNER JOIN Regions r
                         					ON b.RegionCode = r.Code
+                                            AND r.IsDeleted = 0
                         		INNER JOIN Provinces p
                         					ON b.ProvinceCode = p.Code
+                                            AND p.IsDeleted = 0
                         		INNER JOIN Municipalities m
                         					ON b.MunicipalityCode = m.Code
+                                            AND m.IsDeleted = 0
                         		INNER JOIN Barangays s
                         					ON b.BarangayCode = s.Code
+                                            AND s.IsDeleted = 0
                         WHERE b.IsActive = true
                         """;
 

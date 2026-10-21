@@ -7718,7 +7718,7 @@ export class CreateBranchCommand implements ICreateBranchCommand {
     barangayCode?: string;
     phone?: string | undefined;
     fax?: string | undefined;
-    email?: string | undefined;
+    email?: string;
     tin?: string | undefined;
 
     [key: string]: any;
@@ -7796,7 +7796,7 @@ export interface ICreateBranchCommand {
     barangayCode?: string;
     phone?: string | undefined;
     fax?: string | undefined;
-    email?: string | undefined;
+    email?: string;
     tin?: string | undefined;
 
     [key: string]: any;
@@ -12573,7 +12573,7 @@ export class UpdateBranchCommand implements IUpdateBranchCommand {
     phone?: string | undefined;
     fax?: string | undefined;
     tin?: string | undefined;
-    email?: string | undefined;
+    email?: string;
 
     [key: string]: any;
 
@@ -12654,7 +12654,7 @@ export interface IUpdateBranchCommand {
     phone?: string | undefined;
     fax?: string | undefined;
     tin?: string | undefined;
-    email?: string | undefined;
+    email?: string;
 
     [key: string]: any;
 }

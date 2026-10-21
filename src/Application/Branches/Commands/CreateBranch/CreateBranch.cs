@@ -16,7 +16,7 @@ public record CreateBranchCommand : IRequest<int>
     public string BarangayCode { get; set; } = string.Empty;
     public string? Phone { get; set; }
     public string? Fax { get; set; }
-    public string? Email { get; set; }
+    public string Email { get; set; } = string.Empty;
     public string? TIN { get; set; }
 }
 

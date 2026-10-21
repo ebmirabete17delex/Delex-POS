@@ -13,13 +13,13 @@ public class Branch : BaseAuditableEntity
     public string BarangayCode { get; private set; }
     public string? Phone { get; private set; }
     public string? Fax { get; private set; }
-    public string? Email { get; private set; }
+    public string Email { get; private set; }
     public string? Tin {  get; private set; }
 
     public Branch(string name, int warehouseId, string? memo, 
         string? address1, string? address2, string regionCode, 
         string provinceCode, string municipalityCode, string barangayCode, 
-        string? phone, string? fax, string? email, string? tin)
+        string? phone, string? fax, string email, string? tin)
     {
         Name = name;
         IsActive = true;
@@ -33,14 +33,14 @@ public class Branch : BaseAuditableEntity
         BarangayCode = barangayCode;
         Phone = phone ?? string.Empty;
         Fax = fax ?? string.Empty;
-        Email = email ?? string.Empty;
+        Email = email;
         Tin = tin ?? string.Empty;
     }
 
     public void Update(string name, int warehouseId, string? memo,
         string? address1, string? address2, string regionCode, string provinceCode,
         string municipalityCode, string barangayCode, string? phone, string? fax,
-        string? email, string? tin)
+        string email, string? tin)
     {
         Name = name;
         WarehouseId = warehouseId;
@@ -53,7 +53,7 @@ public class Branch : BaseAuditableEntity
         BarangayCode = barangayCode;
         Phone = phone ?? string.Empty;
         Fax = fax ?? string.Empty;
-        Email = email ?? string.Empty;
+        Email = email;
         Tin = tin ?? string.Empty;
     }
 

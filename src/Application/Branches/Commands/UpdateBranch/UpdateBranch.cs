@@ -17,7 +17,7 @@ public record UpdateBranchCommand : IRequest
     public string? Phone { get; set; }
     public string? Fax { get; set; }
     public string? TIN { get; set; }
-    public string? Email { get; set; }
+    public string Email { get; set; } = string.Empty;
 }
 
 public class UpdateBranchCommandHandler : IRequestHandler<UpdateBranchCommand>

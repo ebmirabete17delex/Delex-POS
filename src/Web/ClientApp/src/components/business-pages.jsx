@@ -128,7 +128,7 @@ export const businessPageDefinitions = {
       ).map(barangay => ({ value: barangay.code, label: barangay.areaName })), ['municipalityCode']),
       field('phone', 'Phone'),
       field('fax', 'Fax'),
-      field('email', 'Email', 'email'),
+      field('email', 'Email', 'email', true),
       field('tin', 'TIN'),
     ],
     updateIncludesId: true,

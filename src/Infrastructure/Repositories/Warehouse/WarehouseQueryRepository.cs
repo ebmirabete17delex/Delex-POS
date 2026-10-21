@@ -34,12 +34,17 @@ public class WarehouseQueryRepository : QueryHandlerBase<Domain.Entities.Warehou
                         FROM Warehouses w
                                 LEFT OUTER JOIN Regions r
                                             ON w.RegionCode = r.Code
+                                            AND w.IsDeleted = 0
+                                            AND r.IsDeleted = 0
                                 LEFT OUTER JOIN Provinces p
                                             ON w.ProvinceCode = p.Code
+                                            AND p.IsDeleted = 0
                                 LEFT OUTER JOIN Municipalities m
                                             ON w.MunicipalityCode = m.Code
+                                            AND m.IsDeleted = 0
                                 LEFT OUTER JOIN Barangays b
                                             ON w.BarangayCode = b.Code
+                                            AND b.IsDeleted = 0
                         WHERE w.Id = {id}
                         """;
 
