@@ -5,6 +5,8 @@ namespace Delex_POS.Application.CancelReasons.Commands.UpdateCancelReason;
 public record UpdateCancelReasonCommand : IRequest
 {
     public int Id { get; set; }
+    public bool IsActive { get; set; }
+    public bool IsAllowUserToEnterMemo { get; set; }
     public string? Memo { get; set; }
 }
 
@@ -23,6 +25,16 @@ public class UpdateCancelReasonCommandHandler : IRequestHandler<UpdateCancelReas
     {
         var entity = await _cancelReasonQueryRepository.GetByIdAsync(request.Id, cancellationToken);
         Guard.Against.NotFound(request.Id, entity);
+        if (request.IsActive)
+            entity.Activate();
+        else
+            entity.Deactivate();
+
+        if (request.IsAllowUserToEnterMemo)
+            entity.AllowUserToEnterMemo();
+        else
+            entity.DisallowUserToEnterMemo();
+
         entity.Update(request.Memo ?? string.Empty);
         await _cancelReasonCommandRepository.UpdateAsync(entity, cancellationToken);
     }

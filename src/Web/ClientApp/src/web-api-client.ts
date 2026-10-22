@@ -12661,6 +12661,8 @@ export interface IUpdateBranchCommand {
 
 export class UpdateCancelReasonCommand implements IUpdateCancelReasonCommand {
     id?: number;
+    isActive?: boolean;
+    isAllowUserToEnterMemo?: boolean;
     memo?: string | undefined;
 
     [key: string]: any;
@@ -12681,6 +12683,8 @@ export class UpdateCancelReasonCommand implements IUpdateCancelReasonCommand {
                     this[property] = _data[property];
             }
             this.id = _data["id"];
+            this.isActive = _data["isActive"];
+            this.isAllowUserToEnterMemo = _data["isAllowUserToEnterMemo"];
             this.memo = _data["memo"];
         }
     }
@@ -12699,6 +12703,8 @@ export class UpdateCancelReasonCommand implements IUpdateCancelReasonCommand {
                 data[property] = this[property];
         }
         data["id"] = this.id;
+        data["isActive"] = this.isActive;
+        data["isAllowUserToEnterMemo"] = this.isAllowUserToEnterMemo;
         data["memo"] = this.memo;
         return data;
     }
@@ -12706,6 +12712,8 @@ export class UpdateCancelReasonCommand implements IUpdateCancelReasonCommand {
 
 export interface IUpdateCancelReasonCommand {
     id?: number;
+    isActive?: boolean;
+    isAllowUserToEnterMemo?: boolean;
     memo?: string | undefined;
 
     [key: string]: any;

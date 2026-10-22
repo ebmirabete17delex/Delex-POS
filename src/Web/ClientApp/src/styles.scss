@@ -1020,6 +1020,21 @@ button.danger,
   column-gap: var(--pico-block-spacing-horizontal);
 }
 
+.entity-checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  cursor: pointer;
+
+  .entity-form-grid & input[type="checkbox"] {
+    flex: 0 0 auto;
+    width: 1.25em;
+    height: 1.25em;
+    margin: 0;
+  }
+}
+
 .entity-form-grid input[type="checkbox"],
 .commercial-checkbox input[type="checkbox"],
 .user-assignments td input[type="checkbox"] {

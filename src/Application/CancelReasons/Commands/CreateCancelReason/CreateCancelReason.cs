@@ -5,7 +5,7 @@ namespace Delex_POS.Application.CancelReasons.Commands.CreateCancelReason;
 public record CreateCancelReasonCommand : IRequest<int>
 {
     public string Name { get;  set; } = string.Empty;
-    public bool IsActive { get;  set; } = true;
+    public bool IsActive { get;  set; } = false;
     public bool IsAllowUserToEnterMemo { get;  set; }
     public string? Memo { get;  set; }
 

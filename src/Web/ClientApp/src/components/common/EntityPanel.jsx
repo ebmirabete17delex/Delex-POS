@@ -396,9 +396,8 @@ export function EntityPanel({ definition }) {
             <form onSubmit={save}>
               <div className="entity-form-grid">
                 {fields.map(field => (
-                  <label key={field.name}>
-                    {field.label}
-                    {field.type === 'checkbox' ? (
+                  field.type === 'checkbox' ? (
+                    <label key={field.name} className="entity-checkbox-field">
                       <input
                         type="checkbox"
                         checked={Boolean(editor.value[field.name])}
@@ -408,34 +407,40 @@ export function EntityPanel({ definition }) {
                           value: { ...current.value, [field.name]: event.target.checked },
                         }))}
                       />
-                    ) : field.type === 'select-number' || field.type === 'select' ? (
-                      <select
-                        value={editor.value[field.name] ?? ''}
-                        required={field.required}
-                        disabled={Boolean(optionsLoading[field.name]) || Boolean(field.dependsOn?.some(
-                          dependency => !editor.value[dependency],
-                        ))}
-                        onChange={event => handleSelectChange(field, event.target.value)}
-                      >
-                        <option value="">Select...</option>
-                        {(fieldOptions[field.name] ?? []).map(option => (
-                          <option key={option.value} value={option.value}>{option.label}</option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        type={field.type ?? 'text'}
-                        value={editor.value[field.name] ?? ''}
-                        required={field.required}
-                        min={field.type === 'number' ? field.min : undefined}
-                        step={field.step}
-                        onChange={event => setEditor(current => ({
-                          ...current,
-                          value: { ...current.value, [field.name]: event.target.value },
-                        }))}
-                      />
-                    )}
-                  </label>
+                      <span>{field.label}</span>
+                    </label>
+                  ) : (
+                    <label key={field.name}>
+                      {field.label}
+                      {field.type === 'select-number' || field.type === 'select' ? (
+                        <select
+                          value={editor.value[field.name] ?? ''}
+                          required={field.required}
+                          disabled={Boolean(optionsLoading[field.name]) || Boolean(field.dependsOn?.some(
+                            dependency => !editor.value[dependency],
+                          ))}
+                          onChange={event => handleSelectChange(field, event.target.value)}
+                        >
+                          <option value="">Select...</option>
+                          {(fieldOptions[field.name] ?? []).map(option => (
+                            <option key={option.value} value={option.value}>{option.label}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          type={field.type ?? 'text'}
+                          value={editor.value[field.name] ?? ''}
+                          required={field.required}
+                          min={field.type === 'number' ? field.min : undefined}
+                          step={field.step}
+                          onChange={event => setEditor(current => ({
+                            ...current,
+                            value: { ...current.value, [field.name]: event.target.value },
+                          }))}
+                        />
+                      )}
+                    </label>
+                  )
                 ))}
               </div>
               {formError && <p className="error" role="alert">{formError}</p>}

@@ -48,8 +48,14 @@ const civilStatus = [
   { value: 4, label: 'Other' },
 ];
 
+const cancelReasonFields = [
+  field('name', 'Name', 'text', true),
+  field('isActive', 'Active', 'checkbox'),
+  field('isAllowUserToEnterMemo', 'Allow user memo', 'checkbox'),
+  field('memo', 'Memo'),
+]
+
 const personFields = [
-  field('supplierId', 'Supplier code'),
   field('firstName', 'First name', 'text', true),
   field('lastName', 'Last name', 'text', true),
   field('birthDate', 'Date of birth', 'date', true),
@@ -57,6 +63,26 @@ const personFields = [
   field('civilStatus', 'Civil status', 'select-number', true, civilStatus),
   field('branchId', 'Branch ID', 'number', true),
 ];
+const branchField = [
+      field('branchId', 'Branch', 'select', true, async () => (
+        await api(BranchClient).getBranchesList()
+      ).map(branch => ({value: branch.id, label: branch.name }))),
+]
+
+const psgcFields = [
+  field('regionCode', 'Region', 'select', true, async () => (
+    await api(PsgcClient).getRegions()
+    ).map(region => ({ value: region.code, label: region.areaName }))),
+  field('provinceCode', 'Province', 'select', true, async values => (
+    await api(PsgcClient).getProvinces(values.regionCode)
+    ).map(province => ({ value: province.code, label: province.areaName })), ['regionCode']),
+  field('municipalityCode', 'City/Municipality', 'select', true, async values => (
+    await api(PsgcClient).getMunicipalities(values.provinceCode)
+    ).map(municipality => ({ value: municipality.code, label: municipality.areaName })), ['provinceCode']),
+  field('barangayCode', 'Barangay', 'select', true, async values => (
+    await api(PsgcClient).getBarangays(values.municipalityCode)
+    ).map(barangay => ({ value: barangay.code, label: barangay.areaName })), ['municipalityCode']),
+]
 const contactFields = [
   field('title', 'Title'),
   field('middleName', 'Middle name'),
@@ -76,6 +102,7 @@ const personColumns = [
   { name: 'phone', label: 'Phone' },
   { name: 'created', label: 'Created', type: 'date' },
 ];
+
 
 export const businessPageDefinitions = {
   access: {
@@ -114,18 +141,7 @@ export const businessPageDefinitions = {
       field('memo', 'Notes'),
       field('address1', 'Address 1'),
       field('address2', 'Address 2'),
-      field('regionCode', 'Region', 'select', true, async () => (
-        await api(PsgcClient).getRegions()
-      ).map(region => ({ value: region.code, label: region.areaName }))),
-      field('provinceCode', 'Province', 'select', true, async values => (
-        await api(PsgcClient).getProvinces(values.regionCode)
-      ).map(province => ({ value: province.code, label: province.areaName })), ['regionCode']),
-      field('municipalityCode', 'City/Municipality', 'select', true, async values => (
-        await api(PsgcClient).getMunicipalities(values.provinceCode)
-      ).map(municipality => ({ value: municipality.code, label: municipality.areaName })), ['provinceCode']),
-      field('barangayCode', 'Barangay', 'select', true, async values => (
-        await api(PsgcClient).getBarangays(values.municipalityCode)
-      ).map(barangay => ({ value: barangay.code, label: barangay.areaName })), ['municipalityCode']),
+      ...psgcFields,
       field('phone', 'Phone'),
       field('fax', 'Fax'),
       field('email', 'Email', 'email', true),
@@ -148,14 +164,9 @@ export const businessPageDefinitions = {
     create: body => api(CancelReasonClient).createCancelReason(body),
     update: (id, body) => api(CancelReasonClient).updateCancelReason(id, body),
     remove: id => api(CancelReasonClient).deleteCancelReason(id),
-    fields: [
-      field('name', 'Name', 'text', true),
-      field('isActive', 'Active', 'checkbox'),
-      field('isAllowUserToEnterMemo', 'Allow user memo', 'checkbox'),
-      field('memo', 'Memo'),
-    ],
-    editFields: [field('memo', 'Memo')],
-    updateFields: [field('memo', 'Memo')],
+    fields: [...cancelReasonFields],
+    editFields: [...cancelReasonFields],
+    updateFields: [...cancelReasonFields],
     updateIncludesId: true,
     columns: [
       { name: 'name', label: 'Name' },
@@ -326,7 +337,9 @@ export const businessPageDefinitions = {
     create: body => api(SupplierClient).createSupplier(body),
     update: (id, body) => api(SupplierClient).updateSupplier(id, body),
     remove: id => api(SupplierClient).deleteSupplier(id),
-    fields: personFields,
+    fields: [  
+      field('supplierId', 'Supplier code'),
+      ...personFields,],
     editFields: [...personFields, ...contactFields],
     updateIncludesId: true,
     columns: personColumns,
@@ -379,9 +392,7 @@ export const businessPageDefinitions = {
       field('birthDate', 'Date of birth', 'date', true),
       field('gender', 'Gender', 'select-number', true, gender),
       field('civilStatus', 'Civil status', 'select-number', true, civilStatus),
-      field('branchId', 'Branch', 'select', true, async () => (
-        await api(BranchClient).getBranchesList()
-      ).map(branch => ({value: branch.id, label: branch.name }))),
+      ...branchField,
       field('email', 'Email', 'email', true),
       field('roleId', 'Role', 'select', true, async () => (
         await api(RoleClient).getRolesList()
@@ -394,6 +405,7 @@ export const businessPageDefinitions = {
       field('birthDate', 'Date of birth', 'date', true),
       field('gender', 'Gender', 'select-number', true, gender),
       field('civilStatus', 'Civil status', 'select-number', true, civilStatus),
+      ...contactFields,
     ],
     updateIncludesId: true,
     columns: personColumns,
@@ -413,18 +425,7 @@ export const businessPageDefinitions = {
       field('memo', 'Notes'),
       field('address1', 'Address 1'),
       field('address2', 'Address 2'),
-      field('regionCode', 'Region', 'select', true, async () => (
-        await api(PsgcClient).getRegions()
-      ).map(region => ({ value: region.code, label: region.areaName }))),
-      field('provinceCode', 'Province', 'select', true, async values => (
-        await api(PsgcClient).getProvinces(values.regionCode)
-      ).map(province => ({ value: province.code, label: province.areaName })), ['regionCode']),
-      field('municipalityCode', 'City/Municipality', 'select', true, async values => (
-        await api(PsgcClient).getMunicipalities(values.provinceCode)
-      ).map(municipality => ({ value: municipality.code, label: municipality.areaName })), ['provinceCode']),
-      field('barangayCode', 'Barangay', 'select', true, async values => (
-        await api(PsgcClient).getBarangays(values.municipalityCode)
-      ).map(barangay => ({ value: barangay.code, label: barangay.areaName })), ['municipalityCode']),
+      ...psgcFields,
       field('phone', 'Phone'),
       field('fax', 'Fax'),
       field('email', 'Email', 'email'),
@@ -434,18 +435,7 @@ export const businessPageDefinitions = {
       field('memo', 'Notes'),
       field('address1', 'Address 1'),
       field('address2', 'Address 2'),
-      field('regionCode', 'Region', 'select', true, async () => (
-        await api(PsgcClient).getRegions()
-      ).map(region => ({ value: region.code, label: region.areaName }))),
-      field('provinceCode', 'Province', 'select', true, async values => (
-        await api(PsgcClient).getProvinces(values.regionCode)
-      ).map(province => ({ value: province.code, label: province.areaName })), ['regionCode']),
-      field('municipalityCode', 'City/Municipality', 'select', true, async values => (
-        await api(PsgcClient).getMunicipalities(values.provinceCode)
-      ).map(municipality => ({ value: municipality.code, label: municipality.areaName })), ['provinceCode']),
-      field('barangayCode', 'Barangay', 'select', true, async values => (
-        await api(PsgcClient).getBarangays(values.municipalityCode)
-      ).map(barangay => ({ value: barangay.code, label: barangay.areaName })), ['municipalityCode']),
+      ...psgcFields,
       field('phone', 'Phone'),
       field('fax', 'Fax'),
       field('email', 'Email', 'email'),
@@ -487,7 +477,6 @@ export function ProductPanel() {
 export const ProductAttributePanel = makePanel('product-attributes');
 export const ProductCategoryPanel = makePanel('product-categories');
 export const ProductClassPanel = makePanel('product-classes');
-export const RegionPanel = makePanel('regions');
 export const RolePanel = makePanel('roles');
 export const SupplierPanel = makePanel('suppliers');
 export function UsersPanel() {

@@ -59,7 +59,6 @@ const navigationGroups = [
     items: [
       { label: 'Warehouses', to: '/warehouses', icon: Warehouse },
       { label: 'Branches', to: '/branches', icon: Building2 },
-      { label: 'Regions', to: '/regions', icon: MapPinned },
     ],
   },
   {
@@ -68,8 +67,6 @@ const navigationGroups = [
       { label: 'Roles', to: '/roles', icon: Shield },
       { label: 'Access claims', to: '/access', icon: FileKey2 },
       { label: 'Cancel reasons', to: '/cancel-reasons', icon: ClipboardList },
-      // { label: 'Tasks', to: '/todo', icon: Boxes },
-      // { label: 'Weather', to: '/weather', icon: Archive },
     ],
   },
 ];
