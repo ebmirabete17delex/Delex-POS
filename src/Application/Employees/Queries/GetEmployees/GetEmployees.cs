@@ -31,10 +31,7 @@ public class GetEmployeesQueryHandler : IRequestHandler<GetEmployeesQuery, Pagin
         Expression<Func<EmployeeListDto, bool>> filter = (searchQuery) switch
         {
             (null) => x => true,
-            (_) => x => x.FullName.Contains(searchQuery)
-                    || x.BirthDate.ToString().Contains(searchQuery)
-                    || x.Gender.ToString().Contains(searchQuery)
-                    || x.CivilStatus.ToString().Contains(searchQuery),
+            (_) => x => x.FullName.Contains(searchQuery),
         };
 
         var sortBy = string.IsNullOrEmpty(request.SortBy) ? "Created" : request.SortBy;

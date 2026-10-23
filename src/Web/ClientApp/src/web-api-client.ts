@@ -9343,7 +9343,6 @@ export class EmployeeDto implements IEmployeeDto {
     gender?: number;
     civilStatus?: number;
     branchId?: number;
-    customerTypeId?: number;
     title?: string | undefined;
     middleName?: string | undefined;
     nameExt?: string | undefined;
@@ -9363,6 +9362,7 @@ export class EmployeeDto implements IEmployeeDto {
     fax?: string | undefined;
     tin?: string | undefined;
     contactPerson?: string | undefined;
+    created?: Date;
 
     [key: string]: any;
 
@@ -9389,7 +9389,6 @@ export class EmployeeDto implements IEmployeeDto {
             this.gender = _data["gender"];
             this.civilStatus = _data["civilStatus"];
             this.branchId = _data["branchId"];
-            this.customerTypeId = _data["customerTypeId"];
             this.title = _data["title"];
             this.middleName = _data["middleName"];
             this.nameExt = _data["nameExt"];
@@ -9409,6 +9408,7 @@ export class EmployeeDto implements IEmployeeDto {
             this.fax = _data["fax"];
             this.tin = _data["tin"];
             this.contactPerson = _data["contactPerson"];
+            this.created = _data["created"] ? new Date(_data["created"].toString()) : undefined as any;
         }
     }
 
@@ -9433,7 +9433,6 @@ export class EmployeeDto implements IEmployeeDto {
         data["gender"] = this.gender;
         data["civilStatus"] = this.civilStatus;
         data["branchId"] = this.branchId;
-        data["customerTypeId"] = this.customerTypeId;
         data["title"] = this.title;
         data["middleName"] = this.middleName;
         data["nameExt"] = this.nameExt;
@@ -9453,6 +9452,7 @@ export class EmployeeDto implements IEmployeeDto {
         data["fax"] = this.fax;
         data["tin"] = this.tin;
         data["contactPerson"] = this.contactPerson;
+        data["created"] = this.created ? this.created.toISOString() : undefined as any;
         return data;
     }
 }
@@ -9466,7 +9466,6 @@ export interface IEmployeeDto {
     gender?: number;
     civilStatus?: number;
     branchId?: number;
-    customerTypeId?: number;
     title?: string | undefined;
     middleName?: string | undefined;
     nameExt?: string | undefined;
@@ -9486,6 +9485,7 @@ export interface IEmployeeDto {
     fax?: string | undefined;
     tin?: string | undefined;
     contactPerson?: string | undefined;
+    created?: Date;
 
     [key: string]: any;
 }

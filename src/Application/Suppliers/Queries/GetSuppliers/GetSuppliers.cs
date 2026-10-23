@@ -33,8 +33,8 @@ public class GetSuppliersQueryHandler : IRequestHandler<GetSuppliersQuery, Pagin
             (null) => x => true,
             (_) => x => x.FullName.Contains(searchQuery)
                     || x.BirthDate.ToString().Contains(searchQuery)
-                    || x.Gender.ToString().Contains(searchQuery)
-                    || x.CivilStatus.ToString().Contains(searchQuery),
+                    || nameof(x.Gender).Contains(searchQuery)
+                    || nameof(x.CivilStatus).Contains(searchQuery),
         };
 
         var sortBy = string.IsNullOrEmpty(request.SortBy) ? "Created" : request.SortBy;

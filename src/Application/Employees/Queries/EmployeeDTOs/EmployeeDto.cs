@@ -13,7 +13,6 @@ public class EmployeeDto
     public Gender Gender { get; set; }
     public CivilStatus CivilStatus { get; set; }
     public int BranchId { get; set; }
-    public int CustomerTypeId { get; set; }
     public string? Title { get; set; }
     public string? MiddleName { get; set; }
     public string? NameExt { get; set; }
@@ -33,6 +32,7 @@ public class EmployeeDto
     public string? Fax { get; set; }
     public string? TIN { get; set; }
     public string? ContactPerson { get; set; }
+    public DateTimeOffset Created { get; set; }
     public class Mapping : Profile
     {
         public Mapping()

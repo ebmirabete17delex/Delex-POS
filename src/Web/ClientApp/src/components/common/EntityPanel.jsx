@@ -132,7 +132,6 @@ export function EntityPanel({ definition }) {
   );
 
   const refresh = useCallback(async (requestedPage = pageRef.current, requestedSearch = searchRef.current) => {
-    console.log('refresh');
     const requestId = ++requestRef.current;
     setLoading(true);
     setError('');
@@ -234,11 +233,8 @@ export function EntityPanel({ definition }) {
   }
 
   function handleSelectChange(field, value) {
-    console.log('handleSelectChange');
     const nextValues = { ...editor.value, [field.name]: value };
-    console.log('nextValues: ' + nextValues);
     const dependentFields = getDependentFields(fields, field.name);
-    console.log('dependentFields: ' + dependentFields);
     for (const dependentField of dependentFields) {
       nextValues[dependentField.name] = '';
     }
@@ -258,7 +254,6 @@ export function EntityPanel({ definition }) {
   }
 
   async function openEditor(item) {
-    console.log('openEditor');
     setFormError('');
     setError('');
     const editorFields = item ? definition.editFields ?? definition.fields : definition.fields;
@@ -288,7 +283,6 @@ export function EntityPanel({ definition }) {
   }
 
   async function save(event) {
-    console.log('save');
     event.preventDefault();
     setBusy(true);
     setFormError('');
@@ -317,7 +311,6 @@ export function EntityPanel({ definition }) {
   }
 
   async function remove() {
-    console.log
     if (!deleteTarget) return;
     setDeleteBusy(true);
     setError('');

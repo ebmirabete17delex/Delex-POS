@@ -19,8 +19,9 @@ import {
   WarehousePanel,
 } from './components/business-pages.jsx';
 import { AdminPage } from './features/administrator/AdminPage.jsx';
-import { RoleAccessPage } from './features/administrator/RoleAccessPage.jsx';
-import { AccessPermissionPage } from './features/administrator/AccessPermissionPage.jsx';
+import { RoleAccessPage } from './components/role-access/RoleAccessPage.jsx';
+import { UserAccessPage } from './components/user-access/UserAccessPage.jsx';
+import { AccessPermissionPage } from './components/access-permission/AccessPermissionPage.jsx';
 import { Navigate } from 'react-router-dom';
 
 const protectedPage = element => <ProtectedRoute>{element}</ProtectedRoute>;
@@ -33,6 +34,7 @@ const AppRoutes = [
   { path: '/roles', element: protectedPage(<RolePanel />) },
   { path: '/roles/:roleId/access', element: protectedPage(<RoleAccessPage />) },
   { path: '/users', element: protectedPage(<UsersPanel />) },
+  { path: '/users/:userId/access', element: protectedPage(<UserAccessPage />) },
   { path: '/branches', element: protectedPage(<BranchPanel />) },
   { path: '/warehouses', element: protectedPage(<WarehousePanel />) },
   { path: '/cancel-reasons', element: protectedPage(<CancelReasonPanel />) },

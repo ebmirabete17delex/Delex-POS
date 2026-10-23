@@ -1,6 +1,6 @@
 import { ArrowLeft } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import AccessPermissionPanel from '../../components/AccessPermissionPanel.jsx';
+import AccessPermissionPanel from '../access-permission/AccessPermissionPanel.jsx';
 
 export function AccessPermissionPage(){
     const { accessId } = useParams();

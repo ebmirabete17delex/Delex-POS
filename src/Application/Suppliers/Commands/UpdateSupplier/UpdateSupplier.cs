@@ -1,6 +1,7 @@
 ﻿using Delex_POS.Application.Common.Interfaces.Repositories.PersonalInfo;
 using Delex_POS.Application.Common.Interfaces.Repositories.Supplier;
 using Delex_POS.Domain.Enums;
+
 namespace Delex_POS.Application.Suppliers.Commands.UpdateSupplier;
 
 public record UpdateSupplierCommand : IRequest

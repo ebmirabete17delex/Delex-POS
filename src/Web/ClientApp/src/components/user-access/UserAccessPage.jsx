@@ -1,12 +1,12 @@
 import { ArrowLeft } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import RoleAccessPanel from '../../components/RoleAccessPanel.jsx';
+import UserAccessPanel from './UserAccessPanel.jsx';
 
-export function RoleAccessPage() {
-  const { roleId } = useParams();
+export function UserAccessPage() {
+  const { userId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const roleName = location.state?.roleName;
+  const roleName = location.state?.userName;
 
   return (
     <div className="admin-page">
@@ -15,17 +15,17 @@ export function RoleAccessPage() {
           <button
             className="secondary"
             type="button"
-            onClick={() => navigate('/roles')}
+            onClick={() => navigate('/users')}
           >
             <ArrowLeft size={17} />
-            Back to roles
+            Back to users
           </button>
           <p className="eyebrow">Administration</p>
-          <h1>Role access</h1>
-          <p>{roleName || `Role ID: ${roleId}`}</p>
+          <h1>User access</h1>
+          <p>{roleName || `User ID: ${userId}`}</p>
         </div>
       </header>
-      <RoleAccessPanel roleId={roleId} />
+      <UserAccessPanel userId={userId} />
     </div>
   );
 }

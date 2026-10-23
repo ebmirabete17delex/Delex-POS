@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { AccessClient, RoleClient } from '../web-api-client.ts';
-import { createApiClient } from './api-client.js';
+import { AccessClient, RoleClient } from '../../web-api-client.ts';
+import { createApiClient } from '../api-client.js';
 
 const roleClient = createApiClient(RoleClient);
 const accessClient = createApiClient(AccessClient);
@@ -27,11 +27,9 @@ export default function RoleAccessPanel({ roleId }) {
         roleClient.getRoleAccessPermissions(roleId),
         accessClient.getAccessClaimsList()
       ]);
-      console.log(roleAccess);
       setRoleName(roleClient.roleName ?? '');
       setAssignments(roleAccess ?? []);
       setAvailable(accessClaims ?? []);
-      console.log('assignments: ' + assignments);
     } catch (requestError) {
       setError(requestError?.message || 'Could not load role access assignments.');
     } finally {
@@ -59,7 +57,6 @@ export default function RoleAccessPanel({ roleId }) {
   async function changePermission(permissionId, value) {
     setBusy(true);
     setError('');
-    console.log('roleId: ' + roleId);
     try {
       if(value === true){
         await roleClient.createRolePermission({

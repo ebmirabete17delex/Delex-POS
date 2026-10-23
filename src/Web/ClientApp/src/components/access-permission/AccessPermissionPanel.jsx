@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { AccessClient } from "../web-api-client";
-import { createApiClient } from "./api-client";
+import { AccessClient } from "../../web-api-client";
+import { createApiClient } from "../api-client";
 
 const accessClient = createApiClient(AccessClient);
 

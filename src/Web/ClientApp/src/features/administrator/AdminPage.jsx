@@ -3,7 +3,6 @@ import { Shield, UserRound } from 'lucide-react';
 import {
   AccessPanel,
   BranchPanel,
-  RegionPanel,
   RolePanel,
   UsersPanel,
 } from '../../components/business-pages.jsx';

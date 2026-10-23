@@ -37,8 +37,12 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
     {
         var lastUserCode = await _identityService.GetLastUserCode(cancellationToken);
         var newUserCode = UserCodeHelper.GetNextSixDigitFromLastCode(lastUserCode);
-        var newUser = new ApplicationUserDto(email: request.Email, userCode: newUserCode);
-        var user = await _identityService.CreateUserAsync(newUser, password: "TempPwd123");
+        var newUser = new ApplicationUserDto
+            (
+              email: request.Email, 
+              userCode: newUserCode
+             );
+        var user = await _identityService.CreateUserAsync(newUser, password: "TempPwd123@!");
 
         var role = await _identityService.GetRoleByIdAsync(request.RoleId, cancellationToken);
         await _identityService.AddToRoleAsync(user.UserId, role.Name);

@@ -13,6 +13,6 @@ public class SupplierListDto
     public CivilStatus CivilStatus { get; set; }
     public string? Email { get; set; }
     public string? Phone { get; set; }
-    public DateTime Created { get; set; }
+    public DateTimeOffset Created { get; set; }
 
 }
