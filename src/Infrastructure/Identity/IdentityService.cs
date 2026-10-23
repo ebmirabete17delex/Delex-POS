@@ -5,17 +5,13 @@ using AutoMapper.QueryableExtensions;
 using Delex_POS.Application.Common.Enums;
 using Delex_POS.Application.Common.Extensions;
 using Delex_POS.Application.Common.Interfaces;
-using Delex_POS.Application.Common.Interfaces.Repositories.RefreshToken;
 using Delex_POS.Application.Common.Models;
 using Delex_POS.Application.Employees.Queries.EmployeeDTOs;
 using Delex_POS.Application.Roles.Queries.RoleDTOs;
-using Delex_POS.Domain.Constants;
 using Delex_POS.Infrastructure.Factories;
-using Delex_POS.Infrastructure.Jwt;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Delex_POS.Infrastructure.Identity;
@@ -71,7 +67,7 @@ public class IdentityService : IIdentityService
         var user = new ApplicationUser
         {
             UserName = userName,
-            Email = userName,
+            Email = userName
         };
 
         var result = await _userManager.CreateAsync(user, password);
@@ -206,7 +202,7 @@ public class IdentityService : IIdentityService
             await _roleManager.CreateAsync(new IdentityRole(role));
         }
 
-        var result = await _userManager.AddToRoleAsync(user, role);
+        var result = await _userManager.AddToRolesAsync(user, new [] { role });
         return result.ToApplicationResult();
     }
 

@@ -103,7 +103,7 @@ public static class DependencyInjection
             })
             .AddIdentityCookies();
 
-        builder.Services.AddAuthorizationBuilder();
+        //builder.Services.AddAuthorizationBuilder();
 
         builder.Services
             .AddIdentityCore<ApplicationUser>()

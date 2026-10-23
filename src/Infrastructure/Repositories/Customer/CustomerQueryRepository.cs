@@ -42,14 +42,20 @@ public class CustomerQueryRepository : QueryHandlerBase<Domain.Entities.Customer
                         FROM Customers c
                         		INNER JOIN PersonalInfos p
                         					ON c.PersonalInfoId = p.Id
+                                            AND c.IsDeleted = 0
+                                            AND p.IsDelted = 0
                                 LEFT OUTER JOIN Regions r
                                             ON p.RegionCode = r.Code
+                                            AND r.IsDeleted = 0
                                 LEFT OUTER JOIN Provinces s
                                             ON p.ProvinceCode = s.Code
+                                            AND s.IsDeleted = 0
                                 LEFT OUTER JOIN Municipalities m
                                             ON p.RegionCode = m.Code
+                                            AND m.IsDeleted = 0
                                 LEFT OUTER JOIN Barangays b
                                             ON p.RegionCode = b.Code
+                                            AND b.IsDeleted = 0
                         WHERE c.Id = {id}
                         """;
 
@@ -59,9 +65,9 @@ public class CustomerQueryRepository : QueryHandlerBase<Domain.Entities.Customer
     {
         string query = $"""
                         SELECT c.Id as Id
-                              	, RTRIM(p.LastName + ' '
-                                    		+ p.FirstName + ' '
-                                    		+ p.MiddleName) AS FullName
+                              	, CONCAT(p.LastName,', ',
+                                         p.FirstName,' ',
+                                         p.MiddleName) AS FullName
                               	, p.BirthDate AS BirthDate
                               	, p.Gender AS Gender
                               	, p.CivilStatus AS CivilStatus
@@ -71,6 +77,8 @@ public class CustomerQueryRepository : QueryHandlerBase<Domain.Entities.Customer
                         FROM Customers c
                         		INNER JOIN PersonalInfos p
                         					ON c.PersonalInfoId = p.Id
+                                            AND c.IsDeleted = 0
+                                            AND p.IsDeleted = 0
                         """;
 
         return _dbContext.Database.SqlQueryRaw<CustomerListDto>(query);
@@ -79,12 +87,14 @@ public class CustomerQueryRepository : QueryHandlerBase<Domain.Entities.Customer
     {
         string query = $"""
                         SELECT c.Id as Id
-                              	, RTRIM(p.LastName + ' '
-                                    		+ p.FirstName + ' '
-                                    		+ p.MiddleName) AS FullName
+                              	, CONCAT(p.LastName,', ',
+                                         p.FirstName,' ',
+                                         p.MiddleName) AS FullName
                         FROM Customers c
                         		INNER JOIN PersonalInfos p
                         					ON c.PersonalInfoId = p.Id
+                                            AND c.IsDeleted = 0
+                                            AND p.IsDeleted = 0
                         """;
 
         return _dbContext.Database.SqlQueryRaw<CustomerSearchListDto>(query);

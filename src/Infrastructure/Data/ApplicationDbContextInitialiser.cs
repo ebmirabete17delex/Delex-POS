@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Buffers;
+using System.Text.Json;
 using Delex_POS.Application.Psgc.Commands;
 using Delex_POS.Domain.Constants;
 using Delex_POS.Domain.Entities;
@@ -185,21 +186,38 @@ public class ApplicationDbContextInitialiser
             _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Stock Transfer Management").Id));
             await _context.SaveChangesAsync();
         }
-
         if (!_context.Warehouses.Any())
         {
-            _context.Warehouses.Add(new Warehouse(warehouseId: "WH001", name: "Sauyo Warehouse", memo: "", address1: "", address2: "", regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
-            _context.Warehouses.Add(new Warehouse(warehouseId: "WH002", name: "Makati Warehouse", memo: "", address1: "", address2: "", regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
-            _context.Warehouses.Add(new Warehouse(warehouseId: "WH003", name: "Mandaluyong Warehouse", memo: "", address1: "", address2: "", regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
-            _context.Warehouses.Add(new Warehouse(warehouseId: "WH004", name: "Laguna Warehouse", memo: "", address1: "", address2: "", regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
-            _context.Warehouses.Add(new Warehouse(warehouseId: "WH005", name: "Batangas Warehouse", memo: "", address1: "", address2: "", regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
-            _context.Warehouses.Add(new Warehouse(warehouseId: "WH006", name: "Pangasinan Warehouse", memo: "", address1: "", address2: "", regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
-            _context.Warehouses.Add(new Warehouse(warehouseId: "WH007", name: "Santiago Warehouse", memo: "", address1: "", address2: "", regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
-            _context.Warehouses.Add(new Warehouse(warehouseId: "WH008", name: "Lucena Warehouse", memo: "", address1: "", address2: "", regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
-            _context.Warehouses.Add(new Warehouse(warehouseId: "WH009", name: "Camarines Sur Warehouse", memo: "", address1: "", address2: "", regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
-            _context.Warehouses.Add(new Warehouse(warehouseId: "WH010", name: "Cebu Warehouse", memo: "", address1: "", address2: "", regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
+            _context.Warehouses.Add(new Warehouse(warehouseId: "WH001", name: "Sauyo Warehouse", memo: "", address1: "", address2: "", 
+                regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
+            _context.Warehouses.Add(new Warehouse(warehouseId: "WH002", name: "Makati Warehouse", memo: "", address1: "", address2: "", 
+                regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
+            _context.Warehouses.Add(new Warehouse(warehouseId: "WH003", name: "Mandaluyong Warehouse", memo: "", address1: "", address2: "", 
+                regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
+            _context.Warehouses.Add(new Warehouse(warehouseId: "WH004", name: "Laguna Warehouse", memo: "", address1: "", address2: "", 
+                regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
+            _context.Warehouses.Add(new Warehouse(warehouseId: "WH005", name: "Batangas Warehouse", memo: "", address1: "", address2: "", 
+                regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
+            _context.Warehouses.Add(new Warehouse(warehouseId: "WH006", name: "Pangasinan Warehouse", memo: "", address1: "", address2: "", 
+                regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
+            _context.Warehouses.Add(new Warehouse(warehouseId: "WH007", name: "Santiago Warehouse", memo: "", address1: "", address2: "", 
+                regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
+            _context.Warehouses.Add(new Warehouse(warehouseId: "WH008", name: "Lucena Warehouse", memo: "", address1: "", address2: "", 
+                regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
+            _context.Warehouses.Add(new Warehouse(warehouseId: "WH009", name: "Camarines Sur Warehouse", memo: "", address1: "", address2: "", 
+                regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
+            _context.Warehouses.Add(new Warehouse(warehouseId: "WH010", name: "Cebu Warehouse", memo: "", address1: "", address2: "", 
+                regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "sauyowarehouse@delex.com"));
         }
-
+        if (!_context.Branches.Any())
+        {
+            _context.Branches.Add(new Branch(name: "Kapasigan Branch", warehouseId: 2, memo: "", address1: "", address2: "",
+                regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "kapasiganbranch@delex.com", tin: ""));
+            _context.Branches.Add(new Branch(name: "Lipa Branch", warehouseId: 2, memo: "", address1: "", address2: "",
+                regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "lipabranch@delex.com", tin: ""));
+            _context.Branches.Add(new Branch(name: "Naga Branch", warehouseId: 2, memo: "", address1: "", address2: "",
+                regionCode: "", provinceCode: "", municipalityCode: "", barangayCode: "", phone: "", fax: "", email: "nagabranch@delex.com", tin: ""));
+        }
         if (!_context.Regions.Any())
         {
             var psgcsJson = GetPSGCFromJsonFile("C:\\github\\Delex-POS\\postman\\collections\\PSGC\\.resources\\GetRegions.resources\\examples");
@@ -249,13 +267,11 @@ public class ApplicationDbContextInitialiser
                 }
             });
 
-            await _context.SaveChangesAsync();
         }
-
-
+        await _context.SaveChangesAsync();
     }
 
-    
+
     private List<PsgcResponseResult> GetPSGCFromJsonFile(string path)
     {
         var source = new PsgcResponse();

@@ -12,10 +12,10 @@ public class SupplierQueryRepository : QueryHandlerBase<Domain.Entities.Supplier
     {
         string query = $"""
                         SELECT s.Id as Id
-                              	, RTRIM(p.LastName + ' '
-                                    		+ p.FirstName + ' '
-                                    		+ p.MiddleName) AS FullName
-                              	, p.BirthDate AS BirthDate
+                              	, CONCAT(p.LastName,', ',
+                                         p.FirstName,' ',
+                                         p.MiddleName) AS FullName
+                                , p.BirthDate AS BirthDate
                               	, p.Gender AS Gender
                               	, p.CivilStatus AS CivilStatus
                               	, p.Email AS Email
@@ -24,6 +24,8 @@ public class SupplierQueryRepository : QueryHandlerBase<Domain.Entities.Supplier
                         FROM Suppliers s
                         		INNER JOIN PersonalInfos p
                         					ON s.PersonalInfoId = p.Id
+                                            AND s.IsDeleted = 0
+                                            AND p.IsDeleted = 0
                         """;
 
         return _dbContext.Database.SqlQueryRaw<SupplierListDto>(query);
@@ -32,12 +34,14 @@ public class SupplierQueryRepository : QueryHandlerBase<Domain.Entities.Supplier
     {
         string query = $"""
                         SELECT s.Id as Id
-                              	, RTRIM(p.LastName + ' '
-                                    		+ p.FirstName + ' '
-                                    		+ p.MiddleName) AS FullName
+                              	, CONCAT(p.LastName,', ',
+                                         p.FirstName,' ',
+                                         p.MiddleName) AS FullName
                         FROM Suppliers s
                         		INNER JOIN PersonalInfos p
                         					ON s.PersonalInfoId = p.Id
+                                            AND s.IsDeleted = 0
+                                            AND p.IsDeleted = 0
                         """;
 
         return _dbContext.Database.SqlQueryRaw<SupplierSearchListDto>(query);
@@ -77,14 +81,20 @@ public class SupplierQueryRepository : QueryHandlerBase<Domain.Entities.Supplier
                         FROM Suppliers s
                         		INNER JOIN PersonalInfos p
                         					ON s.PersonalInfoId = p.Id
+                                            AND s.IsDeleted = 0
+                                            AND p.IsDeleted = 0
                                 LEFT OUTER JOIN Regions r
                                             ON p.RegionCode = r.Code
+                                            AND r.IsDeleted = 0
                                 LEFT OUTER JOIN Provinces c
                                             ON p.ProvinceCode = c.Code
+                                            AND c.IsDeleted = 0
                                 LEFT OUTER JOIN Municipalities m
                                             ON p.RegionCode = m.Code
+                                            AND m.IsDeleted = 0
                                 LEFT OUTER JOIN Barangays b
                                             ON p.RegionCode = b.Code
+                                            AND b.IsDeleted = 0
                         WHERE s.Id = {id}
                         """;
 

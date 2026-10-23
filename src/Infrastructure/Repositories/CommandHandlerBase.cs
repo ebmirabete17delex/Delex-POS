@@ -1,8 +1,9 @@
-﻿using Delex_POS.Infrastructure.Data;
+﻿using Delex_POS.Domain.Common;
+using Delex_POS.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 namespace Delex_POS.Infrastructure.Repositories;
 
-public abstract class CommandHandlerBase<TEntity> where TEntity : class
+public abstract class CommandHandlerBase<TEntity> where TEntity : BaseEntity
 {
     protected readonly ApplicationDbContext _dbContext;
 
@@ -14,7 +15,8 @@ public abstract class CommandHandlerBase<TEntity> where TEntity : class
     public virtual async Task<int> AddAsync(TEntity entity, CancellationToken cancellationToken)
     {
         await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken);
-        return await _dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return entity.Id;
     }
 
     public virtual async Task<int> UpdateAsync(TEntity entity, CancellationToken cancellationToken)
