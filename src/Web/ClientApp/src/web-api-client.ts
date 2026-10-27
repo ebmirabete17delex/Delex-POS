@@ -6609,6 +6609,58 @@ export class UsersClient {
         }
         return Promise.resolve<void>(null as any);
     }
+
+    /**
+     * Get User Features
+     * @return OK
+     */
+    getUserFeatures(userid: string): Promise<UserFeatureDto[]> {
+        let url_ = this.baseUrl + "/api/Users/{userid}/features";
+        if (userid === undefined || userid === null)
+            throw new globalThis.Error("The parameter 'userid' must be defined.");
+        url_ = url_.replace("{userid}", encodeURIComponent("" + userid));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetUserFeatures(_response);
+        });
+    }
+
+    protected processGetUserFeatures(response: Response): Promise<UserFeatureDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(UserFeatureDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UserFeatureDto[]>(null as any);
+    }
 }
 
 export class WarehouseClient {
@@ -11588,6 +11640,7 @@ export class RoleAccessDto implements IRoleAccessDto {
     roleId?: string;
     accessId?: number;
     name?: string;
+    feature?: string;
     isActive?: boolean;
 
     [key: string]: any;
@@ -11611,6 +11664,7 @@ export class RoleAccessDto implements IRoleAccessDto {
             this.roleId = _data["roleId"];
             this.accessId = _data["accessId"];
             this.name = _data["name"];
+            this.feature = _data["feature"];
             this.isActive = _data["isActive"];
         }
     }
@@ -11632,6 +11686,7 @@ export class RoleAccessDto implements IRoleAccessDto {
         data["roleId"] = this.roleId;
         data["accessId"] = this.accessId;
         data["name"] = this.name;
+        data["feature"] = this.feature;
         data["isActive"] = this.isActive;
         return data;
     }
@@ -11642,6 +11697,7 @@ export interface IRoleAccessDto {
     roleId?: string;
     accessId?: number;
     name?: string;
+    feature?: string;
     isActive?: boolean;
 
     [key: string]: any;
@@ -13991,6 +14047,58 @@ export interface IUserAccessPermissionDto {
     name?: string;
     feature?: string;
     permissions?: UserPermissionDto[];
+
+    [key: string]: any;
+}
+
+export class UserFeatureDto implements IUserFeatureDto {
+    name?: string;
+    feature?: string;
+
+    [key: string]: any;
+
+    constructor(data?: IUserFeatureDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.name = _data["name"];
+            this.feature = _data["feature"];
+        }
+    }
+
+    static fromJS(data: any): UserFeatureDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserFeatureDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["name"] = this.name;
+        data["feature"] = this.feature;
+        return data;
+    }
+}
+
+export interface IUserFeatureDto {
+    name?: string;
+    feature?: string;
 
     [key: string]: any;
 }

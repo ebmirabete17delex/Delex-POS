@@ -8,6 +8,7 @@ public class RoleAccessDto
     public string RoleId { get; init; } = string.Empty;
     public int AccessId { get; init; }
     public string Name { get; init; } = string.Empty;
+    public string Feature { get; init; } = string.Empty;
     public bool IsActive { get; init; }
 
     public class Mapping : Profile

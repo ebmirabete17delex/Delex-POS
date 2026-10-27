@@ -13,4 +13,6 @@ public interface IUserAccessQueryRepository : IQueryHandlerBase<Domain.Entities.
     // Task<bool> UserExistInNonDraftCompanies(int userId);
     Task<Domain.Entities.UserAccess> GetByUserIdAndAccessIdAsync(string userId, int accessId);
     IQueryable<UserAccessDto> GetByUserId(string id);
+
+    IQueryable<UserFeatureDto> GetFeaturesByUserCode(string code);
 }

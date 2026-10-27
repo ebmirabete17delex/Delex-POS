@@ -17,6 +17,7 @@ using Delex_POS.Application.Employees.Queries.GetUserAccess;
 using Delex_POS.Application.Employees.Queries.EmployeeDTOs;
 using Delex_POS.Application.Employees.Queries.GetUserPermissions;
 using Delex_POS.Application.Employees.Queries.GetAccessPermissions;
+using Delex_POS.Application.Employees.Queries.GetUserFeatures;
 namespace Delex_POS.Web.Endpoints;
 
 public class Users : IEndpointGroup
@@ -47,6 +48,8 @@ public class Users : IEndpointGroup
         groupBuilder.MapGet(GetUserAccessPermissions, "{userId}/accesspermission");
         groupBuilder.MapPost(CreateUserPermission, "{userId}/permission/");
         groupBuilder.MapDelete(DeleteUserPermission, "{userId}/permission/{id}");
+
+        groupBuilder.MapGet(GetUserFeatures, "{userid}/features");
 
     }
 
@@ -224,5 +227,14 @@ public class Users : IEndpointGroup
         });
 
         return TypedResults.NoContent();
+    }
+
+    [EndpointSummary("Get User Features")]
+    [EndpointDescription("Retrieves user Features along with their items.")]
+    public static async Task<Ok<List<UserFeatureDto>>> GetUserFeatures(ISender sender, string userId)
+    {
+        var vm = await sender.Send(new GetUserFeaturesQuery { UserCode = userId });
+
+        return TypedResults.Ok(vm);
     }
 }

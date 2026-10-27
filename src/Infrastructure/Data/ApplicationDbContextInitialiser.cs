@@ -1,13 +1,9 @@
-﻿using System.Buffers;
-using System.Text.Json;
-using Delex_POS.Application.Psgc.Commands;
+﻿using System.Text.Json;
 using Delex_POS.Domain.Constants;
 using Delex_POS.Domain.Entities;
 using Delex_POS.Domain.ValueObjects;
 using Delex_POS.Infrastructure.Identity;
-using Google.Protobuf.Compiler;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -139,8 +135,6 @@ public class ApplicationDbContextInitialiser
             _context.Accesses.Add(
                 new AccessClaim(name: "User Management", feature: "users"));
             _context.Accesses.Add(
-                new AccessClaim(name: "Region Management", feature: "regions"));
-            _context.Accesses.Add(
                 new AccessClaim(name: "Warehouse Management", feature: "warehouses"));
             _context.Accesses.Add(
                 new AccessClaim(name: "Customer Management", feature: "customers"));
@@ -151,7 +145,13 @@ public class ApplicationDbContextInitialiser
             _context.Accesses.Add(
                 new AccessClaim(name: "Inventory Management", feature: "inventories"));
             _context.Accesses.Add(
-                new AccessClaim(name: "Point-Of-Sale", feature: "pos"));
+                new AccessClaim(name: "Point-Of-Sale", feature: "point-of-sale"));
+            _context.Accesses.Add(
+                new AccessClaim(name: "X-Reading", feature: "sales-x-reading"));
+            _context.Accesses.Add(
+                new AccessClaim(name: "Z-Reading", feature: "sales-z-reading"));
+            _context.Accesses.Add(
+                new AccessClaim(name: "Shift Closing", feature: "shift-closing"));
             _context.Accesses.Add(
                 new AccessClaim(name: "Reports Management", feature: "reports"));
             _context.Accesses.Add(
@@ -170,20 +170,36 @@ public class ApplicationDbContextInitialiser
                 _context.Permissions.Add(new Permission(access.Id, "Update"));
             }
         }
+        if (!_context.RoleAccesses.Any(u => u.RoleId == administratorRole.Id))
+        {
+            _context.RoleAccesses.Add(new RoleAccess(roleId: administratorRole.Id, accessId: _context.Accesses.First(a => a.Name == "Customer Management").Id));
+            _context.RoleAccesses.Add(new RoleAccess(roleId: administratorRole.Id, accessId: _context.Accesses.First(a => a.Name == "Supplier Management").Id));
+            _context.RoleAccesses.Add(new RoleAccess(roleId: administratorRole.Id, accessId: _context.Accesses.First(a => a.Name == "User Management").Id));
+            _context.RoleAccesses.Add(new RoleAccess(roleId: administratorRole.Id, accessId: _context.Accesses.First(a => a.Name == "Role Management").Id));
+            _context.RoleAccesses.Add(new RoleAccess(roleId: administratorRole.Id, accessId: _context.Accesses.First(a => a.Name == "Product Management").Id));
+            _context.RoleAccesses.Add(new RoleAccess(roleId: administratorRole.Id, accessId: _context.Accesses.First(a => a.Name == "Inventory Management").Id));
+            _context.RoleAccesses.Add(new RoleAccess(roleId: administratorRole.Id, accessId: _context.Accesses.First(a => a.Name == "Point-Of-Sale").Id));
+            _context.RoleAccesses.Add(new RoleAccess(roleId: administratorRole.Id, accessId: _context.Accesses.First(a => a.Name == "Reports Management").Id));
+            _context.RoleAccesses.Add(new RoleAccess(roleId: administratorRole.Id, accessId: _context.Accesses.First(a => a.Name == "Warehouse Management").Id));
+            _context.RoleAccesses.Add(new RoleAccess(roleId: administratorRole.Id, accessId: _context.Accesses.First(a => a.Name == "Branch Management").Id));
+            _context.RoleAccesses.Add(new RoleAccess(roleId: administratorRole.Id, accessId: _context.Accesses.First(a => a.Name == "Cancel Reasons Management").Id));
+            _context.RoleAccesses.Add(new RoleAccess(roleId: administratorRole.Id, accessId: _context.Accesses.First(a => a.Name == "Stock Transfer Management").Id));
+            await _context.SaveChangesAsync();
+        }
         if (!_context.UserAccesses.Any(u => u.UserId == administrator.Id))
         {
             _context.UserAccesses.Add(new UserAccess(userId: administrator.Id, accessId: _context.Accesses.First(a => a.Name == "Customer Management").Id));
-            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Supplier Management").Id));
-            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "User Management").Id));
-            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Role Management").Id));
-            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Product Management").Id));
-            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Inventory Management").Id));
-            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Point-Of-Sale").Id));
-            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Reports Management").Id));
-            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Warehouse Management").Id));
-            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Branch Management").Id));
-            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Cancel Reasons Management").Id));
-            _context.UserAccesses.Add(new UserAccess ( userId : administrator.Id, accessId : _context.Accesses.First(a => a.Name == "Stock Transfer Management").Id));
+            _context.UserAccesses.Add(new UserAccess(userId: administrator.Id, accessId: _context.Accesses.First(a => a.Name == "Supplier Management").Id));
+            _context.UserAccesses.Add(new UserAccess(userId: administrator.Id, accessId: _context.Accesses.First(a => a.Name == "User Management").Id));
+            _context.UserAccesses.Add(new UserAccess(userId: administrator.Id, accessId: _context.Accesses.First(a => a.Name == "Role Management").Id));
+            _context.UserAccesses.Add(new UserAccess(userId: administrator.Id, accessId: _context.Accesses.First(a => a.Name == "Product Management").Id));
+            _context.UserAccesses.Add(new UserAccess(userId: administrator.Id, accessId: _context.Accesses.First(a => a.Name == "Inventory Management").Id));
+            _context.UserAccesses.Add(new UserAccess(userId: administrator.Id, accessId: _context.Accesses.First(a => a.Name == "Point-Of-Sale").Id));
+            _context.UserAccesses.Add(new UserAccess(userId: administrator.Id, accessId: _context.Accesses.First(a => a.Name == "Reports Management").Id));
+            _context.UserAccesses.Add(new UserAccess(userId: administrator.Id, accessId: _context.Accesses.First(a => a.Name == "Warehouse Management").Id));
+            _context.UserAccesses.Add(new UserAccess(userId: administrator.Id, accessId: _context.Accesses.First(a => a.Name == "Branch Management").Id));
+            _context.UserAccesses.Add(new UserAccess(userId: administrator.Id, accessId: _context.Accesses.First(a => a.Name == "Cancel Reasons Management").Id));
+            _context.UserAccesses.Add(new UserAccess(userId: administrator.Id, accessId: _context.Accesses.First(a => a.Name == "Stock Transfer Management").Id));
             await _context.SaveChangesAsync();
         }
         if (!_context.Warehouses.Any())
@@ -270,7 +286,6 @@ public class ApplicationDbContextInitialiser
         }
         await _context.SaveChangesAsync();
     }
-
 
     private List<PsgcResponseResult> GetPSGCFromJsonFile(string path)
     {

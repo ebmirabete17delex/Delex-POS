@@ -9,6 +9,27 @@ public class UserAccessQueryRepository : QueryHandlerBase<Domain.Entities.UserAc
 {
     public UserAccessQueryRepository(ApplicationDbContext dbContext) : base(dbContext) { }
 
+    public IQueryable<UserFeatureDto> GetFeaturesByUserCode(string code)
+    {
+        string query = $"""
+                        SELECT a.Name
+                                , a.Feature
+                        FROM AspNetUsers u
+                            INNER JOIN AspNetUserRoles ur
+                                ON ur.UserId = u.Id
+                            INNER JOIN AspNetRoles r
+                             	ON ur.RoleId = r.Id 
+                            INNER JOIN RoleAccesses ra
+                                ON ra.RoleId = r.Id 
+                                AND ra.IsDeleted = 0
+                            INNER JOIN Accesses a
+                                ON ra.accessid = a.id
+                                AND a.IsDeleted = 0
+                        WHERE u.UserCode = '{code}'
+                        """;
+        return _dbContext.Database.SqlQueryRaw<UserFeatureDto>(query);
+
+    }
     public async Task<Domain.Entities.UserAccess> GetByUserIdAndAccessIdAsync(string userId, int accessId)
     {
         var entity = await _dbContext.UserAccesses
