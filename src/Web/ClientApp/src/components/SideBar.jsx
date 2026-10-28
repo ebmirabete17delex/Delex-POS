@@ -55,7 +55,6 @@ const navigationGroups = [
       { label: 'Enroll Customer', to: '/loyalty-enroll', icon: Package },
       { label: 'Configurations', to: '/loyalty-configuration', icon: Layers3 },
       { label: 'Product Coverage', to: '/loyalty-coverage', icon: Tags },
-
     ],
   },
   {
@@ -139,6 +138,7 @@ const navigationGroups = [
 export function SideBar() {
   const location = useLocation();
   const [features, setFeatures] = useState([]);
+  const [sideBarNavGroups, setSideBarNavGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -150,23 +150,13 @@ export function SideBar() {
       setLoading(false);
       return;
     }    
-
     setLoading(true);
     setError('');
-    let ids = [];
     try{
-      console.log('id : ' + id);      
-      const userFeatures = await Promise.all(
-        usersClient.getUserFeatures(id)
-      );
-      console.log('userFeatures.count : ' + userFeatures.length);
+      const [userFeatures] = await Promise.all([
+        usersClient.getUserFeatures(id),
+      ]);
       setFeatures(userFeatures ?? []);
-      console.log('features.length : ' + features.length);
-
-      features.map(feature => {
-        ids.push('/' + feature.feature);
-      });
-
     } catch (requestError) {
       setError(requestError?.message || 'Could not load User access assignments.');
     } finally {
@@ -175,6 +165,20 @@ export function SideBar() {
   }, [id])
 
   useEffect(() => { setMenu(); }, [setMenu]);
+
+  useEffect(() => { SetNavBarItems();}, [features]);
+
+  function SetNavBarItems(){
+    let tempNavGroup = [];
+    navigationGroups.map(group => {
+      const accessFeatures = group.items.filter(a => features.some(i => i.feature == a.to.replace('/',''))); 
+      if (accessFeatures.length > 0){
+        group.items.splice(0, group.items.length, ...accessFeatures);
+        tempNavGroup.push(group);
+      }
+    });
+    setSideBarNavGroups(tempNavGroup);
+  }
   
   return (
     <Sidebar collapsible="icon">
@@ -188,34 +192,32 @@ export function SideBar() {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        {navigationGroups.map(group => {    
-          const idSet = new Set(features);
-          const accessFeatures = group.items.filter(a => idSet.has(a.to)); 
-          <SidebarGroup key={group.label}>
-            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {accessFeatures.map(item => {
-                  const Icon = item.icon;
-                  const active = location.pathname === item.to
-                    || (item.to === '/roles' && location.pathname.startsWith('/roles/'));
-                  return (
-                    <SidebarMenuItem key={item.to}>
-                      <SidebarMenuButton
-                        render={<NavLink to={item.to} />}
-                        isActive={active}
-                        tooltip={item.label}
-                      >
-                        <Icon aria-hidden="true" />
-                        <span>{item.label}</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem> 
-                  );
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        })}
+        {sideBarNavGroups.map(group => ( 
+            <SidebarGroup key={group.label}>
+              <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {group.items.map(item => {
+                    const Icon = item.icon;
+                    const active = location.pathname === item.to
+                      || (item.to === '/roles' && location.pathname.startsWith('/roles/'));
+                    return (
+                      <SidebarMenuItem key={item.to}>
+                        <SidebarMenuButton
+                          render={<NavLink to={item.to} />}
+                          isActive={active}
+                          tooltip={item.label}
+                        >
+                          <Icon aria-hidden="true" />
+                          <span>{item.label}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem> 
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
