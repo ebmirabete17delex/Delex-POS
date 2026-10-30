@@ -15,13 +15,19 @@ public class Customer : IEndpointGroup
     public static string? RoutePrefix => "/api/customers";
     public static void Map(RouteGroupBuilder groupBuilder)
     {
-        groupBuilder.MapPost(CreateCustomer);
-        groupBuilder.MapPut(UpdateCustomer, "{id}");
-        groupBuilder.MapDelete(DeleteCustomer, "{id}");
+        groupBuilder.MapPost(CreateCustomer)
+            .RequireAuthorization("CustomerCreate");
+        groupBuilder.MapPut(UpdateCustomer, "{id}")
+            .RequireAuthorization("CustomerUpdate");
+        groupBuilder.MapDelete(DeleteCustomer, "{id}")
+            .RequireAuthorization("CustomerDelete");
 
-        groupBuilder.MapGet(GetCustomers);
-        groupBuilder.MapGet(GetCustomer, "{id}");
-        groupBuilder.MapGet(SearchCustomer, "/search/{query}");
+        groupBuilder.MapGet(GetCustomers)
+            .RequireAuthorization("CustomerRead");
+        groupBuilder.MapGet(GetCustomer, "{id}")
+            .RequireAuthorization("CustomerRead");
+        groupBuilder.MapGet(SearchCustomer, "/search/{query}")
+            .RequireAuthorization("CustomerRead");
     }
 
     [EndpointSummary("Get all Customers")]

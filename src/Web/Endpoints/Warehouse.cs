@@ -16,12 +16,18 @@ public class Warehouse : IEndpointGroup
     {
         groupBuilder.RequireAuthorization();
 
-        groupBuilder.MapPost(CreateWarehouse);
-        groupBuilder.MapPut(UpdateWarehouse, "{id}");
-        groupBuilder.MapDelete(DeleteWarehouse, "{id}");
-        groupBuilder.MapGet(GetWarehouses);
-        groupBuilder.MapGet(GetWarehouseList, "list");
-        groupBuilder.MapGet(GetWarehouse, "{id}");
+        groupBuilder.MapPost(CreateWarehouse)
+            .RequireAuthorization("WarehouseCreate");
+        groupBuilder.MapPut(UpdateWarehouse, "{id}")
+            .RequireAuthorization("WarehouseUpdate");
+        groupBuilder.MapDelete(DeleteWarehouse, "{id}")
+            .RequireAuthorization("WarehouseDelete");
+        groupBuilder.MapGet(GetWarehouses)
+            .RequireAuthorization("WarehouseRead");
+        groupBuilder.MapGet(GetWarehouseList, "list")
+            .RequireAuthorization("WarehouseRead");
+        groupBuilder.MapGet(GetWarehouse, "{id}")
+            .RequireAuthorization("WarehouseRead");
 
     }
     [EndpointSummary("Create a new Warehouse")]

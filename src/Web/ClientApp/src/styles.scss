@@ -1130,6 +1130,34 @@ button.danger,
   select { width: auto; margin: 0; }
 }
 
+// ── React Toastify theme integration ───────────────────────────────────────────
+[data-theme="dark"],
+.dark {
+  .Toastify__toast--error {
+    --toastify-icon-color: #fecaca;
+    --toastify-icon-button-color: #fecaca;
+    --toastify-progress-bar-background: #dc2626;
+  }
+
+  .Toastify__toast--success {
+    --toastify-icon-color: #bbf7d0;
+    --toastify-icon-button-color: #bbf7d0;
+    --toastify-progress-bar-background: #16a34a;
+  }
+
+  .Toastify__toast--info {
+    --toastify-icon-color: #bfdbfe;
+    --toastify-icon-button-color: #bfdbfe;
+    --toastify-progress-bar-background: #2563eb;
+  }
+
+  .Toastify__toast--warn {
+    --toastify-icon-color: #fef3c7;
+    --toastify-icon-button-color: #fef3c7;
+    --toastify-progress-bar-background: #d97706;
+  }
+}
+
 .simple-page,
 .auth-page {
   max-width: 58rem;
@@ -1183,4 +1211,75 @@ button.danger,
   }
 
   .app-page-content { padding-top: 1rem; }
+}
+
+// ── Landing page navigation ───────────────────────────────────────────────────
+.sidebar-group {
+  margin-bottom: 1.25rem;
+}
+
+.sidebar-group-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.5rem;
+  padding-inline: 0.5rem;
+  color: var(--pico-muted-color);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sidebar-group-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-group-links a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.45rem 0.75rem;
+  color: var(--pico-color);
+  text-decoration: none;
+  border: 0;
+  background: transparent;
+  border-radius: 0.375rem;
+  box-shadow: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.sidebar-group-links a:hover {
+  background: color-mix(in srgb, var(--pico-muted-border-color) 25%, transparent);
+  color: var(--pico-primary);
+}
+
+.sidebar-group-links a.active {
+  color: var(--pico-primary);
+  background: color-mix(in srgb, var(--pico-primary-background) 18%, var(--pico-background-color));
+}
+
+.sidebar-group-links a svg {
+  flex: 0 0 1.5rem;
+}
+
+@media (max-width: 700px) {
+  .sidebar-group-links {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .sidebar-group-links a {
+    white-space: nowrap;
+    flex: 0 0 auto;
+    padding: 0.5rem 0.75rem;
+  }
 }

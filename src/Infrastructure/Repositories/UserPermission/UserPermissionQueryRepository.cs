@@ -1,4 +1,5 @@
 ﻿using Delex_POS.Application.Common.Interfaces.Repositories.UserPermission;
+using Delex_POS.Application.Common.Models;
 using Delex_POS.Application.Employees.Queries.EmployeeDTOs;
 using Delex_POS.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,32 @@ public class UserPermissionQueryRepository : QueryHandlerBase<Domain.Entities.Us
     {
 
     }
+
+    public async Task<IQueryable<PermissionDto>> GetGrantedPermissionByUserId(string userId, CancellationToken cancellationToken)
+    {
+        string query = $"""
+            SELECT distinct a.Feature, p.Name AS Action
+            FROM AspNetUsers u
+                INNER JOIN AspNetUserRoles ur
+                    ON ur.UserId = u.Id
+                INNER JOIN RoleAccesses ra 
+                	ON ra.RoleId = ur.RoleId 
+                	AND ra.IsDeleted = 0
+                INNER JOIN Accesses a
+                    ON ra.AccessId = a.Id
+                    AND a.IsDeleted = 0
+                INNER JOIN RolePermissions rp
+                    ON ur.RoleId = rp.RoleId 
+                    AND rp.IsDeleted = 0
+                INNER JOIN Permissions p
+                    ON rp.PermissionId = p.id
+                    AND p.IsDeleted = 0
+                WHERE u.Id = '{userId}'
+                ORDER BY a.Feature 
+            """;
+        return _dbContext.Database.SqlQueryRaw<PermissionDto>(query);
+    }
+
     public async Task<IQueryable<UserPermissionDto>> GetUserPermissionsAsync(int userId, CancellationToken cancellationToken)
     {
         string query = $"""

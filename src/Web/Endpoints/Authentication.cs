@@ -34,21 +34,23 @@ public class Authentication : IEndpointGroup
 
     [EndpointSummary("Activate an account")]
     [EndpointDescription("Sets a new user's six-digit PIN and activates their account.")]
-    public static async Task<Results<Ok<TokenResponse>, BadRequest<string>, UnauthorizedHttpResult>> Activate(
+    public static async Task<Results<Ok<ActivationResponse>, BadRequest<string>, UnauthorizedHttpResult>> Activate(
         IIdentityService identityService,
         ActivationRequest request)
     {
-        if (string.IsNullOrEmpty(request.Pin) ||
-            request.Pin.Length != 6 ||
-            request.Pin.Any(character => character < '0' || character > '9'))
-        {
-            return TypedResults.BadRequest("PIN must be exactly six digits.");
-        }
+        //if (string.IsNullOrEmpty(request.Pin) ||
+        //    request.Pin.Length != 6 ||
+        //    request.Pin.Any(character => character < '0' || character > '9'))
+        //{
+        //    return TypedResults.BadRequest("PIN must be exactly six digits.");
+        //}
 
-        var result = await identityService.ActivateAsync(
+        var result = await identityService.ActivateWoPINAsync(
             request.UserId,
-            request.Password,
-            request.Pin);
+            request.OldPassword,
+            request.NewPassword);
+            //,
+            //request.Pin);
 
         return result is not null
             ? TypedResults.Ok(result)
@@ -77,5 +79,7 @@ public sealed record LoginRequest(
 
 public sealed record ActivationRequest(
     string UserId,
-    string Password,
-    string Pin);
+    string OldPassword,
+    string NewPassword);
+    //,
+    //string Pin);

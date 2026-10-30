@@ -27,13 +27,9 @@ public class PermissionClaimsTransformation(IPermissionService permissionService
         var claimsIdentity = (ClaimsIdentity)principal.Identity;
         foreach (var permission in permissions)
         {
-            claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Permission, $"{permission.Feature}:{permission.Action}"));
+            claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Permission, $"{permission.Feature.ToLower()}:{permission.Action.ToLower()}"));
         }
 
         return principal;
-    }
-    public static class CustomClaimTypes
-    {
-        public const string Permission = "permission";
     }
 }

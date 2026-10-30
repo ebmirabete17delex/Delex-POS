@@ -7,8 +7,8 @@ using Delex_POS.Application.Common.Interfaces.Repositories.Customer;
 using Delex_POS.Application.Common.Interfaces.Repositories.CustomerType;
 using Delex_POS.Application.Common.Interfaces.Repositories.Employee;
 using Delex_POS.Application.Common.Interfaces.Repositories.Generic;
-using Delex_POS.Application.Common.Interfaces.Repositories.PersonalInfo;
 using Delex_POS.Application.Common.Interfaces.Repositories.Permission;
+using Delex_POS.Application.Common.Interfaces.Repositories.PersonalInfo;
 using Delex_POS.Application.Common.Interfaces.Repositories.Product;
 using Delex_POS.Application.Common.Interfaces.Repositories.ProductAttribute;
 using Delex_POS.Application.Common.Interfaces.Repositories.ProductCategory;
@@ -22,14 +22,15 @@ using Delex_POS.Application.Common.Interfaces.Repositories.RolePermission;
 using Delex_POS.Application.Common.Interfaces.Repositories.Supplier;
 using Delex_POS.Application.Common.Interfaces.Repositories.UnitOfMeasure;
 using Delex_POS.Application.Common.Interfaces.Repositories.UserAccess;
-using Delex_POS.Application.Common.Interfaces.Repositories.UserPermission;
 using Delex_POS.Application.Common.Interfaces.Repositories.UserHistory;
+using Delex_POS.Application.Common.Interfaces.Repositories.UserPermission;
 using Delex_POS.Application.Common.Interfaces.Repositories.Warehouse;
+using Delex_POS.Infrastructure.Authorization;
 using Delex_POS.Infrastructure.Data;
 using Delex_POS.Infrastructure.Data.Interceptors;
+using Delex_POS.Infrastructure.Email;
 using Delex_POS.Infrastructure.Factories;
 using Delex_POS.Infrastructure.Identity;
-using Delex_POS.Infrastructure.Jwt;
 using Delex_POS.Infrastructure.Mapping.IdentityProfile;
 using Delex_POS.Infrastructure.Repositories.AccessClaim;
 using Delex_POS.Infrastructure.Repositories.AuditLog;
@@ -39,8 +40,8 @@ using Delex_POS.Infrastructure.Repositories.Customer;
 using Delex_POS.Infrastructure.Repositories.CustomerType;
 using Delex_POS.Infrastructure.Repositories.Employee;
 using Delex_POS.Infrastructure.Repositories.Generic;
-using Delex_POS.Infrastructure.Repositories.PersonalInfo;
 using Delex_POS.Infrastructure.Repositories.Permission;
+using Delex_POS.Infrastructure.Repositories.PersonalInfo;
 using Delex_POS.Infrastructure.Repositories.Product;
 using Delex_POS.Infrastructure.Repositories.ProductAttribute;
 using Delex_POS.Infrastructure.Repositories.ProductCategory;
@@ -54,15 +55,15 @@ using Delex_POS.Infrastructure.Repositories.RolePermission;
 using Delex_POS.Infrastructure.Repositories.Supplier;
 using Delex_POS.Infrastructure.Repositories.UnitOfMeasure;
 using Delex_POS.Infrastructure.Repositories.UserAccess;
-using Delex_POS.Infrastructure.Repositories.UserPermission;
 using Delex_POS.Infrastructure.Repositories.UserHistory;
+using Delex_POS.Infrastructure.Repositories.UserPermission;
 using Delex_POS.Infrastructure.Repositories.Warehouse;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using System.Runtime.CompilerServices;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -93,7 +94,6 @@ public static class DependencyInjection
         // });
 
         builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
-        builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
         builder.Services.AddScoped<ApplicationDbContextInitialiser>();
 
         builder.Services.AddAuthentication(options =>
@@ -103,7 +103,7 @@ public static class DependencyInjection
             })
             .AddIdentityCookies();
 
-        //builder.Services.AddAuthorizationBuilder();
+        builder.Services.AddAuthorizationPolicies();
 
         builder.Services
             .AddIdentityCore<ApplicationUser>()
@@ -116,7 +116,13 @@ public static class DependencyInjection
         builder.Services.AddSingleton(TimeProvider.System);
         builder.Services.AddScoped<TokenFactory>();
         builder.Services.AddScoped<IIdentityService, IdentityService>();
+        
+        builder.Services.AddMemoryCache();
 
+        builder.Services.AddScoped<IPermissionService, PermissionService>();
+        builder.Services.AddTransient<IClaimsTransformation, PermissionClaimsTransformation>();
+
+        builder.Services.AddTransient<IEmailSender, EmailSender>();
 
         #region Repository
         builder.Services.AddScoped<IAccessClaimCommandRepository, AccessClaimCommandRepository>();

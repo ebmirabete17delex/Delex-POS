@@ -19,16 +19,25 @@ public class Product : IEndpointGroup
     {
         groupBuilder.RequireAuthorization();
 
-        groupBuilder.MapPost(CreateProduct);
-        groupBuilder.MapPost(CreateProductSale, "{id}/sale");
-        groupBuilder.MapPost(CreateProductPurchasing, "{id}/purchasing");
-        groupBuilder.MapPut(UpdateProduct, "{id}");
-        groupBuilder.MapDelete(DeleteProduct, "{id}");
+        groupBuilder.MapPost(CreateProduct)
+            .RequireAuthorization("ProductCreate");
+        groupBuilder.MapPost(CreateProductSale, "{productId}/sale")
+            .RequireAuthorization("ProductCreate");
+        groupBuilder.MapPost(CreateProductPurchasing, "{productId}/purchasing")
+            .RequireAuthorization("ProductCreate");
+        groupBuilder.MapPut(UpdateProduct, "{id}")
+            .RequireAuthorization("ProductUpdate");
+        groupBuilder.MapDelete(DeleteProduct, "{id}")
+            .RequireAuthorization("ProductDelete");
 
-        groupBuilder.MapGet(GetProducts);
-        groupBuilder.MapGet(GetProduct, "{id}");
-        groupBuilder.MapGet(GetProductSale, "{id}/sale");
-        groupBuilder.MapGet(GetProductPurchasing, "{id}/purchasing");
+        groupBuilder.MapGet(GetProducts)
+            .RequireAuthorization("ProductRead");
+        groupBuilder.MapGet(GetProduct, "{id}")
+            .RequireAuthorization("ProductRead");
+        groupBuilder.MapGet(GetProductSale, "{id}/sale")
+            .RequireAuthorization("ProductRead");
+        groupBuilder.MapGet(GetProductPurchasing, "{id}/purchasing")
+            .RequireAuthorization("ProductRead");
     }
 
     [EndpointSummary("Create a new Product")]
@@ -42,7 +51,7 @@ public class Product : IEndpointGroup
 
     [EndpointSummary("Create a new Product Sale")]
     [EndpointDescription("Creates a new product sale using the provided details and returns the ID of the created item.")]
-    public static async Task<Created<int>> CreateProductSale(ISender sender, CreateProductSaleCommand command)
+    public static async Task<Created<int>> CreateProductSale(ISender sender, int productId, CreateProductSaleCommand command)
     {
         int id = await sender.Send(command);
 
@@ -51,7 +60,7 @@ public class Product : IEndpointGroup
 
     [EndpointSummary("Create a new Product Purchasing")]
     [EndpointDescription("Creates a new product purchasing using the provided details and returns the ID of the created item.")]
-    public static async Task<Created<int>> CreateProductPurchasing(ISender sender, CreateProductPurchasingCommand command)
+    public static async Task<Created<int>> CreateProductPurchasing(ISender sender, int productId, CreateProductPurchasingCommand command)
     {
         int id = await sender.Send(command);
 

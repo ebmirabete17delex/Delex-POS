@@ -1,10 +1,10 @@
 using Azure.Identity;
 using Delex_POS.Application.Common.Interfaces;
+using Delex_POS.Infrastructure.Authorization;
 using Delex_POS.Web.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Delex_POS.Infrastructure.Authorization;
 using System.Text;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -22,7 +22,9 @@ public static class DependencyInjection
         builder.Services.AddExceptionHandler<ProblemDetailsExceptionHandler>();
 
         ConfigureJwtAuthentication(builder.Services, builder.Configuration);
+
         builder.Services.AddAuthorizationPolicies();
+
         //builder.Services.AddAuthentication(options =>
         //    {
         //        options.DefaultScheme = IdentityConstants.ApplicationScheme;

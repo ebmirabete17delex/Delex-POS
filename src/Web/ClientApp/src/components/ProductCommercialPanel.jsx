@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ProductClient } from '../web-api-client.ts';
-import { createApiClient } from './api-client.js';
+import { createApiClient } from './api-client.jsx';
 
 const products = createApiClient(ProductClient);
 const emptySale = {

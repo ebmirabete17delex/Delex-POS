@@ -16,13 +16,19 @@ public class CancelReason : IEndpointGroup
     {
         groupBuilder.RequireAuthorization();
 
-        groupBuilder.MapPost(CreateCancelReason);
-        groupBuilder.MapPut(UpdateCancelReason, "{id}");
-        groupBuilder.MapDelete(DeleteCancelReason, "{id}");
+        groupBuilder.MapPost(CreateCancelReason)
+            .RequireAuthorization("CancelReasonCreate");
+        groupBuilder.MapPut(UpdateCancelReason, "{id}")
+            .RequireAuthorization("CancelReasonUpdate");
+        groupBuilder.MapDelete(DeleteCancelReason, "{id}")
+            .RequireAuthorization("CancelReasonDelete");
 
-        groupBuilder.MapGet(GetCancelReasons);
-        groupBuilder.MapGet(GetCancelReasonsList, "list");
-        groupBuilder.MapGet(GetCancelReason, "{id}");
+        groupBuilder.MapGet(GetCancelReasons)
+            .RequireAuthorization("CancelReasonRead");
+        groupBuilder.MapGet(GetCancelReasonsList, "list")
+            .RequireAuthorization("CancelReasonRead");
+        groupBuilder.MapGet(GetCancelReason, "{id}")
+            .RequireAuthorization("CancelReasonRead");
     }
 
     [EndpointSummary("Create a new Cancel Reason")]

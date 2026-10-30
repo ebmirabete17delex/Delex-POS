@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, useState } from 'react';
 import { AuthenticationClient, LoginRequest } from '../../web-api-client.ts';
-import { clearAccessToken, clearUserId, createApiClient, getAccessToken, getUserId, storeAccessToken, storeUserId } from '../api-client.js';
+import { clearAccessToken, clearUserId, createApiClient, getAccessToken, getUserId, storeAccessToken, storeUserId } from '../api-client.jsx';
 
 const AuthContext = createContext(null);
 const authentication = createApiClient(AuthenticationClient);
@@ -16,11 +16,17 @@ export function AuthProvider({ children }) {
     isLoading,
     login: async (userId, password) => {
       const response = await authentication.login(new LoginRequest({ userId, password }));
-      if (!response?.accessToken) throw new Error('The login response did not include an access token.');
-      storeUserId(userId);
-      setUserId(userId);
-      storeAccessToken(response.accessToken);
-      setAccessToken(response.accessToken);
+      if (response?.accessToken) {
+        storeUserId(userId);
+        setUserId(userId);
+        storeAccessToken(response.accessToken);
+        setAccessToken(response.accessToken);
+        return response;
+      }
+      if (response?.isActive === false) {
+        return response;
+      }
+      throw new Error('The login response did not include an access token.');
     },
     logout: async () => {
       try {

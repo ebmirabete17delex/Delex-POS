@@ -328,26 +328,21 @@ public class IdentityService : IIdentityService
 
         bool isAdmin = await _userManager.IsInRoleAsync(user, Domain.Constants.Roles.Administrator);
 
-        if (user.IsActive == false && !isAdmin)
+        if (!user.IsActive && !isAdmin)
         {
             var passwordResult = await _signInManager.CheckPasswordSignInAsync(
-                user,
-                password,
-                lockoutOnFailure: true);
-
-            if (!passwordResult.Succeeded)
-            {
-                return null;
-            }
-
+                                            user,
+                                            password,
+                                            lockoutOnFailure: true);
             return new TokenResponse
             {
                 IsActive = user.IsActive,
                 TokenType = null,
                 AccessToken = "",
                 ExpiresIn = 0,
-                RefreshToken = ""
-            }; 
+                RefreshToken = "",
+                Error = !passwordResult.Succeeded ? "Invalid User Code or Password." : ""
+            };                
         }
 
         user = await _userManager.FindByEmailAsync(user.Email!);
@@ -357,24 +352,80 @@ public class IdentityService : IIdentityService
         }
 
         var signInResult = await _signInManager.PasswordSignInAsync(
+                                                user,
+                                                password,
+                                                isPersistent,
+                                                lockoutOnFailure: true);
+
+        return !signInResult.Succeeded ? 
+            new TokenResponse
+            {
+                IsActive = user.IsActive,
+                TokenType = null,
+                AccessToken = "",
+                ExpiresIn = 0,
+                RefreshToken = "",
+                Error = "Invalid User Code or Password."
+            }
+            :
+            new TokenResponse
+            {
+                IsActive = user.IsActive,
+                TokenType = null,
+                AccessToken = await _tokenFactory.GenerateAccessTokenAsync(user, expiresInMinutes),
+                ExpiresIn = expiresInMinutes * 60,
+                RefreshToken = _tokenFactory.GenerateRefreshToken(),
+                Error = ""
+            };
+    }
+
+    public async Task<ActivationResponse?> ActivateWoPINAsync(string userCode, string oldPassword, string newPassword)
+    {
+        string pin = "456859";
+        if (string.IsNullOrEmpty(pin) ||
+            pin.Length != 6 ||
+            pin.Any(character => character < '0' || character > '9'))
+        {
+            return new ActivationResponse { Successful = false, Error = "Invalid PIN" };
+        }
+
+        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserCode.Equals(userCode));
+        if (user!.IsActive)
+        {
+            return new ActivationResponse { Successful = false, Error = "User is already activated." };
+        }
+
+        var passwordResult = await _signInManager.CheckPasswordSignInAsync(
             user,
-            password,
-            isPersistent,
+           oldPassword,
             lockoutOnFailure: true);
 
-        if (!signInResult.Succeeded)
+        if (!passwordResult.Succeeded)
         {
-            return null;
+            return new ActivationResponse { Successful = false, Error = "Invalid User Code or password." };
         }
 
 
-        return new TokenResponse
+        user.UpdatePIN(pin);
+        user.Activate();
+        var updateResult = await _userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
         {
-            IsActive = user.IsActive,
-            TokenType = null,
-            AccessToken = await _tokenFactory.GenerateAccessTokenAsync(user, expiresInMinutes),
-            ExpiresIn = expiresInMinutes * 60,
-            RefreshToken = _tokenFactory.GenerateRefreshToken()
+            var errors = string.Join("; ", updateResult.Errors.Select(error => error.Description));
+            return new ActivationResponse { Successful = false, Error = errors };
+        }
+        
+        var chgPwd = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+        if (!chgPwd.Succeeded)
+        {
+            var errors = string.Join("; ", chgPwd.Errors.Select(error => error.Description));
+            return new ActivationResponse { Successful = false, Error = errors };
+        }
+
+        return new ActivationResponse
+        {
+            Successful = true,
+            Error = ""
         };
     }
 

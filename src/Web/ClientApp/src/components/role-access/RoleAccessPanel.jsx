@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AccessClient, RoleClient } from '../../web-api-client.ts';
-import { createApiClient } from '../api-client.js';
+import { createApiClient } from '../api-client.jsx';
 
 const roleClient = createApiClient(RoleClient);
 const accessClient = createApiClient(AccessClient);

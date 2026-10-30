@@ -17,7 +17,7 @@ import {
   UsersClient,
   WarehouseClient,
 } from '../web-api-client.ts';
-import { createApiClient } from './api-client.js';
+import { createApiClient } from './api-client.jsx';
 import { EntityPanel } from './common/EntityPanel.jsx';
 import { ProductCommercialPanel } from './ProductCommercialPanel.jsx';
 import { UserAssignmentsPanel } from '../components/UsesrAssignmentsPanel.jsx';
@@ -418,8 +418,6 @@ export const businessPageDefinitions = {
       ...contactFields,
     ],
     updateIncludesId: true,
-    rowLink: item => `/users/${encodeURIComponent(item.id)}/access`,
-    rowLinkLabel: 'Manage Access',
     columns: personColumns,
   },
   warehouses: {

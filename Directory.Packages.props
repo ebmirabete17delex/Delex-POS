@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Ardalis.GuardClauses" Version="5.0.0" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.6.4" />
     <PackageVersion Include="Aspire.Hosting.MySql" Version="13.6.4" />
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.6.4" />
     <PackageVersion Include="Aspire.Pomelo.EntityFrameworkCore.MySql" Version="13.5.4" />
@@ -32,6 +33,7 @@
     <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.13" />
     <PackageVersion Include="Moq" Version="4.21.0" />
     <PackageVersion Include="MySql.EntityFrameworkCore" Version="10.0.12" />
+    <PackageVersion Include="MySqlConnector" Version="2.6.2" />
     <PackageVersion Include="nunit" Version="5.0.0" />
     <PackageVersion Include="NUnit.Analyzers" Version="4.15.0" />
     <PackageVersion Include="NUnit3TestAdapter" Version="6.3.1" />
@@ -40,13 +42,13 @@
     <PackageVersion Include="Scalar.AspNetCore" Version="2.18.2" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.23.0" />
-    <PackageVersion Include="Microsoft.Playwright" Version="1.64.0" />
+    <PackageVersion Include="Microsoft.Playwright" Version="1.64.1" />
     <PackageVersion Include="Reqnroll.NUnit" Version="3.3.4" />
     <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.5.4" />
     <PackageVersion Include="Aspire.Hosting.Azure.PostgreSQL" Version="13.6.3" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
     <PackageVersion Include="Aspire.Hosting.Azure.AppContainers" Version="13.6.4" />
-    <PackageVersion Include="Aspire.Hosting.Testing" Version="13.6.3" />
+    <PackageVersion Include="Aspire.Hosting.Testing" Version="13.6.4" />
     <PackageVersion Include="Aspire.Hosting.JavaScript" Version="13.6.4" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.11.0" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.11.0" />

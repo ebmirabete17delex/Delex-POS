@@ -16,13 +16,19 @@ public class CustomerType : IEndpointGroup
     {
         groupBuilder.RequireAuthorization();
 
-        groupBuilder.MapPost(CreateCustomerType);
-        groupBuilder.MapPut(UpdateCustomerType, "{id}");
-        groupBuilder.MapDelete(DeleteCustomerType, "{id}");
+        groupBuilder.MapPost(CreateCustomerType)
+            .RequireAuthorization("CustomerTypeCreate");
+        groupBuilder.MapPut(UpdateCustomerType, "{id}")
+            .RequireAuthorization("CustomerTypeUpdate");
+        groupBuilder.MapDelete(DeleteCustomerType, "{id}")
+            .RequireAuthorization("CustomerTypeDelete");
 
-        groupBuilder.MapGet(GetCustomerTypes);
-        groupBuilder.MapGet(GetCustomerTypesList, "list");
-        groupBuilder.MapGet(GetCustomerType, "{id}");
+        groupBuilder.MapGet(GetCustomerTypes)
+            .RequireAuthorization("CustomerTypeRead");
+        groupBuilder.MapGet(GetCustomerTypesList, "list")
+            .RequireAuthorization("CustomerTypeRead");
+        groupBuilder.MapGet(GetCustomerType, "{id}")
+            .RequireAuthorization("CustomerTypeRead");
     }
 
     [EndpointSummary("Create a new Customer Type")]

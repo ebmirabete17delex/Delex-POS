@@ -23,7 +23,6 @@ public interface IIdentityService
     Task<Result> UpdateUserPinAsync(string userId, string newPIN);
     Task<Result> ActivateUserAsync(string userId, string newPassword, string userPin);
     Task<Result> DeactivateUserAsync(string userId);
-    Task<TokenResponse?> ActivateAsync(string userCode, string password, string pin);
     #endregion
 
     // Role Management
@@ -44,6 +43,8 @@ public interface IIdentityService
     Task<TokenResponse?> LoginAsync(string userCode, string password, bool isPersistent = false);
     //Task<TokenResponse?> LoginAsync(string userCode, string password, HttpContext ctx, bool isPersistent = false);
     //Task<Result> LogoutAsync(HttpContext ctx);
+    Task<TokenResponse?> ActivateAsync(string userCode, string password, string pin);
+    Task<ActivationResponse?> ActivateWoPINAsync(string userCode, string oldPassword, string newPassword);
     //Task<Result> RefreshAsync(HttpContext ctx);
     #endregion
 }

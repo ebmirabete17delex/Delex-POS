@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { notify } from '../toast.jsx';
 import {
   ChevronLeft,
   ChevronRight,
@@ -117,7 +118,6 @@ export function EntityPanel({ definition }) {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
-  const [error, setError] = useState('');
   const [formError, setFormError] = useState('');
   const [fieldOptions, setFieldOptions] = useState({});
   const [optionsLoading, setOptionsLoading] = useState({});
@@ -134,7 +134,6 @@ export function EntityPanel({ definition }) {
   const refresh = useCallback(async (requestedPage = pageRef.current, requestedSearch = searchRef.current) => {
     const requestId = ++requestRef.current;
     setLoading(true);
-    setError('');
     try {
       const response = await definition.list(requestedPage, PAGE_SIZE, requestedSearch || undefined);
       if (requestId !== requestRef.current) return;
@@ -180,7 +179,7 @@ export function EntityPanel({ definition }) {
       }
     } catch (requestError) {
       if (requestId === requestRef.current) {
-        setError(requestError?.message || `Could not load ${definition.plural.toLowerCase()}.`);
+        notify.error(requestError?.message || `Could not load ${definition.plural.toLowerCase()}.`);
       }
     } finally {
       if (requestId === requestRef.current) setLoading(false);
@@ -255,7 +254,6 @@ export function EntityPanel({ definition }) {
 
   async function openEditor(item) {
     setFormError('');
-    setError('');
     const editorFields = item ? definition.editFields ?? definition.fields : definition.fields;
     try {
       setBusy(true);
@@ -276,7 +274,7 @@ export function EntityPanel({ definition }) {
         setEditor({ mode: 'create', value: values });
       }
     } catch (requestError) {
-      setError(requestError?.message || `Could not load ${definition.singular.toLowerCase()} details.`);
+      notify.error(requestError?.message || `Could not load ${definition.singular.toLowerCase()} details.`);
     } finally {
       setBusy(false);
     }
@@ -303,6 +301,7 @@ export function EntityPanel({ definition }) {
       }
       setEditor(null);
       await refresh(update ? pageRef.current : 1, searchRef.current);
+      notify.success(`${definition.singular} saved.`);
     } catch (requestError) {
       setFormError(requestError?.message || `Could not save ${definition.singular.toLowerCase()}.`);
     } finally {
@@ -313,13 +312,13 @@ export function EntityPanel({ definition }) {
   async function remove() {
     if (!deleteTarget) return;
     setDeleteBusy(true);
-    setError('');
     try {
       await definition.remove(deleteTarget[definition.idField ?? 'id']);
       setDeleteTarget(null);
       await refresh(pageRef.current, searchRef.current);
+      notify.success(`${definition.singular} deleted.`);
     } catch (requestError) {
-      setError(requestError?.message || `Could not delete ${definition.singular.toLowerCase()}.`);
+      notify.error(requestError?.message || `Could not delete ${definition.singular.toLowerCase()}.`);
     } finally {
       setDeleteBusy(false);
     }
@@ -483,7 +482,6 @@ export function EntityPanel({ definition }) {
         </ModalDialog>
       )}
 
-      {error && <p className="error" role="alert">{error}</p>}
       {loading ? (
         <p aria-live="polite" aria-busy="true">Loading {definition.plural.toLowerCase()}...</p>
       ) : (

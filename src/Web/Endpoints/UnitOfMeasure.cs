@@ -16,12 +16,18 @@ public class UnitOfMeasure : IEndpointGroup
     {
         groupBuilder.RequireAuthorization();
 
-        groupBuilder.MapPost(CreateUnitOfMeasure);
-        groupBuilder.MapPut(UpdateUnitOfMeasure, "{id}");
-        groupBuilder.MapDelete(DeleteUnitOfMeasure, "{id}");
-        groupBuilder.MapGet(GetUnitOfMeasures);
-        groupBuilder.MapGet(GetUnitOfMeasuresList, "list");
-        groupBuilder.MapGet(GetUnitOfMeasure, "{id}");
+        groupBuilder.MapPost(CreateUnitOfMeasure)
+            .RequireAuthorization("UnitOfMeasureCreate");
+        groupBuilder.MapPut(UpdateUnitOfMeasure, "{id}")
+            .RequireAuthorization("UnitOfMeasureUpdate");
+        groupBuilder.MapDelete(DeleteUnitOfMeasure, "{id}")
+            .RequireAuthorization("UnitOfMeasureDelete");
+        groupBuilder.MapGet(GetUnitOfMeasures)
+            .RequireAuthorization("UnitOfMeasureRead");
+        groupBuilder.MapGet(GetUnitOfMeasuresList, "list")
+            .RequireAuthorization("UnitOfMeasureRead");
+        groupBuilder.MapGet(GetUnitOfMeasure, "{id}")
+            .RequireAuthorization("UnitOfMeaasureRead");
     }
 
     [EndpointSummary("Create a new Unit of Measure")]

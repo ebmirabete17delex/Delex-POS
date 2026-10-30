@@ -16,12 +16,18 @@ public class Branch : IEndpointGroup
     {
         groupBuilder.RequireAuthorization();
 
-        groupBuilder.MapPost(CreateBranch);
-        groupBuilder.MapPut(UpdateBranch, "{id}");
-        groupBuilder.MapDelete(DeleteBranch, "{id}");
-        groupBuilder.MapGet(GetBranches);
-        groupBuilder.MapGet(GetBranchesList, "list");
-        groupBuilder.MapGet(GetBranch, "{id}");
+        groupBuilder.MapPost(CreateBranch)
+            .RequireAuthorization("BranchCreate");
+        groupBuilder.MapPut(UpdateBranch, "{id}")
+            .RequireAuthorization("BranchUpdate");
+        groupBuilder.MapDelete(DeleteBranch, "{id}")
+            .RequireAuthorization("BranchDelete");
+        groupBuilder.MapGet(GetBranches)
+            .RequireAuthorization("BranchRead");
+        groupBuilder.MapGet(GetBranchesList, "list")
+            .RequireAuthorization("BranchRead");
+        groupBuilder.MapGet(GetBranch, "{id}")
+            .RequireAuthorization("BranchRead");
     }
 
     [EndpointSummary("Create a new Branch")]

@@ -1,3 +1,4 @@
+import { LandingPage } from './components/LandingPage.jsx';
 import { ActivationPage } from './components/api-authorization/ActivationPage.jsx';
 import { LoginPage } from './components/api-authorization/LoginPage.jsx';
 import { ProtectedRoute } from './components/api-authorization/ProtectedRoute.jsx';
@@ -26,7 +27,7 @@ import { Navigate } from 'react-router-dom';
 
 const protectedPage = element => <ProtectedRoute>{element}</ProtectedRoute>;
 const AppRoutes = [
-  { index: true, element: protectedPage(<Navigate to="/users" replace />) },
+  { index: true, element: protectedPage(<LandingPage />) },
   { path: '/dashboard', element: protectedPage(<Navigate to="/users" replace />) },
   { path: '/admin', element: protectedPage(<AdminPage />) },
   { path: '/access', element: protectedPage(<AccessPanel />) },

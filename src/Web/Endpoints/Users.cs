@@ -30,27 +30,41 @@ public class Users : IEndpointGroup
 
         groupBuilder.MapGet(GetUsers);
 
-        groupBuilder.MapGet(GetUser, "{userId}");
-        groupBuilder.MapPost(CreateUser);
-        groupBuilder.MapPut(UpdateUser, "{userId}");
-        groupBuilder.MapDelete(DeleteUser, "{userId}");
+        groupBuilder.MapGet(GetUser, "{userId}")
+            .RequireAuthorization("UserRead");
+        groupBuilder.MapPost(CreateUser)
+            .RequireAuthorization("UserCreate");
+        groupBuilder.MapPut(UpdateUser, "{userId}")
+            .RequireAuthorization("UserUpdate");
+        groupBuilder.MapDelete(DeleteUser, "{userId}")
+            .RequireAuthorization("UserDelete");
 
-        groupBuilder.MapGet(GetUserAccess, "{userId}/accesses");
-        groupBuilder.MapPost(AddUserAccess, "{userId}/accesses/{accessId}");
-        groupBuilder.MapPut(UpdateUserAccess, "{userId}/accesses/{accessId}");
-        groupBuilder.MapDelete(RemoveUserAccess, "{userId}/accesses/{accessId}");
+        groupBuilder.MapGet(GetUserAccess, "{userId}/accesses")
+            .RequireAuthorization("UserRead");
+        groupBuilder.MapPost(AddUserAccess, "{userId}/accesses/{accessId}")
+            .RequireAuthorization("UserUpdate");
+        groupBuilder.MapPut(UpdateUserAccess, "{userId}/accesses/{accessId}")
+            .RequireAuthorization("UserUpdate");
+        groupBuilder.MapDelete(RemoveUserAccess, "{userId}/accesses/{accessId}")
+            .RequireAuthorization("UserUpdate");
 
-        groupBuilder.MapGet(GetUserRoles, "{userId}/roles");
-        groupBuilder.MapPost(AssignUserRole, "{userId}/roles/{roleId}");
-        groupBuilder.MapDelete(DismissUserRole, "{userId}/roles/{roleId}");
+        groupBuilder.MapGet(GetUserRoles, "{userId}/roles")
+            .RequireAuthorization("UserRead");
+        groupBuilder.MapPost(AssignUserRole, "{userId}/roles/{roleId}")
+            .RequireAuthorization("UserUpdate");
+        groupBuilder.MapDelete(DismissUserRole, "{userId}/roles/{roleId}")
+            .RequireAuthorization("UserUpdate");
 
-        groupBuilder.MapGet(GetUserPermissions, "{userId}/permission");
-        groupBuilder.MapGet(GetUserAccessPermissions, "{userId}/accesspermission");
-        groupBuilder.MapPost(CreateUserPermission, "{userId}/permission/");
-        groupBuilder.MapDelete(DeleteUserPermission, "{userId}/permission/{id}");
+        groupBuilder.MapGet(GetUserPermissions, "{userId}/permission")
+            .RequireAuthorization("UserUpdate");
+        groupBuilder.MapGet(GetUserAccessPermissions, "{userId}/accesspermission")
+            .RequireAuthorization("UserUpdate");
+        groupBuilder.MapPost(CreateUserPermission, "{userId}/permission/")
+            .RequireAuthorization("UserUpdate");
+        groupBuilder.MapDelete(DeleteUserPermission, "{userId}/permission/{id}")
+            .RequireAuthorization("UserUpdate");
 
         groupBuilder.MapGet(GetUserFeatures, "{userid}/features");
-
     }
 
     [EndpointSummary("Get all Users")]

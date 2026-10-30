@@ -25,21 +25,34 @@ public class Role : IEndpointGroup
     {
         groupBuilder.RequireAuthorization();
 
-        groupBuilder.MapPost(CreateRole);
-        groupBuilder.MapDelete(DeleteRole, "{roleId}");
-        groupBuilder.MapGet(GetRoles);
-        groupBuilder.MapGet(GetRolesList,"list");
-        groupBuilder.MapGet(GetRole, "{roleId}");
+        groupBuilder.MapPost(CreateRole)
+            .RequireAuthorization("RoleCreate");
+        groupBuilder.MapDelete(DeleteRole, "{roleId}")
+            .RequireAuthorization("RoleDelete");
+        groupBuilder.MapGet(GetRoles)
+            .RequireAuthorization("RoleRead");
+        groupBuilder.MapGet(GetRolesList,"list")
+            .RequireAuthorization("RoleRead");
+        groupBuilder.MapGet(GetRole, "{roleId}")
+            .RequireAuthorization("RoleRead");
 
-        groupBuilder.MapGet(GetRoleAccess, "{roleId}/accesses");
-        groupBuilder.MapPost(AddRoleAccess, "{roleId}/accesses/{accessId}");
-        groupBuilder.MapPut(UpdateRoleAccess, "{roleId}/accesses/{accessId}");
-        groupBuilder.MapDelete(RemoveRoleAccess, "{roleId}/accesses/{accessId}");
+        groupBuilder.MapGet(GetRoleAccess, "{roleId}/accesses")
+            .RequireAuthorization("RoleRead");
+        groupBuilder.MapPost(AddRoleAccess, "{roleId}/accesses/{accessId}")
+            .RequireAuthorization("RoleUpdate");
+        groupBuilder.MapPut(UpdateRoleAccess, "{roleId}/accesses/{accessId}")
+            .RequireAuthorization("RoleUpdate");            
+        groupBuilder.MapDelete(RemoveRoleAccess, "{roleId}/accesses/{accessId}")
+            .RequireAuthorization("RoleUpdate");
 
-        groupBuilder.MapGet(GetRolePermissions, "{roleId}/permission");
-        groupBuilder.MapGet(GetRoleAccessPermissions, "{roleId}/accesspermission");
-        groupBuilder.MapPost(CreateRolePermission, "{roleId}/permission");
-        groupBuilder.MapDelete(DeleteRolePermission, "{roleId}/permission/{permissionId}");
+        groupBuilder.MapGet(GetRolePermissions, "{roleId}/permission")
+            .RequireAuthorization("RoleRead");
+        groupBuilder.MapGet(GetRoleAccessPermissions, "{roleId}/accesspermission")
+            .RequireAuthorization("RoleRead");
+        groupBuilder.MapPost(CreateRolePermission, "{roleId}/permission")
+            .RequireAuthorization("RoleUpdate");
+        groupBuilder.MapDelete(DeleteRolePermission, "{roleId}/permission/{permissionId}")
+            .RequireAuthorization("RoleUpdate");
 
     }
 

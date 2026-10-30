@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext.jsx';
+import { notify } from '../toast.jsx';
 
 export function LoginPage() {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -14,13 +14,21 @@ export function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setBusy(true);
-    setError('');
     try {
-      await login(userId, password);
+      const response = await login(userId, password);
+      if (response?.error){ throw new Error(response?.error); }
+      if (!response?.accessToken) {
+        if (response?.isActive === false) {
+          navigate('/activate', { state: { userId } });
+          return;
+        }
+        throw new Error('Unable to sign in. Check your credentials and try again.');
+      }
       const returnUrl = location.state?.returnUrl || '/';
       navigate(returnUrl, { replace: true });
+      notify.success('Signed in successfully.');
     } catch (requestError) {
-      setError(requestError?.message || 'Unable to sign in. Check your credentials and try again.');
+      notify.error(requestError?.message || 'Unable to sign in. Check your credentials and try again.');
     } finally {
       setBusy(false);
     }
@@ -37,7 +45,6 @@ export function LoginPage() {
         <label htmlFor="password">Password</label>
         <input type="password" id="password" autoComplete="current-password" required
           value={password} onChange={event => setPassword(event.target.value)} />
-        {error && <p className="error" role="alert">{error}</p>}
         <button type="submit" disabled={busy}>{busy ? 'Signing in...' : 'Sign in'}</button>
       </form>
     </article>

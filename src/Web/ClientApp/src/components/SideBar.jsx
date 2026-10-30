@@ -33,12 +33,12 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from './ui/sidebar.tsx';
-import { createApiClient, getUserId } from './api-client.js';
+import { createApiClient, getUserId } from './api-client.jsx';
 import { useCallback, useState, useEffect } from 'react';
 
 const usersClient = createApiClient(UsersClient);
 
-const navigationGroups = [
+export const navigationGroups = [
   {
     label: 'Sales',
     items: [

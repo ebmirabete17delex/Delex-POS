@@ -5,6 +5,7 @@ using Delex_POS.Domain.ValueObjects;
 using Delex_POS.Infrastructure.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -122,6 +123,7 @@ public class ApplicationDbContextInitialiser
 
             await _context.PersonalInfos.AddAsync(pi);
             var ee_id = await _context.Employees.AddAsync(new Employee(administrator.Id, pi.Id, 0, ""));
+            await _context.SaveChangesAsync();
         }
 
         if (!_context.Accesses.Any()) 
@@ -160,14 +162,17 @@ public class ApplicationDbContextInitialiser
                 new AccessClaim(name: "Stock Transfer Management", feature: "stock-transfers"));
             await _context.SaveChangesAsync();
         }
+
         if (_context.Accesses.Any())
         {
-            foreach (var access in _context.Accesses)
+            var accesses = _context.Accesses.AsNoTracking().ToList();
+            foreach (var access in accesses)
             {
                 _context.Permissions.Add(new Permission(access.Id, "Read"));
                 _context.Permissions.Add(new Permission(access.Id, "Create"));
                 _context.Permissions.Add(new Permission(access.Id, "Delete"));
                 _context.Permissions.Add(new Permission(access.Id, "Update"));
+                await _context.SaveChangesAsync();
             }
         }
         if (!_context.RoleAccesses.Any(u => u.RoleId == administratorRole.Id))
@@ -186,6 +191,19 @@ public class ApplicationDbContextInitialiser
             _context.RoleAccesses.Add(new RoleAccess(roleId: administratorRole.Id, accessId: _context.Accesses.First(a => a.Name == "Stock Transfer Management").Id));
             await _context.SaveChangesAsync();
         }
+        if (_context.RoleAccesses.Any(u => u.RoleId == administratorRole.Id))
+        {
+            var roleAccesses = _context.RoleAccesses.AsNoTracking().ToList();
+            foreach (var roleAccess in roleAccesses)
+            {
+                _context.RolePermissions.Add(new RolePermission(roleAccess.RoleId, _context.Permissions.First(a => a.Name == "Read").Id));
+                _context.RolePermissions.Add(new RolePermission(roleAccess.RoleId, _context.Permissions.First(a => a.Name == "Create").Id));
+                _context.RolePermissions.Add(new RolePermission(roleAccess.RoleId, _context.Permissions.First(a => a.Name == "Delete").Id));
+                _context.RolePermissions.Add(new RolePermission(roleAccess.RoleId, _context.Permissions.First(a => a.Name == "Update").Id));
+                await _context.SaveChangesAsync();
+            }
+        }
+        
         if (!_context.UserAccesses.Any(u => u.UserId == administrator.Id))
         {
             _context.UserAccesses.Add(new UserAccess(userId: administrator.Id, accessId: _context.Accesses.First(a => a.Name == "Customer Management").Id));

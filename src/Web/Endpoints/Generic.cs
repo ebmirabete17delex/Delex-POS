@@ -16,13 +16,19 @@ public class Generic : IEndpointGroup
     {
         groupBuilder.RequireAuthorization();
 
-        groupBuilder.MapPost(CreateGeneric);
-        groupBuilder.MapPut(UpdateGeneric, "{id}");
-        groupBuilder.MapDelete(DeleteGeneric, "{id}");
+        groupBuilder.MapPost(CreateGeneric)
+            .RequireAuthorization("GenericCreate");
+        groupBuilder.MapPut(UpdateGeneric, "{id}")
+            .RequireAuthorization("GenericUpdate");
+        groupBuilder.MapDelete(DeleteGeneric, "{id}")
+            .RequireAuthorization("GenericDelete");
 
-        groupBuilder.MapGet(GetGenericItems);
-        groupBuilder.MapGet(GetGenericList, "list");
-        groupBuilder.MapGet(GetGeneric, "{id}");
+        groupBuilder.MapGet(GetGenericItems)
+            .RequireAuthorization("GenericRead");
+        groupBuilder.MapGet(GetGenericList, "list")
+            .RequireAuthorization("GenericRead");
+        groupBuilder.MapGet(GetGeneric, "{id}")
+            .RequireAuthorization("GenericRead");
     }
 
     [EndpointSummary("Create a new Generic")]

@@ -14,13 +14,19 @@ public class Supplier : IEndpointGroup
     public static string? RoutePrefix => "/api/suppliers";
     public static void Map(RouteGroupBuilder groupBuilder)
     {
-        groupBuilder.MapPost(CreateSupplier);
-        groupBuilder.MapPut(UpdateSupplier, "{id}");
-        groupBuilder.MapDelete(DeleteSupplier, "{id}");
+        groupBuilder.MapPost(CreateSupplier)
+            .RequireAuthorization("SupplierCreate");
+        groupBuilder.MapPut(UpdateSupplier, "{id}")
+            .RequireAuthorization("SupplierUpdate");
+        groupBuilder.MapDelete(DeleteSupplier, "{id}")
+            .RequireAuthorization("SupplierDelete");
 
-        groupBuilder.MapGet(GetSuppliers);
-        groupBuilder.MapGet(GetSupplier, "{id}");
-        groupBuilder.MapGet(SearchSupplier, "/search/{query}");
+        groupBuilder.MapGet(GetSuppliers)
+            .RequireAuthorization("SupplierRead");
+        groupBuilder.MapGet(GetSupplier, "{id}")
+            .RequireAuthorization("SupplierRead");
+        groupBuilder.MapGet(SearchSupplier, "/search/{query}")
+            .RequireAuthorization("SupplierRead");
     }
     [EndpointSummary("Get all Suppliers")]
     [EndpointDescription("Retrieves all Suppliers along with their items.")]

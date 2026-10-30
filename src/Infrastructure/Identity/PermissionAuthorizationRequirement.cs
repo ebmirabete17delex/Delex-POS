@@ -1,0 +1,28 @@
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Delex_POS.Infrastructure.Identity;
+
+public class PermissionAuthorizationRequirement(params string[] allowedPermissions)
+    : AuthorizationHandler<PermissionAuthorizationRequirement>, IAuthorizationRequirement
+{
+    public string[] AllowedPermissions { get; } = allowedPermissions;
+
+    protected override Task HandleRequirementAsync(
+        AuthorizationHandlerContext context,
+        PermissionAuthorizationRequirement requirement)
+    {
+        foreach (var permission in requirement.AllowedPermissions)
+        {
+            bool found = context.User.FindFirst(c =>
+                c.Type == CustomClaimTypes.Permission &&
+                c.Value == permission) is not null;
+
+            if (found)
+            {
+                context.Succeed(requirement);
+                break;
+            }
+        }
+        return Task.CompletedTask;
+    }
+}

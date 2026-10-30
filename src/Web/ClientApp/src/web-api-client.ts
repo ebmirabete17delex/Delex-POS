@@ -589,7 +589,7 @@ export class AuthenticationClient {
      * Activate an account
      * @return OK
      */
-    activate(body: ActivationRequest): Promise<TokenResponse> {
+    activate(body: ActivationRequest): Promise<ActivationResponse> {
         let url_ = this.baseUrl + "/api/Authentication/activate";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -609,14 +609,14 @@ export class AuthenticationClient {
         });
     }
 
-    protected processActivate(response: Response): Promise<TokenResponse> {
+    protected processActivate(response: Response): Promise<ActivationResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = TokenResponse.fromJS(resultData200);
+            result200 = ActivationResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status === 400) {
@@ -632,7 +632,7 @@ export class AuthenticationClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<TokenResponse>(null as any);
+        return Promise.resolve<ActivationResponse>(null as any);
     }
 
     /**
@@ -1437,6 +1437,14 @@ export class CustomerClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -1502,6 +1510,14 @@ export class CustomerClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -1547,6 +1563,14 @@ export class CustomerClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -1587,6 +1611,14 @@ export class CustomerClient {
         } else if (status === 400) {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -1632,6 +1664,14 @@ export class CustomerClient {
         } else if (status === 400) {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -1684,6 +1724,14 @@ export class CustomerClient {
         } else if (status === 400) {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -2538,8 +2586,11 @@ export class ProductClient {
      * Create a new Product Sale
      * @return Created
      */
-    createProductSale(body: CreateProductSaleCommand): Promise<number> {
-        let url_ = this.baseUrl + "/api/Product/{id}/sale";
+    createProductSale(productId: number, body: CreateProductSaleCommand): Promise<number> {
+        let url_ = this.baseUrl + "/api/Product/{productId}/sale";
+        if (productId === undefined || productId === null)
+            throw new globalThis.Error("The parameter 'productId' must be defined.");
+        url_ = url_.replace("{productId}", encodeURIComponent("" + productId));
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -2590,64 +2641,14 @@ export class ProductClient {
     }
 
     /**
-     * Get Product Sale
-     * @return OK
-     */
-    getProductSale(id: number): Promise<ProductSaleDto> {
-        let url_ = this.baseUrl + "/api/Product/{id}/sale";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetProductSale(_response);
-        });
-    }
-
-    protected processGetProductSale(response: Response): Promise<ProductSaleDto> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = ProductSaleDto.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-            return throwException("Bad Request", status, _responseText, _headers);
-            });
-        } else if (status === 401) {
-            return response.text().then((_responseText) => {
-            return throwException("Unauthorized", status, _responseText, _headers);
-            });
-        } else if (status === 403) {
-            return response.text().then((_responseText) => {
-            return throwException("Forbidden", status, _responseText, _headers);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<ProductSaleDto>(null as any);
-    }
-
-    /**
      * Create a new Product Purchasing
      * @return Created
      */
-    createProductPurchasing(body: CreateProductPurchasingCommand): Promise<number> {
-        let url_ = this.baseUrl + "/api/Product/{id}/purchasing";
+    createProductPurchasing(productId: number, body: CreateProductPurchasingCommand): Promise<number> {
+        let url_ = this.baseUrl + "/api/Product/{productId}/purchasing";
+        if (productId === undefined || productId === null)
+            throw new globalThis.Error("The parameter 'productId' must be defined.");
+        url_ = url_.replace("{productId}", encodeURIComponent("" + productId));
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -2695,59 +2696,6 @@ export class ProductClient {
             });
         }
         return Promise.resolve<number>(null as any);
-    }
-
-    /**
-     * Get Product Purchasing
-     * @return OK
-     */
-    getProductPurchasing(id: number): Promise<ProductPurchasingDto> {
-        let url_ = this.baseUrl + "/api/Product/{id}/purchasing";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetProductPurchasing(_response);
-        });
-    }
-
-    protected processGetProductPurchasing(response: Response): Promise<ProductPurchasingDto> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = ProductPurchasingDto.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-            return throwException("Bad Request", status, _responseText, _headers);
-            });
-        } else if (status === 401) {
-            return response.text().then((_responseText) => {
-            return throwException("Unauthorized", status, _responseText, _headers);
-            });
-        } else if (status === 403) {
-            return response.text().then((_responseText) => {
-            return throwException("Forbidden", status, _responseText, _headers);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<ProductPurchasingDto>(null as any);
     }
 
     /**
@@ -2903,6 +2851,112 @@ export class ProductClient {
             });
         }
         return Promise.resolve<ProductDto>(null as any);
+    }
+
+    /**
+     * Get Product Sale
+     * @return OK
+     */
+    getProductSale(id: number): Promise<ProductSaleDto> {
+        let url_ = this.baseUrl + "/api/Product/{id}/sale";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetProductSale(_response);
+        });
+    }
+
+    protected processGetProductSale(response: Response): Promise<ProductSaleDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ProductSaleDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ProductSaleDto>(null as any);
+    }
+
+    /**
+     * Get Product Purchasing
+     * @return OK
+     */
+    getProductPurchasing(id: number): Promise<ProductPurchasingDto> {
+        let url_ = this.baseUrl + "/api/Product/{id}/purchasing";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetProductPurchasing(_response);
+        });
+    }
+
+    protected processGetProductPurchasing(response: Response): Promise<ProductPurchasingDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ProductPurchasingDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ProductPurchasingDto>(null as any);
     }
 }
 
@@ -4774,6 +4828,14 @@ export class SupplierClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -4839,6 +4901,14 @@ export class SupplierClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -4884,6 +4954,14 @@ export class SupplierClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -4924,6 +5002,14 @@ export class SupplierClient {
         } else if (status === 400) {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -4969,6 +5055,14 @@ export class SupplierClient {
         } else if (status === 400) {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -5021,6 +5115,14 @@ export class SupplierClient {
         } else if (status === 400) {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -5935,6 +6037,14 @@ export class UsersClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -5979,6 +6089,14 @@ export class UsersClient {
         } else if (status === 400) {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -6025,6 +6143,14 @@ export class UsersClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -6065,6 +6191,14 @@ export class UsersClient {
         } else if (status === 400) {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -6118,6 +6252,14 @@ export class UsersClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -6167,6 +6309,14 @@ export class UsersClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -6215,6 +6365,14 @@ export class UsersClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -6258,6 +6416,14 @@ export class UsersClient {
         } else if (status === 400) {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -6311,6 +6477,14 @@ export class UsersClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -6360,6 +6534,14 @@ export class UsersClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -6403,6 +6585,14 @@ export class UsersClient {
         } else if (status === 400) {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -6456,6 +6646,14 @@ export class UsersClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -6505,6 +6703,14 @@ export class UsersClient {
         } else if (status === 400) {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -6558,6 +6764,14 @@ export class UsersClient {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
             });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
+            });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -6601,6 +6815,14 @@ export class UsersClient {
         } else if (status === 400) {
             return response.text().then((_responseText) => {
             return throwException("Bad Request", status, _responseText, _headers);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            return throwException("Forbidden", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -7256,8 +7478,8 @@ export interface IAccessPermissionDto {
 
 export class ActivationRequest implements IActivationRequest {
     userId!: string;
-    password!: string;
-    pin!: string;
+    oldPassword!: string;
+    newPassword!: string;
 
     [key: string]: any;
 
@@ -7277,8 +7499,8 @@ export class ActivationRequest implements IActivationRequest {
                     this[property] = _data[property];
             }
             this.userId = _data["userId"];
-            this.password = _data["password"];
-            this.pin = _data["pin"];
+            this.oldPassword = _data["oldPassword"];
+            this.newPassword = _data["newPassword"];
         }
     }
 
@@ -7296,16 +7518,68 @@ export class ActivationRequest implements IActivationRequest {
                 data[property] = this[property];
         }
         data["userId"] = this.userId;
-        data["password"] = this.password;
-        data["pin"] = this.pin;
+        data["oldPassword"] = this.oldPassword;
+        data["newPassword"] = this.newPassword;
         return data;
     }
 }
 
 export interface IActivationRequest {
     userId: string;
-    password: string;
-    pin: string;
+    oldPassword: string;
+    newPassword: string;
+
+    [key: string]: any;
+}
+
+export class ActivationResponse implements IActivationResponse {
+    successful?: boolean;
+    error?: string;
+
+    [key: string]: any;
+
+    constructor(data?: IActivationResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.successful = _data["successful"];
+            this.error = _data["error"];
+        }
+    }
+
+    static fromJS(data: any): ActivationResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ActivationResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["successful"] = this.successful;
+        data["error"] = this.error;
+        return data;
+    }
+}
+
+export interface IActivationResponse {
+    successful?: boolean;
+    error?: string;
 
     [key: string]: any;
 }
@@ -12385,6 +12659,7 @@ export class TokenResponse implements ITokenResponse {
     accessToken?: string;
     expiresIn?: number;
     refreshToken?: string;
+    error?: string;
 
     [key: string]: any;
 
@@ -12408,6 +12683,7 @@ export class TokenResponse implements ITokenResponse {
             this.accessToken = _data["accessToken"];
             this.expiresIn = _data["expiresIn"];
             this.refreshToken = _data["refreshToken"];
+            this.error = _data["error"];
         }
     }
 
@@ -12429,6 +12705,7 @@ export class TokenResponse implements ITokenResponse {
         data["accessToken"] = this.accessToken;
         data["expiresIn"] = this.expiresIn;
         data["refreshToken"] = this.refreshToken;
+        data["error"] = this.error;
         return data;
     }
 }
@@ -12439,6 +12716,7 @@ export interface ITokenResponse {
     accessToken?: string;
     expiresIn?: number;
     refreshToken?: string;
+    error?: string;
 
     [key: string]: any;
 }

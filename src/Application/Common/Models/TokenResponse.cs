@@ -7,6 +7,7 @@ public class TokenResponse
     public string AccessToken { get; init; } = string.Empty;
     public int ExpiresIn { get; init; }
     public string RefreshToken { get; init; } = string.Empty;
+    public string Error { get; set; } = string.Empty;
 }
 
 public class OboTokenErrorBody
@@ -16,4 +17,10 @@ public class OboTokenErrorBody
     public int status { get; set; }
     public Dictionary<string, List<string>> errors { get; set; } = new();
     public string traceId { get; set; } = string.Empty;
+}
+
+public class ActivationResponse
+{
+    public bool Successful { get; init; }
+    public string Error { get; init; } = string.Empty;
 }
